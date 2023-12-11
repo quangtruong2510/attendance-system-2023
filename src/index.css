@@ -1,0 +1,15 @@
+:root {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background-color: #fafafa;
+}
+
+@media screen and (min-height: 660px) {
+  .css-b1ptpl-MuiTableContainer-root {
+    width: 100%;
+    overflow-x: auto;
+    width: 100%;
+    max-height: calc(100vh - 250px) !important
+}
+}

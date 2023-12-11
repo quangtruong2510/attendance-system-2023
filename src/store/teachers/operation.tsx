@@ -1,0 +1,69 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { execute, Request } from "../../utils/request";
+
+// const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
+
+const BASE_URL_API = "http://localhost:3000/";
+
+// Fetch list teachers
+const fetchTeacher = createAsyncThunk("teacher/fetchTeachers", async () => {
+  const request: Request = {
+    endpoint: `${BASE_URL_API}teacher`,
+    method: "GET",
+  };
+  return await execute(request, "Failed to get teacher");
+});
+
+// get teacher by id
+const getTeacherById = createAsyncThunk(
+  "teacher/getTeacher",
+  async (arg: { id: number }) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}teacher/${arg.id}`,
+      method: "GET",
+    };
+    // const request: Request = { endpoint: `${BASE_URL_API}getTeacherByID/${arg.id}`, method: 'GET' };
+    return await execute(request, "Failed to get teacher");
+  }
+);
+
+const addTeacher = createAsyncThunk(
+  "teacher/addTeacher",
+  async (teacher: any) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}teacher`,
+      method: "POST",
+    };
+    return await execute(request, "Failed to get teacher", teacher);
+  }
+);
+
+const updateTeacher = createAsyncThunk(
+  "teacher/updateTeacher",
+  async (arg: { id: number; payload: any }) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}teacher/${arg.id}`,
+      method: "PUT",
+    };
+    return await execute(request, "Failed to update teacher", arg.payload);
+  }
+);
+
+const deleteTeacherById = createAsyncThunk(
+  "teacher/updateTeacher",
+  async (arg: { id: number }) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}teacher/${arg.id}`,
+      method: "DELETE",
+    };
+    return await execute(request, "Failed to delete teacher");
+  }
+);
+
+export {
+  fetchTeacher,
+  getTeacherById,
+  addTeacher,
+  updateTeacher,
+  deleteTeacherById,
+};
