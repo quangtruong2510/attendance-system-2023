@@ -14,16 +14,15 @@ const loginUser = createAsyncThunk("auth/login", async (user: any) => {
       },
       body: JSON.stringify(user),
     });
-    let data = await response.json();
 
-    if (response.status === 200) {
-      localStorage.setItem("token", data.token);
-      return data;
+    const data = await response.json();
+    if (!response.ok) {
+      return Promise.reject(data.error || "Mật khẩu hoặc tài khoản không chính xác");
     }
 
-    return data.errors;
+    return data;
   } catch (error) {
-    throw new Error("Invalid email or password");
+    return ('An error occurred during login');
   }
 });
 
@@ -49,4 +48,3 @@ const checkAuth = createAsyncThunk("auth/verifyToken", async (token: any) => {
 });
 
 export { checkAuth, loginUser };
-

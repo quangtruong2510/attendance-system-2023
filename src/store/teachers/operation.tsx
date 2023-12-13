@@ -3,7 +3,7 @@ import { execute, Request } from "../../utils/request";
 
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
-const BASE_URL_API = "http://localhost:3000/";
+const BASE_URL_API = "https://3b0c-203-205-51-20.ngrok-free.app/api/school/";
 
 // Fetch list teachers
 const fetchTeacher = createAsyncThunk("teacher/fetchTeachers", async () => {

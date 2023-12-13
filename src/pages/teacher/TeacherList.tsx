@@ -13,7 +13,7 @@ import {
   TableContainer,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
@@ -35,6 +35,7 @@ import {
 import CommonUtil from "../../utils/export";
 import TeacherEdit from "./TeacherEdit";
 import TableRows from "./part/TableRows";
+import { fetchTeacher } from "../../store/teachers/operation";
 
 interface GroupFilterSearch {
   class: string;
@@ -47,10 +48,8 @@ const TeacherList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const teacherList: Teacher[] = useSelector((state) => state.teacher.data);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const selectedStudent: Student = useSelector(
-    (state) => state.students.selectedStudent
-  );
-  const [isNew, setIsNewStudent] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [isNew, setIsNewTeacher] = useState(false);
   const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
@@ -59,8 +58,14 @@ const TeacherList = () => {
     phone: "",
   });
 
-  const addNewStudent = () => {
-    setIsNewStudent(true);
+  useEffect(() => {
+    dispatch(fetchTeacher());
+  }, []);
+
+  const addNewTeacher = () => {
+    console.log("aaaaaaaaaaaaaaaaa");
+
+    setIsNewTeacher(true);
     setDialogOpen(true);
   };
 
@@ -68,10 +73,9 @@ const TeacherList = () => {
     dispatch(deleteStudentById({ id: id }));
     dispatch(fetchStudents());
   };
-  const editStudent = (id: number) => {
-    dispatch(getStudentById({ id: id }));
-
-    setIsNewStudent(false);
+  const editTeacher = (id: number) => {
+    setSelectedTeacher(teacherList.find((teacher) => teacher.id === id) || null);
+    setIsNewTeacher(false);
     setDialogOpen(true);
   };
 
@@ -103,9 +107,9 @@ const TeacherList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   return (
     <ContentLayout>
@@ -123,7 +127,7 @@ const TeacherList = () => {
           }}
           component="label"
           variant="contained"
-          onClick={() => addNewStudent}
+          onClick={addNewTeacher}
           startIcon={<AddCircleOutline />}
         >
           Thêm mới
@@ -174,6 +178,7 @@ const TeacherList = () => {
               component="label"
               variant="contained"
               startIcon={<Cached />}
+
             >
               Làm mới
             </Button>
@@ -230,7 +235,7 @@ const TeacherList = () => {
               )}
               headers={headerTeacherTable}
               onDeleteClick={onDeleteClick}
-              onEditClick={editStudent}
+              onEditClick={editTeacher}
             />
           </Table>
         </TableContainer>
@@ -238,7 +243,7 @@ const TeacherList = () => {
       <TeacherEdit
         isNew={isNew}
         isOpen={isDialogOpen}
-        student={selectedStudent}
+        selectedTeacher={selectedTeacher}
         handleClose={handleClose}
       />
     </ContentLayout>

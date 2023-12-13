@@ -15,15 +15,16 @@ import {
   selectLoading,
 } from "../../store/authentication/slice";
 import { AppDispatch, useSelector } from "../../store/configstore";
+import { useState } from "react";
 
 export default function SignIn() {
   const isLoading = useSelector(selectLoading);
-  const error = useSelector(selectErrorMessage);
+  const error = useSelector(state => state.authentication.error);
   const isLoggedIn = useSelector(selectAuthenticated);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  console.log("isLoading", isLoading);
   console.log("error", error);
-  console.log("isLoggedIn", isLoggedIn);
 
   const navigate = useNavigate();
 
@@ -36,14 +37,6 @@ export default function SignIn() {
       password: data.get("password"),
     };
     dispatch(loginUser(user))
-      .unwrap()
-      .then(() => {
-        console.log("successs");
-        navigate("/dashboard");
-      })
-      .catch((e) => {
-        console.log("aaaaaaaaaaa", e);
-      });
   };
 
   if (isLoggedIn) {
@@ -147,6 +140,8 @@ export default function SignIn() {
                   autoComplete="Username"
                   autoFocus
                   size="medium"
+                  error={Boolean(error)}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
                 <TextField
                   margin="normal"
@@ -156,7 +151,10 @@ export default function SignIn() {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={Boolean(error)}
                 />
+                {error && <Typography color="error">{error}</Typography>}
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
                   label="Ghi nhớ mật khẩu "
@@ -177,7 +175,7 @@ export default function SignIn() {
                 <Grid container>
                   <Grid item xs>
                     <Link href="#" variant="body2">
-                      Forgot password?
+                      Quên mật khẩu
                     </Link>
                   </Grid>
                 </Grid>

@@ -32,6 +32,7 @@ export const studentSlice = createSlice({
     builder.addCase(
       fetchTeacher.fulfilled,
       (state, action: PayloadAction<any>) => {
+        console.log("equest successful");
         state.isLoading = false;
         state.data = action.payload.data;
       }
@@ -85,6 +86,9 @@ export const studentSlice = createSlice({
     builder.addCase(
       addTeacher.rejected,
       (state, action: PayloadAction<any>) => {
+
+        console.log("fail");
+
         // We show the error message
         state.errorMessage = action.payload;
         state.isLoading = false;
