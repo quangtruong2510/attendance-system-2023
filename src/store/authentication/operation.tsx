@@ -6,7 +6,7 @@ const BASE_URL_API = "https://3b0c-203-205-51-20.ngrok-free.app";
 const loginUser = createAsyncThunk("auth/login", async (user: any) => {
   console.log("Userrr", user);
   try {
-    const response = await fetch(`${BASE_URL_API}/api/account/login`, {
+    const response = await fetch(`${BASE_URL_API}/api/login`, {
       method: "POST",
       headers: {
         Accept: "application/json",

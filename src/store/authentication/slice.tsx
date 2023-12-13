@@ -19,8 +19,8 @@ export const authSlice = createSlice({
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload;
-      state.role = action.payload.account.role;
-      if (action.payload.account.role === Roles.TEACHER) {
+      state.role = action.payload.data.role;
+      if (action.payload.data.role === Roles.TEACHER) {
         state.name = "Giao vien Truong"
       }
     });

@@ -32,10 +32,8 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const user = {
-      account: {
-        email: data.get("username"),
-        password: data.get("password"),
-      },
+      email: data.get("username"),
+      password: data.get("password"),
     };
     dispatch(loginUser(user))
       .unwrap()
