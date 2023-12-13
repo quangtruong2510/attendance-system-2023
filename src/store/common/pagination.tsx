@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { PaginationState } from '../../model/Utils';
+interface PaginationState {
+  current: number,
+  perPage: number,
+}
 
 const initialState: PaginationState = {
   current: 0,

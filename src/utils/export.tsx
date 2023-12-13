@@ -45,6 +45,4 @@ class CommonUtils {
   }
 }
 
-const CommonUtil = new CommonUtils();
-
 export default new CommonUtils();

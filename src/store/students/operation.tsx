@@ -8,32 +8,32 @@ const BASE_URL_API = 'http://localhost:3000/';
 // Fetch list students
 const fetchStudents = createAsyncThunk('student/fechthStudents', async () => {
   const request: Request = { endpoint: `${BASE_URL_API}student`, method: 'GET' };
-  return await execute(request, 'Failed to get student');
+  return await execute(request);
 });
 
 // get student by id
 const getStudentById = createAsyncThunk('student/getStudent', async (arg: { id: number }) => {
   const request: Request = { endpoint: `${BASE_URL_API}student/${arg.id}`, method: 'GET' };
   // const request: Request = { endpoint: `${BASE_URL_API}getStudentByID/${arg.id}`, method: 'GET' };
-  return await execute(request, 'Failed to get student');
+  return await execute(request);
 });
 
 const addStudent = createAsyncThunk('student/addStudent', async (student: any) => {
   const request: Request = { endpoint: `${BASE_URL_API}student`, method: 'POST' };
-  return await execute(request, 'Failed to get student', student);
+  return await execute(request, student);
 });
 
 const updateStudent = createAsyncThunk(
   'student/updateStudent',
   async (arg: { id: number; payload: any }) => {
     const request: Request = { endpoint: `${BASE_URL_API}student/${arg.id}`, method: 'PUT' };
-    return await execute(request, 'Failed to update student', arg.payload);
+    return await execute(request, arg.payload);
   }
 );
 
 const deleteStudentById = createAsyncThunk('student/updateStudent', async (arg: { id: number }) => {
   const request: Request = { endpoint: `${BASE_URL_API}student/${arg.id}`, method: 'DELETE' };
-  return await execute(request, 'Failed to delete student');
+  return await execute(request);
 });
 
 export { fetchStudents, getStudentById, addStudent, updateStudent, deleteStudentById };

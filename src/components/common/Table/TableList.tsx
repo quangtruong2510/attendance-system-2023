@@ -4,7 +4,6 @@ import TableContainer from "@mui/material/TableContainer";
 
 import React from "react";
 import { Column } from "../../../constant/headerTable";
-import TableHeader from "./TableHeader";
 
 interface Props {
   children: React.ReactNode;

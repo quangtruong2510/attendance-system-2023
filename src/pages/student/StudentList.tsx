@@ -30,9 +30,8 @@ import {
   getStudentById,
 } from "../../store/students/operation";
 import CommonUtil from "../../utils/export";
-import EditStudent from "./StudentEdit";
-import TableRows from "./part/TableRows";
 import { Roles } from "../../utils/role";
+import TableRows from "./part/TableRows";
 
 interface GroupFilterSearch {
   class: string;
@@ -44,13 +43,13 @@ interface GroupFilterSearch {
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const studentList: Student[] = useSelector((state) => state.students.data);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const selectedStudent: Student = useSelector(
-    (state) => state.students.selectedStudent
-  );
+  // const [isDialogOpen, setDialogOpen] = useState(false);
+  // const selectedStudent: Student = useSelector(
+  //   (state) => state.students.selectedStudent
+  // );
 
   const role = useSelector((state) => state.authentication.role);
-  const [isNew, setIsNewStudent] = useState(false);
+  // const [isNew, setIsNewStudent] = useState(false);
   const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
@@ -60,8 +59,8 @@ const StudentList = () => {
   });
 
   const addNewStudent = () => {
-    setIsNewStudent(true);
-    setDialogOpen(true);
+    // setIsNewStudent(true);
+    // setDialogOpen(true);
   };
 
   const onDeleteClick = (id: number) => {
@@ -71,13 +70,13 @@ const StudentList = () => {
   const editStudent = (id: number) => {
     dispatch(getStudentById({ id: id }));
 
-    setIsNewStudent(false);
-    setDialogOpen(true);
+    // setIsNewStudent(false);
+    // setDialogOpen(true);
   };
 
-  const handleClose = () => {
-    setDialogOpen(false);
-  };
+  // const handleClose = () => {
+  //   setDialogOpen(false);
+  // };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(

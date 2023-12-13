@@ -11,7 +11,7 @@ const fetchTeacher = createAsyncThunk("teacher/fetchTeachers", async () => {
     endpoint: `${BASE_URL_API}teacher`,
     method: "GET",
   };
-  return await execute(request, "Failed to get teacher");
+  return await execute(request);
 });
 
 // get teacher by id
@@ -23,7 +23,7 @@ const getTeacherById = createAsyncThunk(
       method: "GET",
     };
     // const request: Request = { endpoint: `${BASE_URL_API}getTeacherByID/${arg.id}`, method: 'GET' };
-    return await execute(request, "Failed to get teacher");
+    return await execute(request);
   }
 );
 
@@ -34,7 +34,7 @@ const addTeacher = createAsyncThunk(
       endpoint: `${BASE_URL_API}teacher`,
       method: "POST",
     };
-    return await execute(request, "Failed to get teacher", teacher);
+    return await execute(request, teacher);
   }
 );
 
@@ -45,7 +45,7 @@ const updateTeacher = createAsyncThunk(
       endpoint: `${BASE_URL_API}teacher/${arg.id}`,
       method: "PUT",
     };
-    return await execute(request, "Failed to update teacher", arg.payload);
+    return await execute(request, arg.payload);
   }
 );
 
@@ -56,7 +56,7 @@ const deleteTeacherById = createAsyncThunk(
       endpoint: `${BASE_URL_API}teacher/${arg.id}`,
       method: "DELETE",
     };
-    return await execute(request, "Failed to delete teacher");
+    return await execute(request);
   }
 );
 

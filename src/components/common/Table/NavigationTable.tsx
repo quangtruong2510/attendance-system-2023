@@ -19,7 +19,6 @@ const NavigationTable: React.FC<Props> = ({ count }) => {
   const { current, perPage } = useSelector((state) => state.pagination);
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     dispatch(setCurrentPage(newPage));
@@ -60,7 +59,7 @@ const NavigationTable: React.FC<Props> = ({ count }) => {
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} trên ${count !== -1 ? count : `nhiều`}`
         }
-        onPageChange={handleChangePage}
+        onPageChange={() => handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         ActionsComponent={TablePaginationActions}
       />

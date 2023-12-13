@@ -7,7 +7,6 @@ export type Request = {
 /* eREslint-disable  @typescript-eslint/no-explicit-any */
 export const execute = async (
   request: Request,
-  errorMessage: string,
   payload?: JSON
 ): Promise<any> => {
   const response = await requestAPI(request, payload);

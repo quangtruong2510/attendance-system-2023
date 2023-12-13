@@ -1,5 +1,5 @@
+import { EventNoteOutlined, ManageAccountsOutlined, SettingsOutlined } from '@mui/icons-material'
 import NavigatorItemModel from '../models/navigator'
-import { EditNote, EventNoteOutlined, ManageAccountsOutlined, SchoolOutlined, SettingsOutlined, WcRounded } from '@mui/icons-material'
 import { Roles } from '../utils/role'
 
 const navigatorList: NavigatorItemModel[] = [

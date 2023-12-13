@@ -1,19 +1,9 @@
-import React, { useEffect } from "react";
+import { Table, TableBody, TableContainer } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
-import styled from "styled-components";
-import { useDispatch } from "react-redux";
-import {
-  initializeState,
-  setCurrentPage,
-  setPerPage,
-} from "../../../store/common/pagination";
-import { useSelector } from "../../../store/configstore";
-import TablePaginationActions from "./TablePaginationActions";
+import React from "react";
 import { Column } from "../../../constant/headerTable";
-import { Table, TableBody, TableContainer } from "@mui/material";
 import NavigationTable from "./NavigationTable";
 
 interface Props {
@@ -34,9 +24,7 @@ const TableCommon: React.FC<Props> = ({ headers, count, children }) => {
             {headers.map((column) => (
               <TableCell
                 key={column.id}
-                // align={column.align}
                 style={{
-                  // minWidth: column.minWidth,
                   fontWeight: "bold",
                   boxSizing: "border-box",
                   padding: "8px",
@@ -52,9 +40,5 @@ const TableCommon: React.FC<Props> = ({ headers, count, children }) => {
     </TableContainer>
   );
 };
-
-const StyledTableHead = styled(TableRow)`
-  background-color: #a5adb7;
-`;
 
 export default TableCommon;

@@ -20,12 +20,12 @@ interface Props {
   handleClose: () => void;
 }
 
-interface GroupFilterSearch {
-  class: string;
-  grade: string;
-  name: string;
-  phone: string;
-}
+// interface GroupFilterSearch {
+//   class: string;
+//   grade: string;
+//   name: string;
+//   phone: string;
+// }
 
 const EditStudent: React.FC<Props> = ({
   isNew,

@@ -5,7 +5,6 @@ import {
 } from "react-redux";
 import { combineReducers } from "redux";
 import studentsReducer from "./students/slice";
-import majorReducer from "./major/slice";
 import pagination from "./common/pagination";
 import authenticationReducer from "./authentication/slice";
 import DashboardReducer from "./dashboard/slice";
@@ -15,7 +14,6 @@ import ClassReducer from "./class/slice";
 
 const reducer = combineReducers({
   students: studentsReducer,
-  major: majorReducer,
   pagination: pagination,
   authentication: authenticationReducer,
   dashBoard: DashboardReducer,

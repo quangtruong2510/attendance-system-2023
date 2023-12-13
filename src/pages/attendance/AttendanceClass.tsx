@@ -23,14 +23,13 @@ import { headerAttendanceClassTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
 import { AppDispatch, useSelector } from "../../store/configstore";
 
-import { useParams } from "react-router-dom";
 import { StatusAttendanceType } from "../../Type/Utils";
 import { StatusAttendanceTypeList } from "../../constant/constant";
 import { AttendanceStudent } from "../../models/attendance";
+import { setSelectedStudent } from "../../store/attendances/slice";
 import CommonUtil from "../../utils/export";
 import AttendanceStudentEdit from "./edit/AttendanceStudent";
 import DetailRows from "./part/DetailAttendanceClass";
-import { setSelectedStudent } from "../../store/attendances/slice";
 
 interface GroupFilterSearch {
   status: string;
@@ -77,7 +76,7 @@ const AttendanceClass = () => {
       value: StatusAttendanceType.ABSENCE_WITHOUT_PERMISSION,
       label:
         StatusAttendanceTypeList[
-          StatusAttendanceType.ABSENCE_WITHOUT_PERMISSION
+        StatusAttendanceType.ABSENCE_WITHOUT_PERMISSION
         ],
     },
     {
@@ -91,18 +90,18 @@ const AttendanceClass = () => {
     },
   ];
 
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
+  // const GradeOptions: OptionSelect[] = [
+  //   { value: 1, label: "6A1" },
+  //   { value: 2, label: "7A2" },
+  //   { value: 3, label: "8B6" },
+  //   { value: 4, label: "9B3" },
+  // ];
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(

@@ -1,11 +1,9 @@
+import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import styled from "styled-components";
+import { useSelector } from "../../store/configstore";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch, useSelector } from "../../store/configstore";
-import { checkAuth } from "../../store/authentication/operation";
 
 const ContentLayout = styled("div")(() => ({
   flexGrow: 1,
@@ -15,7 +13,6 @@ const ContentLayout = styled("div")(() => ({
 }));
 
 const Layout = () => {
-  const dispatch = useDispatch<AppDispatch>;
 
   const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
 
@@ -24,7 +21,7 @@ const Layout = () => {
   }
   useEffect(() => {
     // get token from localStorage
-    const token = { token: localStorage.getItem("token") };
+    // const token = { token: localStorage.getItem("token") };
 
     // dispatch(checkAuth());
     // if (!!token) {

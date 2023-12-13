@@ -4,7 +4,6 @@ import { RootState } from "../configstore";
 import initialState from "./initialize";
 
 import { fetchAttendance } from "./operation";
-import { AttendanceStudent } from "../../models/attendance";
 
 export const attendanceSlice = createSlice({
   name: "attendance",

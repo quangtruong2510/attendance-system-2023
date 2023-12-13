@@ -10,14 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import { ChangeEvent, useState } from "react";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
 import { headerAttendanceReportTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
-import { AppDispatch, useSelector } from "../../store/configstore";
+import { useSelector } from "../../store/configstore";
 import CommonUtil from "../../utils/export";
 
 import { useNavigate } from "react-router-dom";
@@ -34,7 +33,7 @@ interface GroupFilterSearch {
 
 const AttendanceList = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const attendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
   );
@@ -51,7 +50,7 @@ const AttendanceList = () => {
     console.log("Date range updated in parent component:", startDay);
     console.log("Date range updated in parent component:", endDay);
   };
-  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+  // const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
 
   const onDetailClick = (id: number) => {
     navigate(`/attendanceToday/class/${id}`);

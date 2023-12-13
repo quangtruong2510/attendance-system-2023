@@ -1,10 +1,6 @@
 import { StatusAttendanceType } from "../Type/Utils";
 import { OptionSelect } from "../models/Utils";
 
-interface Gender {
-  id: number;
-  value: string;
-}
 const authTypes = {
   developer: "1",
   operator: "2",

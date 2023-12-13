@@ -7,16 +7,12 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
-  InputLabel,
   SelectChangeEvent,
-  Stack,
-  TextField,
+  Stack
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
 import { AttendanceStudent } from "../../../models/attendance";
-import { AppDispatch, useSelector } from "../../../store/configstore";
 
 interface Props {
   isOpen: boolean;
@@ -29,7 +25,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
   handleClose,
   selectedAttendanceStudent,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const [attendanceStudent, setAttendanceStudent] =
     useState<AttendanceStudent | null>(null);
 
@@ -39,8 +35,9 @@ const AttendanceStudentEdit: React.FC<Props> = ({
 
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleChange = (event) => {
-    setIsChecked(event.target.checked);
+  const handleChange = () => {
+    // setIsChecked(event.target.checked);
+    setIsChecked(prev => !prev)
   };
 
   const handleEditStudent = () => {

@@ -11,7 +11,7 @@ const fetchClasses = createAsyncThunk("class/fetchClasses", async () => {
     endpoint: `${BASE_URL_API}class`,
     method: "GET",
   };
-  return await execute(request, "Failed to get class");
+  return await execute(request);
 });
 
 // get class by id
@@ -23,7 +23,7 @@ const getClassById = createAsyncThunk(
       method: "GET",
     };
     // const request: Request = { endpoint: `${BASE_URL_API}getClassByID/${arg.id}`, method: 'GET' };
-    return await execute(request, "Failed to get class");
+    return await execute(request);
   }
 );
 
@@ -34,7 +34,7 @@ const getClassById = createAsyncThunk(
 //       endpoint: `${BASE_URL_API}class`,
 //       method: "POST",
 //     };
-//     return await execute(request, "Failed to get class", class);
+//     return await execute(request, class);
 //   }
 // );
 
@@ -45,7 +45,7 @@ const updateClass = createAsyncThunk(
       endpoint: `${BASE_URL_API}class/${arg.id}`,
       method: "PUT",
     };
-    return await execute(request, "Failed to update class", arg.payload);
+    return await execute(request, arg.payload);
   }
 );
 
@@ -54,7 +54,7 @@ const addClass = createAsyncThunk("class/add", async (classValue: any) => {
     endpoint: `${BASE_URL_API}class`,
     method: "POST",
   };
-  return await execute(request, "Failed to delete class", classValue);
+  return await execute(request, classValue);
 });
 
 const deleteClassById = createAsyncThunk(
@@ -64,7 +64,7 @@ const deleteClassById = createAsyncThunk(
       endpoint: `${BASE_URL_API}class/${arg.id}`,
       method: "DELETE",
     };
-    return await execute(request, "Failed to delete class");
+    return await execute(request);
   }
 );
 

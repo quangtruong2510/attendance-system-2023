@@ -101,7 +101,7 @@ export const studentSlice = createSlice({
     // Request successful
     builder.addCase(
       deleteClassById.fulfilled,
-      (state, action: PayloadAction<any>) => {
+      (state) => {
         state.isLoading = false;
       }
     );

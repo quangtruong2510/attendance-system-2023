@@ -9,7 +9,7 @@ const fetchAttendance = createAsyncThunk("attendance/today", async () => {
     endpoint: `${BASE_URL_API}student`,
     method: "GET",
   };
-  return await execute(request, "Failed to get student");
+  return await execute(request);
 });
 
 // get student by id
@@ -21,7 +21,7 @@ const getStudentById = createAsyncThunk(
       method: "GET",
     };
     // const request: Request = { endpoint: `${BASE_URL_API}getStudentByID/${arg.id}`, method: 'GET' };
-    return await execute(request, "Failed to get student");
+    return await execute(request);
   }
 );
 
