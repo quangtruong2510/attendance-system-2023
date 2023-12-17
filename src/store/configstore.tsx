@@ -11,6 +11,7 @@ import DashboardReducer from "./dashboard/slice";
 import AttendanceReducer from "./attendances/slice";
 import TeacherReducer from "./teachers/slice";
 import ClassReducer from "./class/slice";
+import initialReducer from "./initdata/slice";
 
 const reducer = combineReducers({
   students: studentsReducer,
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   attendance: AttendanceReducer,
   teacher: TeacherReducer,
   class: ClassReducer,
+  initial: initialReducer,
 });
 
 const store = configureStore({ reducer });

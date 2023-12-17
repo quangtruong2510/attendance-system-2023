@@ -9,21 +9,20 @@ import {
   TableContainer,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
+import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
 import { headerClassTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
 import { Class } from "../../models/class";
+import { deleteClassById, fetchClasses } from "../../store/class/operation";
+import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
-import {
-  deleteStudentById,
-  fetchStudents,
-} from "../../store/students/operation";
 import CommonUtil from "../../utils/export";
 import ClassEditDialog from "./ClassEdit";
 import TableRows from "./part/TableRows";
@@ -38,11 +37,11 @@ interface GroupFilterSearch {
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const classList: Class[] = useSelector((state) => state.class.data);
-  // const selectedStudent: Student = useSelector(
-  //   (state) => state.students.selectedStudent
-  // );
   const [IsOpenEditDialog, setIsOpenEditDialog] = useState(false);
   const { current, perPage } = useSelector((state) => state.pagination);
+  const isLoading = useSelector((state) => state.class.isLoading);
+
+
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
     grade: "",
@@ -50,13 +49,18 @@ const StudentList = () => {
     phone: "",
   });
 
+  useEffect(() => {
+    dispatch(initializeState())
+    dispatch(fetchClasses());
+  }, []);
+
   const addNewStudent = () => {
     setIsOpenEditDialog(true);
   };
 
-  const onDeleteClick = (id: number) => {
-    dispatch(deleteStudentById({ id: id }));
-    dispatch(fetchStudents());
+  const onDeleteClick = async (id: number) => {
+    await dispatch(deleteClassById(id));
+    await dispatch(fetchClasses());
   };
 
   const handleClose = () => {
@@ -79,9 +83,9 @@ const StudentList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel("lop-hoc", "Danh sách lớp học", classList);
@@ -203,14 +207,18 @@ const StudentList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerClassTable} />
-            <TableRows
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={5} />
+            ) : (<TableRows
               rows={classList.slice(
                 current * perPage,
                 current * perPage + perPage
               )}
               headers={headerClassTable}
               onDeleteClick={onDeleteClick}
-            />
+            />)
+            }
+
           </Table>
         </TableContainer>
       </Paper>

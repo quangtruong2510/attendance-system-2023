@@ -21,11 +21,15 @@ const TableRows: React.FC<Props> = (props: Props) => {
           {props.headers
             .filter((column) => column.id !== "action")
             .map((column) => {
-              const value = row[column.id];
+              let value = row[column.id];
+              if (column.id == "id") {
+                value = index + 1
+              }
               return (
                 <TableCell
                   style={{
                     maxWidth: column.maxWidth,
+                    minWidth: column.minWidth,
                     textAlign: column.align,
                     boxSizing: "border-box",
                     padding: "8px 16px",

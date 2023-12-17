@@ -11,8 +11,8 @@ const EditIcon = styled(EditRoundedIcon)`
   cursor: pointer;
 `;
 const EditIconButton: React.FC<Props> = (props: Props) => {
-return (
-  <Tooltip title="Edit">
+  return (
+    <Tooltip title="Chỉnh sửa">
       <EditIcon
         style={{ fill: '#0072ea' }}
         aria-label="edit"
@@ -21,6 +21,6 @@ return (
         }}
       />
     </Tooltip>
-);
+  );
 }
 export default EditIconButton;

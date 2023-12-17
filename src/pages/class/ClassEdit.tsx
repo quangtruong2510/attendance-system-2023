@@ -8,10 +8,14 @@ import {
   SelectChangeEvent,
   Stack,
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import { OptionSelect } from "../../models/Utils";
+import { AppDispatch, useSelector } from "../../store/configstore";
+import { useDispatch } from "react-redux";
+import { addClass, fetchClasses } from "../../store/class/operation";
+import { clearValidationErrors } from "../../store/teachers/slice";
 
 interface AddClassDialogProps {
   open: boolean;
@@ -19,43 +23,47 @@ interface AddClassDialogProps {
 }
 
 interface NewClass {
-  grade: string;
-  name: string;
-  teacher: string;
+  gradeId: string;
+  className: string;
+  teacherId: string;
 }
 
 const ClassEditDialog: React.FC<AddClassDialogProps> = ({ open, onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [newClass, setNewClass] = useState<NewClass>({
-    grade: "",
-    name: "",
-    teacher: "",
+    gradeId: "",
+    className: "",
+    teacherId: "",
   });
+
+  const grades: OptionSelect[] = useSelector(state => state.initial.gradeList)
+  const teachers: OptionSelect[] = useSelector(state => state.initial.unAssignedTeachers)
+  const validationErrors = useSelector(state => state.class.validationErrors);
 
   const handleChangeFilter =
     (property: keyof NewClass) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setNewClass((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setNewClass((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleAddClass = () => {
-    console.log("aaaaaaaaaaa", newClass);
-
-    onClose();
+    dispatch(addClass(newClass)).unwrap()
+      .then(() => {
+        setNewClass({
+          gradeId: "",
+          className: "",
+          teacherId: "",
+        })
+        onClose();
+        dispatch(fetchClasses());
+      })
+      .catch(() => {
+      })
   };
 
-  const grades: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
-
-  const teachers: OptionSelect[] = [
-    { value: 1, label: "Nguyễn Văn A" },
-    { value: 2, label: "Nguyễn Văn B" },
-    { value: 3, label: "Nguyễn Văn C" },
-    { value: 4, label: "Nguyễn Văn D" },
-  ];
+  useEffect(() => {
+    dispatch(clearValidationErrors())
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -67,8 +75,9 @@ const ClassEditDialog: React.FC<AddClassDialogProps> = ({ open, onClose }) => {
             type="text"
             fullWidth={true}
             size="small"
-            value={newClass.name}
-            onChange={handleChangeFilter("name")}
+            value={newClass.className}
+            onChange={handleChangeFilter("className")}
+            messageError={validationErrors && validationErrors.className ? validationErrors.className : ''}
           />
         </FormControl>
         <Stack flexDirection={"row"} gap={2} paddingTop={2} marginTop={1}>
@@ -76,16 +85,16 @@ const ClassEditDialog: React.FC<AddClassDialogProps> = ({ open, onClose }) => {
             id={"grade"}
             label="Khối"
             options={grades}
-            value={newClass.grade}
-            onChange={handleChangeFilter("grade")}
+            value={newClass.gradeId}
+            onChange={handleChangeFilter("gradeId")}
           />
 
           <SelectDropdown
             id={"teacher"}
             label="GVCN"
             options={teachers}
-            value={newClass.teacher}
-            onChange={handleChangeFilter("teacher")}
+            value={newClass.teacherId}
+            onChange={handleChangeFilter("teacherId")}
             width={200}
           />
         </Stack>

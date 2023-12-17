@@ -122,6 +122,7 @@ interface CustomInputProps {
   maxRows?: number;
   rows?: number;
   width?: string;
+  messageError?: string | undefined;
 }
 
 const useStyles = makeStyles({
@@ -153,14 +154,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
   isMultiline,
   maxRows,
   rows,
+  messageError,
 }) => {
   const classes = useStyles();
   const inputProps = type === 'phone' ? {
     pattern: '[0-9]*',
     maxLength: 10,
   } : { maxLength: maxLength }
-
-  console.log("inputProps", inputProps);
 
   return (
     <TextField
@@ -186,6 +186,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
       disabled={isDisable}
       maxRows={maxRows ? maxRows : 1}
       rows={rows}
+      error={!!messageError}
+      helperText={messageError}
     />
   );
 };

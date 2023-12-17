@@ -15,5 +15,5 @@ export interface PaginationState {
 
 export interface OptionSelect {
   value: number;
-  label: string;
+  label: string | number;
 }

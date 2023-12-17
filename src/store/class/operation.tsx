@@ -3,7 +3,7 @@ import { execute, Request } from "../../utils/request";
 
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
-const BASE_URL_API = "http://localhost:3000/";
+const BASE_URL_API = "https://attendance.ily1606.space/api/school/";
 
 // Fetch list Classes
 const fetchClasses = createAsyncThunk("class/fetchClasses", async () => {
@@ -22,21 +22,10 @@ const getClassById = createAsyncThunk(
       endpoint: `${BASE_URL_API}class/${arg.id}`,
       method: "GET",
     };
-    // const request: Request = { endpoint: `${BASE_URL_API}getClassByID/${arg.id}`, method: 'GET' };
     return await execute(request);
   }
 );
 
-// const addClass = createAsyncThunk(
-//   "class/addClass",
-//   async (class: any) => {
-//     const request: Request = {
-//       endpoint: `${BASE_URL_API}class`,
-//       method: "POST",
-//     };
-//     return await execute(request, class);
-//   }
-// );
 
 const updateClass = createAsyncThunk(
   "class/updateClass",
@@ -49,23 +38,33 @@ const updateClass = createAsyncThunk(
   }
 );
 
-const addClass = createAsyncThunk("class/add", async (classValue: any) => {
-  const request: Request = {
-    endpoint: `${BASE_URL_API}class`,
-    method: "POST",
-  };
-  return await execute(request, classValue);
+const addClass = createAsyncThunk("class/add", async (classValue: any, { rejectWithValue }) => {
+  try {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}class`,
+      method: "POST",
+    };
+    const response = await execute(request, classValue);
+
+    return response.data
+  } catch (err: any) {
+    if (!err.response) {
+      throw err
+    }
+    return rejectWithValue(err.response.data)
+  }
 });
 
 const deleteClassById = createAsyncThunk(
   "class/updateClass",
-  async (arg: { id: number }) => {
+  async (id: number) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}class/${arg.id}`,
+      endpoint: `${BASE_URL_API}class/${id}`,
       method: "DELETE",
     };
     return await execute(request);
   }
 );
 
-export { fetchClasses, getClassById, addClass, updateClass, deleteClassById };
+export { addClass, deleteClassById, fetchClasses, getClassById, updateClass };
+

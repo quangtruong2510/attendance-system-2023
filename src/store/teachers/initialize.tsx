@@ -1,13 +1,8 @@
-import { Student } from "../../models/student";
 import { Teacher } from "../../models/teacher";
-
-export const initTeacher: Student = {
+export const initTeacher: Teacher = {
   id: 0,
-  studentCode: "",
+  homeroomClass: "",
   name: "",
-  dateOfBirth: "",
-  className: "",
-  gender: "",
   address: "",
   phone: "",
 };
@@ -87,11 +82,18 @@ const teachers: Teacher[] = [
   },
 ];
 
-const initialState = {
+interface State {
+  data: Teacher[],
+  selectedTeacher: Teacher,
+  isLoading: Boolean,
+  validationErrors: any,
+}
+
+const initialState: State = {
   data: teachers,
   selectedTeacher: initTeacher,
-  isLoading: false,
-  errorMessage: null,
+  isLoading: true,
+  validationErrors: null,
 };
 
 export default initialState;

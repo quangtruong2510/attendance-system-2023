@@ -333,16 +333,16 @@ const headerAttendanceClassDashboardTable: Column[] = [
 const headerClassTable: Column[] = [
   { id: "id", label: "STT", minWidth: 50, align: "center", maxWidth: 300 },
   {
-    id: "grade",
+    id: "gradeName",
     label: "Khối",
-    minWidth: 50,
+    minWidth: 100,
     align: "center",
-    maxWidth: 300,
+    maxWidth: 100,
   },
   {
-    id: "class",
+    id: "className",
     label: "Lớp",
-    minWidth: 50,
+    minWidth: 100,
     align: "center",
     maxWidth: 300,
   },
@@ -356,13 +356,6 @@ const headerClassTable: Column[] = [
   {
     id: "homeroomTeacher",
     label: "GVCN",
-    minWidth: 50,
-    align: "center",
-    maxWidth: 300,
-  },
-  {
-    id: "phone",
-    label: "Số điện thoại",
     minWidth: 50,
     align: "center",
     maxWidth: 300,

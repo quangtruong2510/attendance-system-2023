@@ -1,10 +1,8 @@
 import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import React from "react";
-import EditIconButton from "../../../components/common/Button/EditIconButton";
 import DeleteButton from "../../../components/common/Button/DeleteButton";
-
+import EditIconButton from "../../../components/common/Button/EditIconButton";
 interface Props {
   rows: Teacher[];
   headers: Column[];
@@ -17,13 +15,16 @@ import { Teacher } from "../../../models/teacher";
 
 const TableRows: React.FC<Props> = (props: Props) => {
   return (
-    <TableBody>
+    <>
       {props.rows.map((row, index) => (
         <TableRow key={index} hover role="checkbox" tabIndex={-1}>
           {props.headers
             .filter((column) => column.id !== "action")
             .map((column) => {
-              const value = row[column.id];
+              let value = row[column.id];
+              if (column.id == "id") {
+                value = index + 1
+              }
               return (
                 <TableCell
                   style={{
@@ -45,12 +46,12 @@ const TableRows: React.FC<Props> = (props: Props) => {
               gap: "30px",
             }}
           >
-            <EditIconButton id={row.id} onIconClick={props.onEditClick} />
-            <DeleteButton id={row.id} onIconClick={props.onDeleteClick} />
+            <EditIconButton id={row.id ? row.id : 0} onIconClick={props.onEditClick} />
+            <DeleteButton id={row.id ? row.id : 0} onIconClick={props.onDeleteClick} />
           </TableCell>
         </TableRow>
       ))}
-    </TableBody>
+    </>
   );
 };
 

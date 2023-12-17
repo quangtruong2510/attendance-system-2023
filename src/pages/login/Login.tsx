@@ -24,8 +24,6 @@ export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  console.log("error", error);
-
   const navigate = useNavigate();
 
   const dispatch = useDispatch<AppDispatch>();

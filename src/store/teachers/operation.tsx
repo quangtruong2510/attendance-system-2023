@@ -3,7 +3,7 @@ import { execute, Request } from "../../utils/request";
 
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
-const BASE_URL_API = "https://3b0c-203-205-51-20.ngrok-free.app/api/school/";
+const BASE_URL_API = "https://attendance.ily1606.space/api/school/";
 
 // Fetch list teachers
 const fetchTeacher = createAsyncThunk("teacher/fetchTeachers", async () => {
@@ -22,38 +22,46 @@ const getTeacherById = createAsyncThunk(
       endpoint: `${BASE_URL_API}teacher/${arg.id}`,
       method: "GET",
     };
-    // const request: Request = { endpoint: `${BASE_URL_API}getTeacherByID/${arg.id}`, method: 'GET' };
     return await execute(request);
   }
 );
 
 const addTeacher = createAsyncThunk(
   "teacher/addTeacher",
-  async (teacher: any) => {
-    const request: Request = {
-      endpoint: `${BASE_URL_API}teacher`,
-      method: "POST",
-    };
-    return await execute(request, teacher);
+  async (teacher: any, { rejectWithValue }) => {
+    try {
+      const request: Request = {
+        endpoint: `${BASE_URL_API}teacher`,
+        method: "POST",
+      };
+      const response = await execute(request, teacher);
+      return response.data
+    } catch (err: any) {
+      if (!err.response) {
+        throw err
+      }
+      return rejectWithValue(err.response.data)
+    }
+
   }
 );
 
 const updateTeacher = createAsyncThunk(
   "teacher/updateTeacher",
-  async (arg: { id: number; payload: any }) => {
+  async (teacher: any) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}teacher/${arg.id}`,
-      method: "PUT",
+      endpoint: `${BASE_URL_API}teacher/${teacher.id}`,
+      method: "PATCH",
     };
-    return await execute(request, arg.payload);
+    return await execute(request, teacher);
   }
 );
 
 const deleteTeacherById = createAsyncThunk(
   "teacher/updateTeacher",
-  async (arg: { id: number }) => {
+  async (id: number) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}teacher/${arg.id}`,
+      endpoint: `${BASE_URL_API}teacher/${id}`,
       method: "DELETE",
     };
     return await execute(request);

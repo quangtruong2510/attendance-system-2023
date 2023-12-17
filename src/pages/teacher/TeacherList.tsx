@@ -10,6 +10,7 @@ import {
   SelectChangeEvent,
   Stack,
   Table,
+  TableBody,
   TableContainer,
   Typography,
 } from "@mui/material";
@@ -20,22 +21,19 @@ import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
+import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
 import {
   headerTeacherTable
 } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
-import { Student } from "../../models/student";
 import { Teacher } from "../../models/teacher";
+import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
-import {
-  deleteStudentById,
-  fetchStudents,
-  getStudentById,
-} from "../../store/students/operation";
+import { } from "../../store/students/operation";
+import { deleteTeacherById, fetchTeacher } from "../../store/teachers/operation";
 import CommonUtil from "../../utils/export";
 import TeacherEdit from "./TeacherEdit";
 import TableRows from "./part/TableRows";
-import { fetchTeacher } from "../../store/teachers/operation";
 
 interface GroupFilterSearch {
   class: string;
@@ -51,6 +49,8 @@ const TeacherList = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [isNew, setIsNewTeacher] = useState(false);
   const { current, perPage } = useSelector((state) => state.pagination);
+  const isLoading = useSelector((state) => state.teacher.isLoading);
+
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
     grade: "",
@@ -59,23 +59,28 @@ const TeacherList = () => {
   });
 
   useEffect(() => {
+    dispatch(initializeState())
     dispatch(fetchTeacher());
   }, []);
 
-  const addNewTeacher = () => {
-    console.log("aaaaaaaaaaaaaaaaa");
-
-    setIsNewTeacher(true);
+  const addNewTeacher = async () => {
+    await setIsNewTeacher(true);
     setDialogOpen(true);
   };
 
-  const onDeleteClick = (id: number) => {
-    dispatch(deleteStudentById({ id: id }));
-    dispatch(fetchStudents());
+  const handeSuccessEdit = (isSuccess: boolean) => {
+    if (isSuccess) {
+      dispatch(fetchTeacher());
+    }
+  }
+
+  const onDeleteClick = async (id: number) => {
+    await dispatch(deleteTeacherById(id));
+    await dispatch(fetchTeacher());
   };
   const editTeacher = (id: number) => {
-    setSelectedTeacher(teacherList.find((teacher) => teacher.id === id) || null);
     setIsNewTeacher(false);
+    setSelectedTeacher(teacherList.find(teacher => teacher.id === id) || null);
     setDialogOpen(true);
   };
 
@@ -228,15 +233,21 @@ const TeacherList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerTeacherTable} />
-            <TableRows
-              rows={teacherList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerTeacherTable}
-              onDeleteClick={onDeleteClick}
-              onEditClick={editTeacher}
-            />
+            <TableBody>
+              {isLoading ? (
+                <TableRowsLoader rowsNum={10} numColumns={5} />
+              ) : (<TableRows
+                rows={teacherList.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerTeacherTable}
+                onDeleteClick={onDeleteClick}
+                onEditClick={editTeacher}
+              />)
+              }
+            </TableBody>
+
           </Table>
         </TableContainer>
       </Paper>
@@ -245,6 +256,7 @@ const TeacherList = () => {
         isOpen={isDialogOpen}
         selectedTeacher={selectedTeacher}
         handleClose={handleClose}
+        onClickEdit={handeSuccessEdit}
       />
     </ContentLayout>
   );

@@ -8,63 +8,75 @@ import {
   SelectChangeEvent,
   Stack,
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
-import { CustomInput } from "../../components/common/FormInput/InputField";
-import { OptionSelect } from "../../models/Utils";
-import { Teacher } from "../../models/teacher";
-import { addTeacher } from "../../store/teachers/operation";
-import { AppDispatch } from "../../store/configstore";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { CustomInput } from "../../components/common/FormInput/InputField";
+import { Teacher } from "../../models/teacher";
+import { AppDispatch, useSelector } from "../../store/configstore";
+import { initTeacher } from "../../store/teachers/initialize";
+import { addTeacher, fetchTeacher, updateTeacher } from "../../store/teachers/operation";
+import { clearValidationErrors } from "../../store/teachers/slice";
 
 interface Props {
   isNew: boolean
   isOpen: boolean
   selectedTeacher?: Teacher | null
   handleClose: () => void;
+  onClickEdit: (isSuccess: boolean) => void;
 }
 
-const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleClose }) => {
+const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleClose, onClickEdit }) => {
 
   const dispatch = useDispatch<AppDispatch>();
-  const teacher: Teacher = selectedTeacher || {
+  const validationErrors = useSelector(state => state.teacher.validationErrors);
+
+  const [teacher, setTeacher] = useState<Teacher>({
     homeroomClass: "",
     name: "",
     address: "",
     phone: "",
-  };
-  const [newTeacher, setnewTeacher] = useState<Teacher>(teacher);
+  });
 
-  const handleChangeFilter =
+  const handleInputChange =
     (property: keyof Teacher) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setnewTeacher((prev) => ({ ...prev, [property]: event.target.value }));
+        setTeacher((prev) => ({ ...prev, [property]: event.target.value }));
       };
-
-  const handleAddTeacher = () => {
+  const handleAddTeacher = async () => {
     if (isNew) {
-      dispatch(addTeacher(newTeacher))
+      dispatch(addTeacher(teacher)).unwrap()
+        .then(() => {
+          handleClose();
+          dispatch(fetchTeacher());
+          onClickEdit(true)
+        })
+        .catch(() => {
+          onClickEdit(false)
+        })
+    } else {
+      dispatch(updateTeacher(teacher)).unwrap()
+        .then(() => {
+          handleClose();
+          dispatch(fetchTeacher());
+          onClickEdit(true)
+        })
+        .catch(() => {
+          onClickEdit(false)
+        })
     }
-
-    handleClose();
   };
 
-  const grades: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
 
-  const teachers: OptionSelect[] = [
-    { value: 1, label: "Nguyễn Văn A" },
-    { value: 2, label: "Nguyễn Văn B" },
-    { value: 3, label: "Nguyễn Văn C" },
-    { value: 4, label: "Nguyễn Văn D" },
-  ];
+  useEffect(() => {
+    dispatch(clearValidationErrors());
+    if (!isNew) {
+      setTeacher(selectedTeacher || initTeacher)
+    }
+  }, [dispatch]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle color={"rgb(65, 84, 241)"}>Thêm mới giáo viên</DialogTitle>
+      <DialogTitle color={"rgb(65, 84, 241)"}> {`${isNew ? "Thêm mới " : "Chỉnh sửa"} giáo viên`}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput
@@ -73,8 +85,8 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             fullWidth={true}
             size="small"
             style={{ width: "300px" }}
-            value={newTeacher.name}
-            onChange={handleChangeFilter("name")}
+            value={teacher.name}
+            onChange={handleInputChange("name")}
           />
         </FormControl>
         <Stack flexDirection={"row"} gap={2} paddingTop={2}>
@@ -84,8 +96,9 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             type="phone"
             fullWidth={true}
             size="small"
-            value={newTeacher.phone}
-            onChange={handleChangeFilter("phone")}
+            value={teacher.phone}
+            onChange={handleInputChange("phone")}
+            messageError={validationErrors && validationErrors.phone ? validationErrors.phone : ''}
           />
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
@@ -94,8 +107,8 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             type="text"
             fullWidth={true}
             size="small"
-            value={newTeacher.address}
-            onChange={handleChangeFilter("address")}
+            value={teacher.address}
+            onChange={handleInputChange("address")}
           />
         </FormControl>
       </DialogContent>
@@ -110,7 +123,7 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
           Đóng
         </Button>
         <Button variant="contained" size="medium" onClick={handleAddTeacher}>
-          THêm mới
+          {isNew ? "Thêm mới " : "Cập nhật"}
         </Button>
       </DialogActions>
     </Dialog>

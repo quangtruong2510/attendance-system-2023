@@ -9,10 +9,7 @@ export const execute = async (
   request: Request,
   payload?: JSON
 ): Promise<any> => {
-  const response = await requestAPI(request, payload);
-  if (response.status < 200 || response.status >= 300) {
-    return response.errors;
-  }
+  const response = await requestAPI(request, payload)
 
   return response.data;
 };

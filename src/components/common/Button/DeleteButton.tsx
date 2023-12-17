@@ -12,10 +12,9 @@ const DeleteIcon = styled(DeleteRoundedIcon)`
 `;
 const EditIconButton: React.FC<Props> = (props: Props) => {
   return (
-    <Tooltip title="Delete">
+    <Tooltip title="Xóa">
       <DeleteIcon
         color="error"
-        // style={{ fill: '#0072ea' }}
         aria-label="Delete"
         onClick={() => {
           props.onIconClick(props.id);

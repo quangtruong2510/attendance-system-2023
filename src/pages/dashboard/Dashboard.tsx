@@ -68,10 +68,6 @@ export default function Dashboard() {
   headers = role == Roles.TEACHER ? headerAttendanceClassDashboardTable : headerDashboardTable;
 
   const rows = role == Roles.TEACHER ? attendanceStudent : data;
-
-  console.log("attendanceStudent", attendanceStudent, rows);
-
-
   return (
     <Container>
       <Breadcrumbs aria-label="breadcrumb">

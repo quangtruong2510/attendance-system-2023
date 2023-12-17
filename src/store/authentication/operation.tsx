@@ -1,10 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
-const BASE_URL_API = "https://3b0c-203-205-51-20.ngrok-free.app";
+const BASE_URL_API = "https://attendance.ily1606.space";
 
 const loginUser = createAsyncThunk("auth/login", async (user: any) => {
-  console.log("Userrr", user);
   try {
     const response = await fetch(`${BASE_URL_API}/api/login`, {
       method: "POST",

@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { useSelector } from "../../store/configstore";
+import { AppDispatch, useSelector } from "../../store/configstore";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
+import { useDispatch } from "react-redux";
+import { fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 
 const ContentLayout = styled("div")(() => ({
   flexGrow: 1,
@@ -15,13 +17,16 @@ const ContentLayout = styled("div")(() => ({
 const Layout = () => {
 
   const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
+  const dispatch = useDispatch<AppDispatch>();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/login" />;
+  // }
   useEffect(() => {
     // get token from localStorage
-    // const token = { token: localStorage.getItem("token") };
+    const token = { token: localStorage.getItem("token") };
+    dispatch(fetchUnAssignTeacherList());
+    dispatch(fetchGradeList());
 
     // dispatch(checkAuth());
     // if (!!token) {
