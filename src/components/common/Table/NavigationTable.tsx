@@ -59,7 +59,7 @@ const NavigationTable: React.FC<Props> = ({ count }) => {
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} trên ${count !== -1 ? count : `nhiều`}`
         }
-        onPageChange={() => handleChangePage}
+        onPageChange={(event, newPage) => handleChangePage(newPage)}
         onRowsPerPageChange={handleChangeRowsPerPage}
         ActionsComponent={TablePaginationActions}
       />

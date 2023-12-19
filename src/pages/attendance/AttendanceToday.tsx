@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
@@ -19,7 +19,7 @@ import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
 import { headerAttendanceTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
-import { useSelector } from "../../store/configstore";
+import { AppDispatch, useSelector } from "../../store/configstore";
 import CommonUtil from "../../utils/export";
 
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,9 @@ import { AttendanceReport } from "../../models/attendance";
 import TableRows from "./part/TableRows";
 import { Roles } from "../../utils/role";
 import AttendanceClass from "./AttendanceClass";
+import { fetchStatisticsAttendance } from "../../store/attendances/operation";
+import { initializeState } from "../../store/common/pagination";
+import { useDispatch } from "react-redux";
 
 interface GroupFilterSearch {
   class: string;
@@ -37,6 +40,7 @@ interface GroupFilterSearch {
 
 const AttendanceList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   // const dispatch = useDispatch<AppDispatch>();
   const attendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
@@ -55,6 +59,8 @@ const AttendanceList = () => {
   });
 
   const onDetailClick = (id: number) => {
+    console.log("onDetailClick", id);
+
     navigate(`class/${id}`);
   };
 
@@ -90,6 +96,10 @@ const AttendanceList = () => {
   const formattedDayName = format(today, "EEEE", { locale: vi });
   const formattedMonthName = format(today, "MMMM", { locale: vi });
   const dayValue = today.getDate();
+
+  useEffect(() => {
+    dispatch(fetchStatisticsAttendance());
+  }, []);
 
   if (role == Roles.TEACHER) {
     return <AttendanceClass></AttendanceClass>

@@ -19,7 +19,7 @@ const TableHeaders: React.FC<Props> = ({ headers }) => {
               textAlign: column.align,
               fontWeight: "bold",
               backgroundColor: "#F6F6FE",
-              minWidth: column.minWidth
+              minWidth: column.minWidth,
             }}
           >
             {column.label}

@@ -47,7 +47,6 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
       dispatch(addTeacher(teacher)).unwrap()
         .then(() => {
           handleClose();
-          dispatch(fetchTeacher());
           onClickEdit(true)
         })
         .catch(() => {
@@ -57,7 +56,6 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
       dispatch(updateTeacher(teacher)).unwrap()
         .then(() => {
           handleClose();
-          dispatch(fetchTeacher());
           onClickEdit(true)
         })
         .catch(() => {
@@ -71,8 +69,10 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
     dispatch(clearValidationErrors());
     if (!isNew) {
       setTeacher(selectedTeacher || initTeacher)
+    } else {
+      setTeacher(initTeacher)
     }
-  }, [dispatch]);
+  }, [selectedTeacher]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
@@ -87,6 +87,7 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             style={{ width: "300px" }}
             value={teacher.name}
             onChange={handleInputChange("name")}
+            messageError={validationErrors && validationErrors.name ? validationErrors.name : ''}
           />
         </FormControl>
         <Stack flexDirection={"row"} gap={2} paddingTop={2}>
@@ -109,6 +110,7 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             size="small"
             value={teacher.address}
             onChange={handleInputChange("address")}
+            messageError={validationErrors && validationErrors.address ? validationErrors.address : ''}
           />
         </FormControl>
       </DialogContent>

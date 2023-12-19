@@ -2,10 +2,9 @@ import { Student } from "../../models/student";
 
 export const initStudent: Student = {
   id: 0,
-  studentCode: "",
   name: "",
   dateOfBirth: "",
-  className: "",
+  classId: "",
   gender: "",
   address: "",
   phone: "",
@@ -133,12 +132,17 @@ const students: Student[] = [
     phone: "0817590009",
   },
 ];
-
-const initialState = {
+interface State {
+  data: Student[];
+  selectedStudent: Student;
+  isLoading: Boolean;
+  validationErrors: any;
+}
+const initialState: State = {
   data: students,
   selectedStudent: initStudent,
   isLoading: false,
-  errorMessage: null,
+  validationErrors: null,
 };
 
 export default initialState;

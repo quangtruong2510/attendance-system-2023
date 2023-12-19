@@ -1,8 +1,4 @@
-import {
-  AddCircleOutline,
-  Cached,
-  CloudUpload
-} from "@mui/icons-material";
+import { AddCircleOutline, Cached, CloudUpload } from "@mui/icons-material";
 import {
   Breadcrumbs,
   Button,
@@ -22,18 +18,22 @@ import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
 import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
-import {
-  headerTeacherTable
-} from "../../constant/headerTable";
+import { headerTeacherTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
 import { Teacher } from "../../models/teacher";
 import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import { } from "../../store/students/operation";
-import { deleteTeacherById, fetchTeacher } from "../../store/teachers/operation";
+import {
+  deleteTeacherById,
+  fetchTeacher,
+} from "../../store/teachers/operation";
 import CommonUtil from "../../utils/export";
 import TeacherEdit from "./TeacherEdit";
 import TableRows from "./part/TableRows";
+import BreadcrumbsComponent from "../../components/common/Utils";
+import { breadcrumbTeacherItems } from "../../constant/breadcrums";
+import TableTitle from "../../components/common/Table/TableTitle";
 
 interface GroupFilterSearch {
   class: string;
@@ -59,12 +59,13 @@ const TeacherList = () => {
   });
 
   useEffect(() => {
-    dispatch(initializeState())
+    dispatch(initializeState());
     dispatch(fetchTeacher());
   }, []);
 
   const addNewTeacher = async () => {
-    await setIsNewTeacher(true);
+    setSelectedTeacher(null)
+    setIsNewTeacher(true);
     setDialogOpen(true);
   };
 
@@ -72,7 +73,7 @@ const TeacherList = () => {
     if (isSuccess) {
       dispatch(fetchTeacher());
     }
-  }
+  };
 
   const onDeleteClick = async (id: number) => {
     await dispatch(deleteTeacherById(id));
@@ -80,7 +81,9 @@ const TeacherList = () => {
   };
   const editTeacher = (id: number) => {
     setIsNewTeacher(false);
-    setSelectedTeacher(teacherList.find(teacher => teacher.id === id) || null);
+    setSelectedTeacher(
+      teacherList.find((teacher) => teacher.id === id) || null
+    );
     setDialogOpen(true);
   };
 
@@ -95,6 +98,8 @@ const TeacherList = () => {
       teacherList
     );
   };
+
+  const handleReload = () => { };
 
   const options: OptionSelect[] = [
     { value: 1, label: "6" },
@@ -118,77 +123,25 @@ const TeacherList = () => {
 
   return (
     <ContentLayout>
-      <Stack flexDirection={"row"} justifyContent={"space-between"}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="h5" style={{ color: "#4154F1" }}>
-            Quản lý
-          </Typography>
-          <Typography color="text.primary">Giáo viên</Typography>
-        </Breadcrumbs>
-        <Button
-          style={{
-            textTransform: "none",
-            height: "40px",
-          }}
-          component="label"
-          variant="contained"
-          onClick={addNewTeacher}
-          startIcon={<AddCircleOutline />}
-        >
-          Thêm mới
-        </Button>
-      </Stack>
+      <BreadcrumbsComponent
+        breadcrumbs={breadcrumbTeacherItems}
+        haveAddButton={true}
+        handleAddButton={addNewTeacher}
+      ></BreadcrumbsComponent>
       <Paper
         sx={{
           width: "100%",
           padding: "10px",
           boxSizing: "border-box",
           marginTop: "15px",
-          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px"
+          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
-        <GroupFilter>
-          <GroupFilter>
-            <Typography
-              sx={{ margin: "0" }}
-              variant="h6"
-              style={{ color: "rgb(227 113 12)" }}
-            >
-              Danh sách giáo viên
-            </Typography>
-          </GroupFilter>
-          <Stack direction="row" spacing={2}>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-                backgroundColor: "#117957",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<CloudUpload />}
-              onClick={handleExport}
-            >
-              Xuất Excel
-            </Button>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<Cached />}
-
-            >
-              Làm mới
-            </Button>
-          </Stack>
-        </GroupFilter>
+        <TableTitle
+          title="Danh sách giáo viên"
+          handleExport={handleExport}
+          reload={handleReload}
+        />
         <Stack
           flexDirection={"row"}
           justifyContent={"space-between"}
@@ -236,18 +189,18 @@ const TeacherList = () => {
             <TableBody>
               {isLoading ? (
                 <TableRowsLoader rowsNum={10} numColumns={5} />
-              ) : (<TableRows
-                rows={teacherList.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerTeacherTable}
-                onDeleteClick={onDeleteClick}
-                onEditClick={editTeacher}
-              />)
-              }
+              ) : (
+                <TableRows
+                  rows={teacherList.slice(
+                    current * perPage,
+                    current * perPage + perPage
+                  )}
+                  headers={headerTeacherTable}
+                  onDeleteClick={onDeleteClick}
+                  onEditClick={editTeacher}
+                />
+              )}
             </TableBody>
-
           </Table>
         </TableContainer>
       </Paper>
@@ -266,11 +219,5 @@ const ContentLayout = styled("div")(() => ({
   padding: "15px 20px 0px 20px",
   overflowY: "auto",
 }));
-
-const GroupFilter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-`;
 
 export default TeacherList;

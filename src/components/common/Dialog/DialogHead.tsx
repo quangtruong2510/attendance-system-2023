@@ -6,6 +6,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
+  title: string
   isNew: boolean;
   onClose: () => void
 }

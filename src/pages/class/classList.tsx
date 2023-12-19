@@ -26,6 +26,8 @@ import { AppDispatch, useSelector } from "../../store/configstore";
 import CommonUtil from "../../utils/export";
 import ClassEditDialog from "./ClassEdit";
 import TableRows from "./part/TableRows";
+import { breadcrumbClassItems } from "../../constant/breadcrums";
+import BreadcrumbsComponent from "../../components/common/Utils";
 
 interface GroupFilterSearch {
   class: string;
@@ -41,7 +43,6 @@ const StudentList = () => {
   const { current, perPage } = useSelector((state) => state.pagination);
   const isLoading = useSelector((state) => state.class.isLoading);
 
-
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
     grade: "",
@@ -50,11 +51,11 @@ const StudentList = () => {
   });
 
   useEffect(() => {
-    dispatch(initializeState())
+    dispatch(initializeState());
     dispatch(fetchClasses());
   }, []);
 
-  const addNewStudent = () => {
+  const addNewClass = () => {
     setIsOpenEditDialog(true);
   };
 
@@ -83,9 +84,9 @@ const StudentList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+    };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel("lop-hoc", "Danh sách lớp học", classList);
@@ -93,33 +94,18 @@ const StudentList = () => {
 
   return (
     <ContentLayout>
-      <Stack flexDirection={"row"} justifyContent={"space-between"}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="h5" style={{ color: "#4154F1" }}>
-            Quản lý
-          </Typography>
-          <Typography color="text.primary">Học sinh</Typography>
-        </Breadcrumbs>
-        <Button
-          style={{
-            textTransform: "none",
-            height: "40px",
-          }}
-          component="label"
-          variant="contained"
-          onClick={addNewStudent}
-          startIcon={<AddCircleOutline />}
-        >
-          Thêm mới
-        </Button>
-      </Stack>
+      <BreadcrumbsComponent
+        breadcrumbs={breadcrumbClassItems}
+        haveAddButton={true}
+        handleAddButton={addNewClass}
+      ></BreadcrumbsComponent>
       <Paper
         sx={{
           width: "100%",
           padding: "10px",
           boxSizing: "border-box",
           marginTop: "15px",
-          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px"
+          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
         <GroupFilter>
@@ -209,16 +195,16 @@ const StudentList = () => {
             <TableHeaders headers={headerClassTable} />
             {isLoading ? (
               <TableRowsLoader rowsNum={10} numColumns={5} />
-            ) : (<TableRows
-              rows={classList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerClassTable}
-              onDeleteClick={onDeleteClick}
-            />)
-            }
-
+            ) : (
+              <TableRows
+                rows={classList.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerClassTable}
+                onDeleteClick={onDeleteClick}
+              />
+            )}
           </Table>
         </TableContainer>
       </Paper>

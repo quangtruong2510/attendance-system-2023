@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
@@ -30,6 +30,8 @@ import { setSelectedStudent } from "../../store/attendances/slice";
 import CommonUtil from "../../utils/export";
 import AttendanceStudentEdit from "./edit/AttendanceStudent";
 import DetailRows from "./part/DetailAttendanceClass";
+import { useParams } from "react-router-dom";
+import { fetchAttendanceClass } from "../../store/attendances/operation";
 
 interface GroupFilterSearch {
   status: string;
@@ -41,8 +43,10 @@ const AttendanceClass = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const attendanceStudent: AttendanceStudent[] = useSelector(
-    (state) => state.attendance.attendanceClass.attendanceStudent
+    (state) => state.attendanceClass.data
   );
+
+  const { id } = useParams();
 
   const selectedAttendanceStudent: AttendanceStudent | null = useSelector(
     (state) => state.attendance.attendanceClass.selectedStudent
@@ -90,13 +94,6 @@ const AttendanceClass = () => {
     },
   ];
 
-  // const GradeOptions: OptionSelect[] = [
-  //   { value: 1, label: "6A1" },
-  //   { value: 2, label: "7A2" },
-  //   { value: 3, label: "8B6" },
-  //   { value: 4, label: "9B3" },
-  // ];
-
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +107,11 @@ const AttendanceClass = () => {
       attendanceStudent
     );
   };
+
+  useEffect(() => {
+    const idClass = id ? parseInt(id, 10) : 0;
+    dispatch(fetchAttendanceClass(idClass));
+  }, []);
 
   const today = new Date();
   const formattedDayName = format(today, "EEEE", { locale: vi });

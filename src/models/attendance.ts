@@ -5,7 +5,7 @@ export interface AttendanceReport {
   id: number;
   grade: string;
   classId?: number;
-  class?: string;
+  className?: string;
   quantity: number;
   present: number;
   absenceWithPermission: number;
@@ -16,11 +16,11 @@ export interface AttendanceReport {
 
 export interface AttendanceStudent {
   [key: number | string]:
-    | string
-    | number
-    | boolean
-    | undefined
-    | StatusAttendanceType;
+  | string
+  | number
+  | boolean
+  | undefined
+  | StatusAttendanceType;
   id: number;
   name: string;
   phone?: string;

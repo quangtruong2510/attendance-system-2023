@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-import { RootState } from "../configstore";
 import initialState from "./initialize";
 
 import {
   fetchUnAssignTeacherList,
   fetchGradeList,
+  fetchClassSelection,
 } from "./operation";
 
 export const studentSlice = createSlice({
@@ -25,10 +24,13 @@ export const studentSlice = createSlice({
         state.gradeList = action.payload.data;
       }
     );
+    builder.addCase(
+      fetchClassSelection.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.classSelectionList = action.payload.data;
+      }
+    );
   },
 });
-
-export const unAssignedTeacherList = (state: RootState) => state.students.data;
-export const gradeList = (state: RootState) => state.students.isLoading;
 
 export default studentSlice.reducer;

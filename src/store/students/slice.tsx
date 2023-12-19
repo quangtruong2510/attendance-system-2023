@@ -8,6 +8,7 @@ import {
   deleteStudentById,
   fetchStudents,
   getStudentById,
+  updateStudent,
 } from "./operation";
 
 export const studentSlice = createSlice({
@@ -19,6 +20,9 @@ export const studentSlice = createSlice({
         action.payload.current * action.payload.perPage,
         action.payload.current * action.payload.perPage + action.payload.perPage
       );
+    },
+    clearValidationErrors: (state) => {
+      state.validationErrors = null;
     },
   },
   extraReducers: (builder) => {
@@ -40,7 +44,7 @@ export const studentSlice = createSlice({
       fetchStudents.rejected,
       (state, action: PayloadAction<any>) => {
         // We show the error message
-        state.errorMessage = action.payload.errors;
+        state.validationErrors = action.payload.errors;
         state.isLoading = false;
       }
     );
@@ -62,79 +66,41 @@ export const studentSlice = createSlice({
       getStudentById.rejected,
       (state, action: PayloadAction<any>) => {
         // We show the error message
-        state.errorMessage = action.payload.data;
+        state.validationErrors = action.payload.data;
         state.isLoading = false;
       }
     );
 
-    builder.addCase(addStudent.pending, (state) => {
-      state.isLoading = true;
-    });
-
-    // Request successful
-    builder.addCase(
-      addStudent.fulfilled,
-      (state, action: PayloadAction<any>) => {
-        state.isLoading = false;
-        state.data = action.payload;
-      }
-    );
 
     // Request fail
     builder.addCase(
       addStudent.rejected,
       (state, action: PayloadAction<any>) => {
-        // We show the error message
-        state.errorMessage = action.payload;
-        state.isLoading = false;
+        state.validationErrors = action.payload.errors;
+      }
+    );
+
+    builder.addCase(
+      updateStudent.rejected,
+      (state, action: PayloadAction<any>) => {
+        state.validationErrors = action.payload.errors;
+        console.log("updateStudentaaaaaaaaaaa");
       }
     );
 
     builder.addCase(deleteStudentById.pending, (state) => {
       state.isLoading = true;
     });
-
-    //
-    // Request successful
-    // builder.addCase(updateStudent.fulfilled, (state, action: PayloadAction<any>) => {
-    //   state.isLoading = false;
-    //   state.data = action.payload.data;
-    // });
-
-    // // Request fail
-    // builder.addCase(updateStudent.rejected, (state, action: PayloadAction<any>) => {
-    //   state.errorMessage = action.payload.errors;
-    //   state.isLoading = false;
-    // });
-
-    // builder.addCase(updateStudent.pending, (state) => {
-    //   state.isLoading = true;
-    // });
-
-    // Request successful
-    builder.addCase(
-      deleteStudentById.fulfilled,
-      (state) => {
-        state.isLoading = false;
-      }
-    );
-
-    // Request fail
-    builder.addCase(
-      deleteStudentById.rejected,
-      (state, action: PayloadAction<any>) => {
-        // We show the error message
-        state.errorMessage = action.payload;
-        state.isLoading = false;
-      }
-    );
-  },
+    builder.addCase(deleteStudentById.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+  }
 });
 
 export const selectStudents = (state: RootState) => state.students.data;
 export const selectLoading = (state: RootState) => state.students.isLoading;
 export const selectErrorMessage = (state: RootState) =>
-  state.students.errorMessage;
+  state.students.validationErrors;
 
-export const { setFilterStudent } = studentSlice.actions;
+export const { setFilterStudent, clearValidationErrors } = studentSlice.actions;
 export default studentSlice.reducer;

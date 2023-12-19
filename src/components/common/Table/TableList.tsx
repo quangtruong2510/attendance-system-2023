@@ -2,26 +2,33 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { Column } from "../../../constant/headerTable";
+import TableHeaders from "./TableHeader";
+import TableRowsLoader from "./TableRowsLoader";
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
   headers: Column[];
-  count: number;
+  isLoading: boolean;
 }
 export interface PaginationState {
   current: number;
   perPage: number;
 }
 
-const TableList: React.FC<Props> = (props: Props) => {
+const TableList: React.FC<Props> = ({ headers, isLoading, children }) => {
   return (
-    <TableContainer sx={{ paddingBottom: "30px", width: "100%" }}>
+    <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
       <Table className="border-collapse" stickyHeader aria-label="sticky table">
-        {/* <TableHeader count={props.count}></TableHeader> */}
-
-        <TableBody>{props.children}</TableBody>
+        <TableHeaders headers={headers} />
+        <TableBody>
+          {isLoading ? (
+            <TableRowsLoader rowsNum={10} numColumns={5} />
+          ) : (
+            <>{children}</>
+          )}
+        </TableBody>
       </Table>
     </TableContainer>
   );

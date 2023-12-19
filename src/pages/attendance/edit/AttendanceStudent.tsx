@@ -7,12 +7,15 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
+  Radio,
+  RadioGroup,
   SelectChangeEvent,
-  Stack
+  Stack,
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
 import { AttendanceStudent } from "../../../models/attendance";
+import { StatusAttendanceType } from "../../../Type/Utils";
 
 interface Props {
   isOpen: boolean;
@@ -33,14 +36,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
     setAttendanceStudent(selectedAttendanceStudent);
   }, [selectedAttendanceStudent]);
 
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleChange = () => {
-    // setIsChecked(event.target.checked);
-    setIsChecked(prev => !prev)
-  };
-
-  const handleEditStudent = () => {
+  const handleEditAttendanceStudent = () => {
     // if (!isNew) {
     //   dispatch(updateStudent({ id: editedStudent.id, payload: editedStudent }));
     //   return;
@@ -50,18 +46,18 @@ const AttendanceStudentEdit: React.FC<Props> = ({
 
   const handleChangeData =
     (property: keyof AttendanceStudent) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setAttendanceStudent((prev) => {
-          if (!prev) {
-            return { [property]: event.target.value } as AttendanceStudent;
-          }
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setAttendanceStudent((prev) => {
+        if (!prev) {
+          return { [property]: event.target.value } as AttendanceStudent;
+        }
 
-          return {
-            ...prev,
-            [property]: event.target.value,
-          };
-        });
-      };
+        return {
+          ...prev,
+          [property]: event.target.value,
+        };
+      });
+    };
   return (
     <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle color={"rgb(65, 84, 241)"}>Chỉnh sửa thông tin</DialogTitle>
@@ -99,7 +95,34 @@ const AttendanceStudentEdit: React.FC<Props> = ({
             />
           </FormControl>
         </Stack>
-
+        <RadioGroup
+          aria-label="attendance"
+          name="attendance"
+          value={attendanceStudent?.status}
+          onChange={handleChangeData("status")}
+          row
+        >
+          <FormControlLabel
+            value={StatusAttendanceType.PRESENT}
+            control={<Radio />}
+            label="Có mặt"
+          />
+          <FormControlLabel
+            value={StatusAttendanceType.ABSENCE_WITHOUT_PERMISSION}
+            control={<Radio />}
+            label="Vắng(KP)"
+          />
+          <FormControlLabel
+            value={StatusAttendanceType.ABSENCE_WITH_PERMISSION}
+            control={<Radio />}
+            label="Vắng(CP)"
+          />
+          <FormControlLabel
+            value={StatusAttendanceType.LATE}
+            control={<Radio />}
+            label="Đi trễ"
+          />
+        </RadioGroup>
         <FormControl fullWidth style={{ margin: "10px 0px" }}>
           <CustomInput
             id="outlined-multiline-flexible"
@@ -113,24 +136,6 @@ const AttendanceStudentEdit: React.FC<Props> = ({
             onChange={handleChangeData("note")}
           />
         </FormControl>
-        <div>
-          <FormControlLabel
-            control={<Checkbox checked={isChecked} onChange={handleChange} color="primary" />}
-            label="Có mặt"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={isChecked} onChange={handleChange} color="secondary" />}
-            label="Vắng không phép"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={isChecked} onChange={handleChange} color="default" />}
-            label="Vắng có phép"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={isChecked} onChange={handleChange} color="default" />}
-            label="Đi trể"
-          />
-        </div>
       </DialogContent>
 
       <DialogActions>
@@ -142,7 +147,11 @@ const AttendanceStudentEdit: React.FC<Props> = ({
         >
           Đóng
         </Button>
-        <Button variant="contained" size="medium" onClick={handleEditStudent}>
+        <Button
+          variant="contained"
+          size="medium"
+          onClick={handleEditAttendanceStudent}
+        >
           Cập nhật
         </Button>
       </DialogActions>

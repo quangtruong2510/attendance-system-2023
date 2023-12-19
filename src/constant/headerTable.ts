@@ -84,7 +84,7 @@ const headerStudentTable: Column[] = [
   {
     id: "name",
     label: "Họ và tên",
-    minWidth: 100,
+    minWidth: 200,
     align: "center",
     maxWidth: 300,
   },
@@ -98,14 +98,14 @@ const headerStudentTable: Column[] = [
   {
     id: "gender",
     label: "Giới tính",
-    minWidth: 50,
+    minWidth: 90,
     align: "center",
     maxWidth: 300,
   },
   {
     id: "address",
     label: "Địa chỉ",
-    minWidth: 300,
+    minWidth: 100,
     align: "center",
     maxWidth: 300,
   },
@@ -135,7 +135,7 @@ const headerAttendanceTable: Column[] = [
     maxWidth: 300,
   },
   {
-    id: "class",
+    id: "className",
     label: "Lớp",
     minWidth: 50,
     align: "center",
@@ -202,7 +202,7 @@ const headerAttendanceReportTable: Column[] = [
     maxWidth: 300,
   },
   {
-    id: "class",
+    id: "className",
     label: "Lớp",
     minWidth: 50,
     align: "center",
@@ -377,5 +377,5 @@ export {
   headerAttendanceReportTable,
   headerTeacherTable,
   headerClassTable,
-  headerAttendanceClassDashboardTable
+  headerAttendanceClassDashboardTable,
 };

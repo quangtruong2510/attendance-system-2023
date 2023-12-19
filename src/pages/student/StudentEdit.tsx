@@ -1,103 +1,211 @@
-import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import DialogHead from "../../components/common/Dialog/DialogHead";
 import {
-  DateTimeInputField,
-  SelectInputField,
-  TextInputField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  InputLabel,
+  Radio,
+  RadioGroup,
+  SelectChangeEvent,
+  Stack,
+  TextField,
+} from "@mui/material";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import {
+  CustomInput
 } from "../../components/common/FormInput/InputField";
+import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import { genders } from "../../constant/constant";
-import Payload from "../../models/Utils";
+import { OptionSelect } from "../../models/Utils";
 import { Student } from "../../models/student";
-import { AppDispatch } from "../../store/configstore";
-import { addStudent, updateStudent } from "../../store/students/operation";
+import { AppDispatch, useSelector } from "../../store/configstore";
+import { initStudent } from "../../store/students/initialize";
+import {
+  addStudent,
+  fetchStudents,
+  updateStudent,
+} from "../../store/students/operation";
+import { clearValidationErrors } from "../../store/students/slice";
+import BasicDatePicker from "../../components/common/DatePicker";
+import { Gender } from "../../Type/Utils";
 
 interface Props {
   isNew: boolean;
   isOpen: boolean;
-  student: Student;
+  selectedStudent?: Student | null;
   handleClose: () => void;
+  onClickEdit: (isSuccess: boolean) => void;
 }
-
-// interface GroupFilterSearch {
-//   class: string;
-//   grade: string;
-//   name: string;
-//   phone: string;
-// }
 
 const EditStudent: React.FC<Props> = ({
   isNew,
   isOpen,
-  student,
+  selectedStudent,
   handleClose,
+  onClickEdit,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [editedStudent, setEditedStudent] = useState(student);
+  const [student, setStudent] = useState<Student>(initStudent);
+  const validationErrors = useSelector(
+    (state) => state.students.validationErrors
+  );
 
-  const setValue = (payload: Payload) => {
-    setEditedStudent((prevStudent) => ({
-      ...prevStudent,
-      [payload.key]: payload.key,
-    }));
-  };
+  const classes: OptionSelect[] = useSelector(
+    (state) => state.initial.classSelectionList
+  );
 
-  const handleEditStudent = () => {
-    if (!isNew) {
-      dispatch(updateStudent({ id: editedStudent.id, payload: editedStudent }));
-      return;
+  const handleInputChange =
+    (property: keyof Student) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
+        setStudent((prev) => ({ ...prev, [property]: event.target.value }));
+      };
+
+  const handleEditStudent = async () => {
+    if (isNew) {
+      dispatch(addStudent(student))
+        .unwrap()
+        .then(() => {
+          handleClose();
+          onClickEdit(true);
+        })
+        .catch(() => {
+          onClickEdit(false);
+        });
+    } else {
+      dispatch(updateStudent(student))
+        .unwrap()
+        .then(() => {
+          handleClose();
+          onClickEdit(true);
+        })
+        .catch(() => {
+          onClickEdit(false);
+        });
     }
-    dispatch(addStudent({ student: editedStudent }));
   };
+
+  useEffect(() => {
+    dispatch(clearValidationErrors());
+    if (!isNew) {
+      setStudent(selectedStudent || initStudent);
+    } else {
+      setStudent(initStudent);
+    }
+  }, [selectedStudent, dispatch]);
+
+  console.log("selectedStudent", selectedStudent);
+
+
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogHead onClose={handleClose} isNew={isNew}></DialogHead>
-      <DialogContent style={{ height: "fit-content", width: "auto" }}>
-        <TextInputField
-          id={"mssv"}
-          value={editedStudent.studentCode}
-          label={"Mã Sinh Viên*"}
-          name={"studentCode"}
-          onChange={setValue}
-        />
-        <TextInputField
-          id={"name"}
-          value={editedStudent.name}
-          label={"Họ Tên*"}
-          name={"name"}
-          onChange={setValue}
-        />
-        <SelectInputField
-          id={"gender"}
-          options={genders}
-          value={editedStudent.gender}
-          label={"Giới tính*"}
-          name={"gender"}
-          onChange={setValue}
-        ></SelectInputField>
-        <DateTimeInputField
-          id={"birth-day"}
-          value={editedStudent.dateOfBirth}
-          label={"Ngày Sinh*"}
-          name={"dateOfBirth"}
-          onChange={setValue}
-        ></DateTimeInputField>
-        <TextInputField
-          id={"address"}
-          value={editedStudent.address}
-          label={"Địa chỉ*"}
-          name={"address"}
-          onChange={setValue}
-        />
-        <TextInputField
-          id={"phone-number"}
-          value={editedStudent.phone}
-          label={"Số điện thoại*"}
-          name={"phone"}
-          onChange={setValue}
-        />
+      <DialogTitle color={"rgb(0, 130, 146)"}>
+        {`${isNew ? "Thêm mới " : "Chỉnh sửa thông tin"} học sinh`}
+      </DialogTitle>
+      <DialogContent style={{ height: "fit-content", width: "auto", maxWidth: "470px" }}>
+        <FormControl fullWidth style={{ margin: "5px 0px" }}>
+          <CustomInput
+            id={"name"}
+            value={student.name}
+            label={"Họ và Tên"}
+            onChange={handleInputChange("name")}
+            messageError={
+              validationErrors && validationErrors.name
+                ? validationErrors.name
+                : ""
+            }
+          />
+        </FormControl>
+        <Stack
+          flexDirection={"row"}
+          gap={2}
+          marginTop={1}
+          alignItems={"center"}
+        >
+          <FormControl error={validationErrors && validationErrors.dateOfBirth ? true : false}>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={student?.gender}
+              onChange={handleInputChange("gender")}
+            >
+              <FormControlLabel value={Gender.MALE} control={<Radio size="small" />} label="Nam" />
+              <FormControlLabel value={Gender.FEMALE} control={<Radio size="small" />} label="Nữ" />
+            </RadioGroup>
+          </FormControl>
+        </Stack>
+
+        <Stack flexDirection={"row"} gap={2} marginTop={1} style={{ maxWidth: "100%" }}>
+          <SelectDropdown
+            id={"class"}
+            minWidth={120}
+            label="Lớp"
+            options={classes}
+            value={student.classId}
+            onChange={handleInputChange("classId")}
+            errorMessage={validationErrors && validationErrors.classId
+              ? validationErrors.classId
+              : ""}
+          />
+          <TextField
+            fullWidth={true}
+            size="small"
+            name="dateOfBirth"
+            label="Ngày sinh"
+            value={student.dateOfBirth}
+            InputLabelProps={{ shrink: true, required: true }}
+            type="date"
+            onChange={handleInputChange("dateOfBirth")}
+            error={validationErrors && validationErrors.dateOfBirth ? true : false}
+            helperText={
+              validationErrors && validationErrors.dateOfBirth
+                ? validationErrors.dateOfBirth
+                : ""
+            }
+          // defaultValue={"2000-10-25"}
+          />
+        </Stack>
+        <FormControl fullWidth style={{ margin: "20px 0px" }}>
+          <CustomInput
+            id="phone"
+            label="Số điện thoại"
+            type="phone"
+            fullWidth={true}
+            size="small"
+            placeholder="xxx-xxx-xxxx"
+            value={student.phone}
+            onChange={handleInputChange("phone")}
+            messageError={
+              validationErrors && validationErrors.phone
+                ? validationErrors.phone
+                : ""
+            }
+          />
+        </FormControl>
+
+        <FormControl fullWidth>
+          <CustomInput
+            label="Địa chỉ"
+            type="text"
+            fullWidth={true}
+            size="small"
+            value={student.address}
+            onChange={handleInputChange("address")}
+            style={{ width: "100%" }}
+            messageError={
+              validationErrors && validationErrors.address
+                ? validationErrors.address
+                : ""
+            }
+          />
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button
@@ -106,10 +214,10 @@ const EditStudent: React.FC<Props> = ({
           color="error"
           onClick={handleClose}
         >
-          Cancel
+          Hủy
         </Button>
         <Button variant="contained" size="medium" onClick={handleEditStudent}>
-          {isNew ? "Create" : "Update"}
+          {isNew ? "Thêm mới" : "Cập nhật"}
         </Button>
       </DialogActions>
     </Dialog>

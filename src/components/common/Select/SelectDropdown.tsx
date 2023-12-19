@@ -11,6 +11,7 @@ interface Props {
   value?: any;
   minWidth?: number;
   width?: number;
+  errorMessage?: string;
   onChange: (event: SelectChangeEvent<any>) => void;
 }
 
@@ -22,6 +23,7 @@ const SelectDropdown: React.FC<Props> = ({
   onChange,
   minWidth,
   width,
+  errorMessage
 }) => {
   return (
     <FormControl
@@ -48,6 +50,7 @@ const SelectDropdown: React.FC<Props> = ({
         onChange={onChange}
         label={label}
         size={"small"}
+        error={!!errorMessage}
       >
         {options.map((option: OptionSelect) => (
           <MenuItem key={option.value} value={option.value}>

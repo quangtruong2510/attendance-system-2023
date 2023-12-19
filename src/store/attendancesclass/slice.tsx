@@ -1,43 +1,44 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../configstore";
-import initialState from "./initialize";
 
-import { fetchStatisticsAttendance, fetchAttendanceClass, updateAttendanceStudent } from "./operation";
+import initialState from "./initialize";
+import { fetchAttendanceClass, updateAttendanceStudent } from "./operation";
 
 export const attendanceSlice = createSlice({
   name: "attendance",
   initialState,
   reducers: {
     setSelectedStudent: (state, action: PayloadAction<number>) => {
-      state.attendanceClass.selectedStudent =
-        state.attendanceClass.attendanceStudent.find(
+      state.selectedStudent =
+        state.data.find(
           (student) => student.id === action.payload
         ) ?? null;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchStatisticsAttendance.pending, (state) => {
+    builder.addCase(fetchAttendanceClass.pending, (state) => {
       state.isLoading = true;
     });
 
     builder.addCase(
-      fetchStatisticsAttendance.fulfilled,
+      fetchAttendanceClass.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.attendanceClasses = action.payload.data;
+        state.data = action.payload.data;
       }
     );
     builder.addCase(
-      fetchStatisticsAttendance.rejected,
+      fetchAttendanceClass.rejected,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
       }
     );
+
     builder.addCase(
       updateAttendanceStudent.rejected,
       (state, action: PayloadAction<any>) => {
-        state.errorMessage = action.payload.errors;
+        state.validationErrors = action.payload.errors;
         state.isLoading = false;
       }
     );

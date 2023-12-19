@@ -2,15 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { execute, Request } from "../../utils/request";
 const BASE_URL_API = "https://attendance.ily1606.space/api/school/";
 
-// Fetch list students
-const fetchStatisticsAttendance = createAsyncThunk("attendance/today", async () => {
-  const request: Request = {
-    endpoint: `${BASE_URL_API}statistics/`,
-    method: "GET",
-  };
-  return await execute(request);
-});
-
 const fetchAttendanceClass = createAsyncThunk(
   "attendance/today",
   async (id: number) => {
@@ -45,4 +36,4 @@ const updateAttendanceStudent = createAsyncThunk(
   }
 );
 
-export { fetchStatisticsAttendance, fetchAttendanceClass, getStudentById, updateAttendanceStudent };
+export { fetchAttendanceClass, getStudentById, updateAttendanceStudent };

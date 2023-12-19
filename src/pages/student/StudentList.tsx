@@ -1,8 +1,4 @@
-import {
-  AddCircleOutline,
-  Cached,
-  CloudUpload
-} from "@mui/icons-material";
+import { AddCircleOutline, Cached, CloudUpload } from "@mui/icons-material";
 import {
   Breadcrumbs,
   Button,
@@ -10,10 +6,11 @@ import {
   SelectChangeEvent,
   Stack,
   Table,
+  TableBody,
   TableContainer,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
@@ -32,6 +29,14 @@ import {
 import CommonUtil from "../../utils/export";
 import { Roles } from "../../utils/role";
 import TableRows from "./part/TableRows";
+import EditStudent from "./StudentEdit";
+import TableTitle from "../../components/common/Table/TableTitle";
+import BreadcrumbsComponent from "../../components/common/Utils";
+import { breadcrumbStudentItems } from "../../constant/breadcrums";
+import TableList from "../../components/common/Table/TableList";
+import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
+import { initializeState } from "../../store/common/pagination";
+import { clearValidationErrors } from "../../store/students/slice";
 
 interface GroupFilterSearch {
   class: string;
@@ -51,6 +56,10 @@ const StudentList = () => {
   const role = useSelector((state) => state.authentication.role);
   // const [isNew, setIsNewStudent] = useState(false);
   const { current, perPage } = useSelector((state) => state.pagination);
+  const isLoading = useSelector((state) => state.students.isLoading);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [isNew, setIsNewStudent] = useState(false);
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
     grade: "",
@@ -58,25 +67,38 @@ const StudentList = () => {
     phone: "",
   });
 
+  console.log("studentList", studentList);
+
+  const handleClose = () => {
+    setDialogOpen(false);
+    dispatch(clearValidationErrors());
+  }
+
+  const handeSuccessEdit = async (isSuccess: boolean) => {
+    if (isSuccess) {
+      console.log("handeSuccessEdit");
+
+      await dispatch(fetchStudents());
+      setDialogOpen(false);
+    }
+  };
   const addNewStudent = () => {
-    // setIsNewStudent(true);
-    // setDialogOpen(true);
+    setSelectedStudent(null)
+    setIsNewStudent(true);
+    setDialogOpen(true);
   };
 
-  const onDeleteClick = (id: number) => {
-    dispatch(deleteStudentById({ id: id }));
-    dispatch(fetchStudents());
+  const onDeleteClick = async (id: number) => {
+    await dispatch(deleteStudentById({ id: id }));
+    await dispatch(fetchStudents());
   };
   const editStudent = (id: number) => {
-    dispatch(getStudentById({ id: id }));
-
-    // setIsNewStudent(false);
-    // setDialogOpen(true);
+    setIsNewStudent(false);
+    setDialogOpen(true);
+    setSelectedStudent(
+      studentList.find((student) => student.id === id) || null
+    );
   };
-
-  // const handleClose = () => {
-  //   setDialogOpen(false);
-  // };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
@@ -84,6 +106,10 @@ const StudentList = () => {
       "Danh sách học sinh",
       studentList
     );
+  };
+
+  const handleReload = async () => {
+    dispatch(fetchStudents());
   };
 
   const options: OptionSelect[] = [
@@ -106,78 +132,33 @@ const StudentList = () => {
         setFilter((prev) => ({ ...prev, [property]: event.target.value }));
       };
 
+  useEffect(() => {
+    dispatch(initializeState());
+    console.log("useEffect");
+    dispatch(fetchStudents());
+  }, []);
+
   return (
     <ContentLayout>
-      <Stack flexDirection={"row"} justifyContent={"space-between"}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="h5" style={{ color: "#4154F1" }}>
-            Quản lý
-          </Typography>
-          <Typography color="text.primary">Học sinh</Typography>
-        </Breadcrumbs>
-        <Button
-          style={{
-            textTransform: "none",
-            height: "40px",
-          }}
-          component="label"
-          variant="contained"
-          onClick={() => addNewStudent}
-          startIcon={<AddCircleOutline />}
-        >
-          Thêm mới
-        </Button>
-      </Stack>
+      <BreadcrumbsComponent
+        breadcrumbs={breadcrumbStudentItems}
+        haveAddButton={true}
+        handleAddButton={addNewStudent}
+      ></BreadcrumbsComponent>
       <Paper
         sx={{
           width: "100%",
           padding: "10px",
           boxSizing: "border-box",
           marginTop: "15px",
-          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px"
+          boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
-        <GroupFilter>
-          <GroupFilter>
-            <Typography
-              sx={{ margin: "0" }}
-              variant="h6"
-              style={{ color: "rgb(227 113 12)" }}
-            >
-              Danh sách học sinh
-            </Typography>
-          </GroupFilter>
-          <Stack direction="row" spacing={2}>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-                backgroundColor: "#117957",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<CloudUpload />}
-              onClick={handleExport}
-            >
-              Xuất Excel
-            </Button>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<Cached />}
-            >
-              Làm mới
-            </Button>
-          </Stack>
-        </GroupFilter>
+        <TableTitle
+          title="Danh sách học sinh"
+          handleExport={handleExport}
+          reload={handleReload}
+        />
         <Stack
           flexDirection={"row"}
           justifyContent={"space-between"}
@@ -215,7 +196,6 @@ const StudentList = () => {
               placeholder={"Họ và tên"}
               fullWidth={false}
             />
-
             {role == Roles.TEACHER && (
               <>
                 <CustomInput
@@ -228,10 +208,8 @@ const StudentList = () => {
               </>
             )}
           </Stack>
-
           <NavigationTable count={studentList.length} />
         </Stack>
-
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
           <Table
             className="border-collapse"
@@ -239,24 +217,29 @@ const StudentList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerStudentTable} />
-            <TableRows
-              rows={studentList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerStudentTable}
-              onDeleteClick={onDeleteClick}
-              onEditClick={editStudent}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={studentList.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerStudentTable}
+                onDeleteClick={onDeleteClick}
+                onEditClick={editStudent}
+              />)}
           </Table>
         </TableContainer>
       </Paper>
-      {/* <EditStudent
+
+      <EditStudent
         isNew={isNew}
         isOpen={isDialogOpen}
-        student={selectedStudent}
+        selectedStudent={selectedStudent}
         handleClose={handleClose}
-      /> */}
+        onClickEdit={handeSuccessEdit}
+      />
     </ContentLayout>
   );
 };
@@ -265,11 +248,5 @@ const ContentLayout = styled("div")(() => ({
   padding: "15px 20px 0px 20px",
   overflowY: "auto",
 }));
-
-const GroupFilter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-`;
 
 export default StudentList;

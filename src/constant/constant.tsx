@@ -14,7 +14,7 @@ const genders: OptionSelect[] = [
 ];
 
 const StatusAttendanceTypeList = {
-  [StatusAttendanceType.PRESENT]: "-",
+  [StatusAttendanceType.PRESENT]: "Có mặt",
   [StatusAttendanceType.ABSENCE_WITHOUT_PERMISSION]: "Vắng không phép",
   [StatusAttendanceType.ABSENCE_WITH_PERMISSION]: "Vắng có phép",
   [StatusAttendanceType.LATE]: "Đi trễ",

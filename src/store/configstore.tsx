@@ -9,6 +9,8 @@ import pagination from "./common/pagination";
 import authenticationReducer from "./authentication/slice";
 import DashboardReducer from "./dashboard/slice";
 import AttendanceReducer from "./attendances/slice";
+import AttendanceClassReducer from "./attendancesclass/slice";
+
 import TeacherReducer from "./teachers/slice";
 import ClassReducer from "./class/slice";
 import initialReducer from "./initdata/slice";
@@ -19,6 +21,7 @@ const reducer = combineReducers({
   authentication: authenticationReducer,
   dashBoard: DashboardReducer,
   attendance: AttendanceReducer,
+  attendanceClass: AttendanceClassReducer,
   teacher: TeacherReducer,
   class: ClassReducer,
   initial: initialReducer,

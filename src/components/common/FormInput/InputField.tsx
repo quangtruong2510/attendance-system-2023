@@ -81,7 +81,7 @@ const SelectInputField: React.FC<PropsSelectField> = (
 const DateTimeInputField: React.FC<PropsTextField> = (
   props: PropsTextField
 ) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     let payLoad: Payload = {
       key: event.target.name,
       value: event.target.value,
@@ -157,10 +157,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
   messageError,
 }) => {
   const classes = useStyles();
-  const inputProps = type === 'phone' ? {
-    pattern: '[0-9]*',
-    maxLength: 10,
-  } : { maxLength: maxLength }
+  const inputProps =
+    type === "phone"
+      ? {
+        pattern: "[0-9]*",
+        maxLength: 10,
+      }
+      : { maxLength: maxLength };
 
   return (
     <TextField
@@ -179,7 +182,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       sx={{
         fontSize: 13,
         ".css-1pysi21-MuiFormLabel-root-MuiInputLabel-root": {
-          fontSize: 15,
+          fontSize: 13,
         },
       }}
       multiline={isMultiline}
@@ -188,6 +191,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       rows={rows}
       error={!!messageError}
       helperText={messageError}
+      InputLabelProps={{ shrink: true, required: true }}
     />
   );
 };

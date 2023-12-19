@@ -5,7 +5,7 @@ import { AppDispatch, useSelector } from "../../store/configstore";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
 import { useDispatch } from "react-redux";
-import { fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
+import { fetchClassSelection, fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 
 const ContentLayout = styled("div")(() => ({
   flexGrow: 1,
@@ -27,6 +27,7 @@ const Layout = () => {
     const token = { token: localStorage.getItem("token") };
     dispatch(fetchUnAssignTeacherList());
     dispatch(fetchGradeList());
+    dispatch(fetchClassSelection());
 
     // dispatch(checkAuth());
     // if (!!token) {
