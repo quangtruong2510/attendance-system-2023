@@ -1,14 +1,10 @@
-import { AddCircleOutline, Cached, CloudUpload } from "@mui/icons-material";
 import {
-  Breadcrumbs,
-  Button,
   Paper,
   SelectChangeEvent,
   Stack,
   Table,
   TableBody,
   TableContainer,
-  Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,12 +14,15 @@ import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
 import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
+import TableTitle from "../../components/common/Table/TableTitle";
+import BreadcrumbsComponent from "../../components/common/Utils";
+import { breadcrumbTeacherItems } from "../../constant/breadcrums";
 import { headerTeacherTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
 import { Teacher } from "../../models/teacher";
 import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
-import { } from "../../store/students/operation";
+import {} from "../../store/students/operation";
 import {
   deleteTeacherById,
   fetchTeacher,
@@ -31,9 +30,6 @@ import {
 import CommonUtil from "../../utils/export";
 import TeacherEdit from "./TeacherEdit";
 import TableRows from "./part/TableRows";
-import BreadcrumbsComponent from "../../components/common/Utils";
-import { breadcrumbTeacherItems } from "../../constant/breadcrums";
-import TableTitle from "../../components/common/Table/TableTitle";
 
 interface GroupFilterSearch {
   class: string;
@@ -64,7 +60,7 @@ const TeacherList = () => {
   }, []);
 
   const addNewTeacher = async () => {
-    setSelectedTeacher(null)
+    setSelectedTeacher(null);
     setIsNewTeacher(true);
     setDialogOpen(true);
   };
@@ -99,7 +95,7 @@ const TeacherList = () => {
     );
   };
 
-  const handleReload = () => { };
+  const handleReload = () => {};
 
   const options: OptionSelect[] = [
     { value: 1, label: "6" },
@@ -117,9 +113,9 @@ const TeacherList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+    };
 
   return (
     <ContentLayout>

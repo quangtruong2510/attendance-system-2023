@@ -5,7 +5,7 @@ import React from "react";
 interface Props {
   breadcrumbs: any;
   haveAddButton: boolean;
-  handleAddButton: () => void;
+  handleAddButton?: () => void;
 }
 const BreadcrumbsComponent: React.FC<Props> = ({
   breadcrumbs,

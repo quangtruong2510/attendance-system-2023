@@ -3,7 +3,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../configstore";
 import initialState from "./initialize";
 
-import { fetchStatisticsAttendance, fetchAttendanceClass, updateAttendanceStudent } from "./operation";
+import {
+  fetchStatisticsAttendance,
+  updateAttendanceStudent,
+} from "./operation";
 
 export const attendanceSlice = createSlice({
   name: "attendance",
@@ -28,12 +31,9 @@ export const attendanceSlice = createSlice({
         state.attendanceClasses = action.payload.data;
       }
     );
-    builder.addCase(
-      fetchStatisticsAttendance.rejected,
-      (state, action: PayloadAction<any>) => {
-        state.isLoading = false;
-      }
-    );
+    builder.addCase(fetchStatisticsAttendance.rejected, (state) => {
+      state.isLoading = false;
+    });
     builder.addCase(
       updateAttendanceStudent.rejected,
       (state, action: PayloadAction<any>) => {

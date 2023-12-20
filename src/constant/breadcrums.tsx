@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+
 interface breadcrumb {
   label: string;
   link: string;
@@ -18,4 +21,28 @@ const breadcrumbClassItems: breadcrumb[] = [
   { label: "Lớp học", link: "/" },
 ];
 
-export { breadcrumbClassItems, breadcrumbTeacherItems, breadcrumbStudentItems };
+const breadcrumbDashboardItems: breadcrumb[] = [
+  { label: "Trang chủ", link: "/" },
+  { label: "Phân tích", link: "/" },
+];
+
+const today = new Date();
+const formattedDayName = format(today, "EEEE", { locale: vi });
+const formattedMonthName = format(today, "MMMM", { locale: vi });
+const dayValue = today.getDate();
+
+const breadcrumbAttendanceToday: breadcrumb[] = [
+  { label: "Chuyên cần hôm nay", link: "/" },
+  {
+    label: ` ${formattedDayName} ngày ${dayValue} ${formattedMonthName} năm ${today.getFullYear()}`,
+    link: "/",
+  },
+];
+
+export {
+  breadcrumbClassItems,
+  breadcrumbTeacherItems,
+  breadcrumbStudentItems,
+  breadcrumbDashboardItems,
+  breadcrumbAttendanceToday,
+};

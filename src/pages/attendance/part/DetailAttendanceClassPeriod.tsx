@@ -5,15 +5,16 @@ import React from "react";
 import EditIconButton from "../../../components/common/Button/EditIconButton";
 
 interface Props {
-  rows: AttendanceReport[];
+  rows: any[];
   headers: Column[];
-  onDetailClick: (id: number) => void;
+  onEditClick: (id: number) => void;
 }
 
+import { StatusAttendanceType } from "../../../Type/Utils";
+import { StatusAttendanceTypeList } from "../../../constant/constant";
 import { Column } from "../../../constant/headerTable";
-import { AttendanceReport } from "../../../models/attendance";
 
-const TableRows: React.FC<Props> = (props: Props) => {
+const DetailPeriodRows: React.FC<Props> = (props: Props) => {
   return (
     <TableBody>
       {props.rows.map((row, index) => (
@@ -22,15 +23,20 @@ const TableRows: React.FC<Props> = (props: Props) => {
             .filter((column) => column.id !== "action")
             .map((column) => {
               let value = row[column.id];
-              if (column.id == "id") {
-                value = index + 1;
+              if (column.id === "status") {
+                const type: StatusAttendanceType =
+                  value as StatusAttendanceType;
+                value = StatusAttendanceTypeList[type];
               }
               return (
                 <TableCell
                   style={{
+                    maxWidth: column.maxWidth,
                     textAlign: column.align,
                     boxSizing: "border-box",
+                    padding: "8px 0px",
                     minWidth: column.minWidth,
+                    fontSize: 13,
                   }}
                 >
                   {column.format && typeof value === "number"
@@ -46,8 +52,8 @@ const TableRows: React.FC<Props> = (props: Props) => {
             }}
           >
             <EditIconButton
-              id={row.classId ? row.classId : 0}
-              onIconClick={props.onDetailClick}
+              id={row.id}
+              onIconClick={props.onEditClick}
               tooltip="Xem chi tiết"
             />
           </TableCell>
@@ -57,4 +63,4 @@ const TableRows: React.FC<Props> = (props: Props) => {
   );
 };
 
-export default TableRows;
+export default DetailPeriodRows;

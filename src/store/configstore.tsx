@@ -10,6 +10,8 @@ import authenticationReducer from "./authentication/slice";
 import DashboardReducer from "./dashboard/slice";
 import AttendanceReducer from "./attendances/slice";
 import AttendanceClassReducer from "./attendancesclass/slice";
+import PeriodAttendanceClassReducer from "./attendancesperiod/slice";
+import DetailAttendanceStudent from "./detailAttendanceStudent/slice";
 
 import TeacherReducer from "./teachers/slice";
 import ClassReducer from "./class/slice";
@@ -25,6 +27,8 @@ const reducer = combineReducers({
   teacher: TeacherReducer,
   class: ClassReducer,
   initial: initialReducer,
+  attendancesPeriod: PeriodAttendanceClassReducer,
+  detailAttendancesStudent: DetailAttendanceStudent,
 });
 
 const store = configureStore({ reducer });

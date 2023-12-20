@@ -123,6 +123,7 @@ interface CustomInputProps {
   rows?: number;
   width?: string;
   messageError?: string | undefined;
+  require?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -155,14 +156,15 @@ const CustomInput: React.FC<CustomInputProps> = ({
   maxRows,
   rows,
   messageError,
+  require,
 }) => {
   const classes = useStyles();
   const inputProps =
     type === "phone"
       ? {
-        pattern: "[0-9]*",
-        maxLength: 10,
-      }
+          pattern: "[0-9]*",
+          maxLength: 10,
+        }
       : { maxLength: maxLength };
 
   return (
@@ -191,7 +193,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       rows={rows}
       error={!!messageError}
       helperText={messageError}
-      InputLabelProps={{ shrink: true, required: true }}
+      InputLabelProps={{ shrink: true, required: require }}
     />
   );
 };

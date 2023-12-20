@@ -1,17 +1,12 @@
-import {
-  Box,
-  Divider,
-  ListItemButton,
-  Typography,
-} from "@mui/material";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import { Box, Divider, ListItemButton, Typography } from "@mui/material";
 import List from "@mui/material/List";
 import { styled } from "@mui/system";
 import * as React from "react";
+import { Link, useLocation } from "react-router-dom";
 import navigatorList from "../../../constant/navigator";
 import NavigatorItemModel from "../../../models/navigator";
 import NavigatorItem from "./NavigatorItem";
-import { Link } from "react-router-dom";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 const NavigatorLayout = styled("div")(() => ({
   backgroundColor: "#FFFFFF",
@@ -34,6 +29,7 @@ const NavigatorLayout = styled("div")(() => ({
 }));
 
 const Navigation: React.FC = () => {
+  const location = useLocation();
   return (
     <NavigatorLayout>
       <Box
@@ -56,11 +52,14 @@ const Navigation: React.FC = () => {
           <ListItemButton sx={{ pl: 2 }}>
             <HomeOutlinedIcon />
             <Typography
+              className={`no-underline ${
+                location.pathname === "/dashboard" && "active-navigation"
+              }`}
               sx={{
                 ml: 1,
                 textDecoration: "none !important",
-                fontWeight: "600",
-                margin: 1,
+                fontWeight: "500",
+                mt: 1,
                 padding: 0,
               }}
               gutterBottom

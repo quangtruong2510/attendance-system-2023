@@ -1,7 +1,7 @@
-import React from 'react';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import styled from 'styled-components';
+import React from "react";
+import Tooltip from "@mui/material/Tooltip";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import styled from "styled-components";
 
 interface Props {
   id: number;

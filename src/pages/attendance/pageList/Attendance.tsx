@@ -1,5 +1,6 @@
 import { Cached, CloudUpload } from "@mui/icons-material";
 import {
+  Breadcrumbs,
   Button,
   Paper,
   SelectChangeEvent,
@@ -8,63 +9,51 @@ import {
   TableContainer,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
-import { CustomInput } from "../../components/common/FormInput/InputField";
-import SelectDropdown from "../../components/common/Select/SelectDropdown";
-import NavigationTable from "../../components/common/Table/NavigationTable";
-import TableHeaders from "../../components/common/Table/TableHeader";
-import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
-import BreadcrumbsComponent from "../../components/common/Utils";
-import { breadcrumbClassItems } from "../../constant/breadcrums";
-import { headerClassTable } from "../../constant/headerTable";
-import { OptionSelect } from "../../models/Utils";
-import { Class } from "../../models/class";
-import { deleteClassById, fetchClasses } from "../../store/class/operation";
-import { initializeState } from "../../store/common/pagination";
-import { AppDispatch, useSelector } from "../../store/configstore";
-import CommonUtil from "../../utils/export";
-import ClassEditDialog from "./ClassEdit";
-import TableRows from "./part/TableRows";
+import SelectDropdown from "../../../components/common/Select/SelectDropdown";
+import NavigationTable from "../../../components/common/Table/NavigationTable";
+import TableHeaders from "../../../components/common/Table/TableHeader";
+import { headerAttendanceReportTable } from "../../../constant/headerTable";
+import { OptionSelect } from "../../../models/Utils";
+import { useSelector } from "../../../store/configstore";
+import CommonUtil from "../../../utils/export";
+
+import { useNavigate } from "react-router-dom";
+import DateRangePickerCommon from "../../../components/common/FormInput/SingleInputDateRangePickerWithAdornment";
+import { AttendanceReport } from "../../../models/attendance";
+import TableRows from "../../../components/common/Table/TableRows";
+// import TableRows from "../part/TableRows";
 
 interface GroupFilterSearch {
   class: string;
   grade: string;
-  name: string;
-  phone: string;
+  from: string;
+  to: string;
 }
 
-const StudentList = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const classList: Class[] = useSelector((state) => state.class.data);
-  const [IsOpenEditDialog, setIsOpenEditDialog] = useState(false);
+const AttendanceList = () => {
+  const navigate = useNavigate();
+  // const dispatch = useDispatch<AppDispatch>();
+  const attendanceList: AttendanceReport[] = useSelector(
+    (state) => state.attendance.attendanceClasses
+  );
+
   const { current, perPage } = useSelector((state) => state.pagination);
-  const isLoading = useSelector((state) => state.class.isLoading);
 
   const [filter, setFilter] = useState<GroupFilterSearch>({
     class: "",
     grade: "",
-    name: "",
-    phone: "",
+    from: "3",
+    to: "4",
   });
 
-  useEffect(() => {
-    dispatch(initializeState());
-    dispatch(fetchClasses());
-  }, []);
-
-  const addNewClass = () => {
-    setIsOpenEditDialog(true);
+  const handleDateUpdate = (startDay: string, endDay: string) => {
+    setFilter((prev) => ({ ...prev, from: startDay, to: endDay }));
   };
 
-  const onDeleteClick = async (id: number) => {
-    await dispatch(deleteClassById(id));
-    await dispatch(fetchClasses());
-  };
-
-  const handleClose = () => {
-    setIsOpenEditDialog(false);
+  const onDetailClick = (idClass: number) => {
+    navigate(`/attendance/class/${idClass}/${filter.from}/${filter.to}`);
   };
 
   const options: OptionSelect[] = [
@@ -88,36 +77,40 @@ const StudentList = () => {
     };
 
   const handleExport = async () => {
-    await CommonUtil.exportToExcel("lop-hoc", "Danh sách lớp học", classList);
+    await CommonUtil.exportToExcel(
+      "chuyen-can-cac-lop",
+      "Chuyên cần các lớp",
+      attendanceList
+    );
   };
 
   return (
     <ContentLayout>
-      <BreadcrumbsComponent
-        breadcrumbs={breadcrumbClassItems}
-        haveAddButton={true}
-        handleAddButton={addNewClass}
-      ></BreadcrumbsComponent>
+      <Stack flexDirection={"row"} justifyContent={"space-between"}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography variant="h5" style={{ color: "rgb(0, 130, 146)" }}>
+            Thống kê
+          </Typography>
+        </Breadcrumbs>
+      </Stack>
       <Paper
         sx={{
           width: "100%",
-          padding: "10px",
+          padding: "10px 10px 10px 10px",
           boxSizing: "border-box",
-          marginTop: "15px",
+          marginTop: "20px",
           boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
         <GroupFilter>
-          <GroupFilter>
-            <Typography
-              sx={{ margin: "0" }}
-              variant="h6"
-              style={{ color: "rgb(227 113 12)" }}
-            >
-              Danh sách lớp học
-            </Typography>
-          </GroupFilter>
-          <Stack direction="row" spacing={2}>
+          <Typography
+            sx={{ margin: "0" }}
+            variant="h6"
+            style={{ color: "rgb(227 113 12)" }}
+          >
+            Thông tin chuyên cần của các lớp
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent={"end"}>
             <Button
               style={{
                 height: "35px",
@@ -173,16 +166,10 @@ const StudentList = () => {
               value={filter.class}
               onChange={handleChangeFilter("class")}
             />
-            <CustomInput
-              label={"GVCN"}
-              value={filter.name}
-              onChange={handleChangeFilter("name")}
-              placeholder={"Họ và tên"}
-              fullWidth={false}
-            />
+            <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
           </Stack>
 
-          <NavigationTable count={classList.length} />
+          <NavigationTable count={attendanceList.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -191,23 +178,18 @@ const StudentList = () => {
             stickyHeader
             aria-label="sticky table"
           >
-            <TableHeaders headers={headerClassTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={5} />
-            ) : (
-              <TableRows
-                rows={classList.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerClassTable}
-                onDeleteClick={onDeleteClick}
-              />
-            )}
+            <TableHeaders headers={headerAttendanceReportTable} />
+            <TableRows
+              rows={attendanceList.slice(
+                current * perPage,
+                current * perPage + perPage
+              )}
+              headers={headerAttendanceReportTable}
+              onEditClick={onDetailClick}
+            />
           </Table>
         </TableContainer>
       </Paper>
-      <ClassEditDialog open={IsOpenEditDialog} onClose={handleClose} />
     </ContentLayout>
   );
 };
@@ -223,4 +205,4 @@ const GroupFilter = styled.div`
   gap: 20px;
 `;
 
-export default StudentList;
+export default AttendanceList;

@@ -3,9 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../configstore";
 import initialState from "./initialize";
 
-import {
-  fetchStudents,
-} from "./operation";
+import { fetchStudents } from "./operation";
 
 export const studentSlice = createSlice({
   name: "student",
@@ -46,8 +44,6 @@ export const studentSlice = createSlice({
 
 export const selectStudents = (state: RootState) => state.students.data;
 export const selectLoading = (state: RootState) => state.students.isLoading;
-export const selectErrorMessage = (state: RootState) =>
-  state.students.errorMessage;
 
 export const { setFilterStudent } = studentSlice.actions;
 export default studentSlice.reducer;

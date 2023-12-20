@@ -1,14 +1,9 @@
-import { AddCircleOutline, Cached, CloudUpload } from "@mui/icons-material";
 import {
-  Breadcrumbs,
-  Button,
   Paper,
   SelectChangeEvent,
   Stack,
   Table,
-  TableBody,
   TableContainer,
-  Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -17,26 +12,24 @@ import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
+import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
+import TableTitle from "../../components/common/Table/TableTitle";
+import BreadcrumbsComponent from "../../components/common/Utils";
+import { breadcrumbStudentItems } from "../../constant/breadcrums";
 import { headerStudentTable } from "../../constant/headerTable";
 import { OptionSelect } from "../../models/Utils";
 import { Student } from "../../models/student";
+import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import {
   deleteStudentById,
   fetchStudents,
-  getStudentById,
 } from "../../store/students/operation";
+import { clearValidationErrors } from "../../store/students/slice";
 import CommonUtil from "../../utils/export";
 import { Roles } from "../../utils/role";
-import TableRows from "./part/TableRows";
 import EditStudent from "./StudentEdit";
-import TableTitle from "../../components/common/Table/TableTitle";
-import BreadcrumbsComponent from "../../components/common/Utils";
-import { breadcrumbStudentItems } from "../../constant/breadcrums";
-import TableList from "../../components/common/Table/TableList";
-import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
-import { initializeState } from "../../store/common/pagination";
-import { clearValidationErrors } from "../../store/students/slice";
+import TableRows from "./part/TableRows";
 
 interface GroupFilterSearch {
   class: string;
@@ -72,18 +65,16 @@ const StudentList = () => {
   const handleClose = () => {
     setDialogOpen(false);
     dispatch(clearValidationErrors());
-  }
+  };
 
   const handeSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
-      console.log("handeSuccessEdit");
-
       await dispatch(fetchStudents());
       setDialogOpen(false);
     }
   };
   const addNewStudent = () => {
-    setSelectedStudent(null)
+    setSelectedStudent(null);
     setIsNewStudent(true);
     setDialogOpen(true);
   };
@@ -128,13 +119,12 @@ const StudentList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+    };
 
   useEffect(() => {
     dispatch(initializeState());
-    console.log("useEffect");
     dispatch(fetchStudents());
   }, []);
 
@@ -228,7 +218,8 @@ const StudentList = () => {
                 headers={headerStudentTable}
                 onDeleteClick={onDeleteClick}
                 onEditClick={editStudent}
-              />)}
+              />
+            )}
           </Table>
         </TableContainer>
       </Paper>

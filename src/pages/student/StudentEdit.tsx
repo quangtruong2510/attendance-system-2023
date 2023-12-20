@@ -6,9 +6,6 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
-  FormHelperText,
-  FormLabel,
-  InputLabel,
   Radio,
   RadioGroup,
   SelectChangeEvent,
@@ -17,23 +14,15 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  CustomInput
-} from "../../components/common/FormInput/InputField";
+import { Gender } from "../../Type/Utils";
+import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
-import { genders } from "../../constant/constant";
 import { OptionSelect } from "../../models/Utils";
 import { Student } from "../../models/student";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import { initStudent } from "../../store/students/initialize";
-import {
-  addStudent,
-  fetchStudents,
-  updateStudent,
-} from "../../store/students/operation";
+import { addStudent, updateStudent } from "../../store/students/operation";
 import { clearValidationErrors } from "../../store/students/slice";
-import BasicDatePicker from "../../components/common/DatePicker";
-import { Gender } from "../../Type/Utils";
 
 interface Props {
   isNew: boolean;
@@ -63,9 +52,9 @@ const EditStudent: React.FC<Props> = ({
 
   const handleInputChange =
     (property: keyof Student) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
-        setStudent((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
+      setStudent((prev) => ({ ...prev, [property]: event.target.value }));
+    };
 
   const handleEditStudent = async () => {
     if (isNew) {
@@ -102,13 +91,14 @@ const EditStudent: React.FC<Props> = ({
 
   console.log("selectedStudent", selectedStudent);
 
-
   return (
     <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle color={"rgb(0, 130, 146)"}>
         {`${isNew ? "Thêm mới " : "Chỉnh sửa thông tin"} học sinh`}
       </DialogTitle>
-      <DialogContent style={{ height: "fit-content", width: "auto", maxWidth: "470px" }}>
+      <DialogContent
+        style={{ height: "fit-content", width: "auto", maxWidth: "470px" }}
+      >
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput
             id={"name"}
@@ -128,7 +118,11 @@ const EditStudent: React.FC<Props> = ({
           marginTop={1}
           alignItems={"center"}
         >
-          <FormControl error={validationErrors && validationErrors.dateOfBirth ? true : false}>
+          <FormControl
+            error={
+              validationErrors && validationErrors.dateOfBirth ? true : false
+            }
+          >
             <RadioGroup
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
@@ -136,13 +130,26 @@ const EditStudent: React.FC<Props> = ({
               value={student?.gender}
               onChange={handleInputChange("gender")}
             >
-              <FormControlLabel value={Gender.MALE} control={<Radio size="small" />} label="Nam" />
-              <FormControlLabel value={Gender.FEMALE} control={<Radio size="small" />} label="Nữ" />
+              <FormControlLabel
+                value={Gender.MALE}
+                control={<Radio size="small" />}
+                label="Nam"
+              />
+              <FormControlLabel
+                value={Gender.FEMALE}
+                control={<Radio size="small" />}
+                label="Nữ"
+              />
             </RadioGroup>
           </FormControl>
         </Stack>
 
-        <Stack flexDirection={"row"} gap={2} marginTop={1} style={{ maxWidth: "100%" }}>
+        <Stack
+          flexDirection={"row"}
+          gap={2}
+          marginTop={1}
+          style={{ maxWidth: "100%" }}
+        >
           <SelectDropdown
             id={"class"}
             minWidth={120}
@@ -150,9 +157,11 @@ const EditStudent: React.FC<Props> = ({
             options={classes}
             value={student.classId}
             onChange={handleInputChange("classId")}
-            errorMessage={validationErrors && validationErrors.classId
-              ? validationErrors.classId
-              : ""}
+            errorMessage={
+              validationErrors && validationErrors.classId
+                ? validationErrors.classId
+                : ""
+            }
           />
           <TextField
             fullWidth={true}
@@ -163,13 +172,15 @@ const EditStudent: React.FC<Props> = ({
             InputLabelProps={{ shrink: true, required: true }}
             type="date"
             onChange={handleInputChange("dateOfBirth")}
-            error={validationErrors && validationErrors.dateOfBirth ? true : false}
+            error={
+              validationErrors && validationErrors.dateOfBirth ? true : false
+            }
             helperText={
               validationErrors && validationErrors.dateOfBirth
                 ? validationErrors.dateOfBirth
                 : ""
             }
-          // defaultValue={"2000-10-25"}
+            // defaultValue={"2000-10-25"}
           />
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>

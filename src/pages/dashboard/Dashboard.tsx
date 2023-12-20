@@ -6,7 +6,7 @@ import {
   PersonRemove,
   WatchLater,
 } from "@mui/icons-material";
-import { Breadcrumbs, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -26,8 +26,14 @@ import {
 import styled from "styled-components";
 import { StatusAttendanceType } from "../../Type/Utils";
 import TableHeaders from "../../components/common/Table/TableHeader";
+import BreadcrumbsComponent from "../../components/common/Utils";
+import { breadcrumbDashboardItems } from "../../constant/breadcrums";
 import { StatusAttendanceTypeList } from "../../constant/constant";
-import { Column, headerAttendanceClassDashboardTable, headerDashboardTable } from "../../constant/headerTable";
+import {
+  Column,
+  headerAttendanceClassDashboardTable,
+  headerDashboardTable,
+} from "../../constant/headerTable";
 import { AttendanceStudent } from "../../models/attendance";
 import { useSelector } from "../../store/configstore";
 import { Roles } from "../../utils/role";
@@ -50,14 +56,13 @@ const ChartLayout = styled.div`
   margin-bottom: 30px;
 `;
 
-
 const iconStyle = {
   color: "green",
   width: "45px",
   height: "45px",
 };
 
-let headers: Column[] = []
+let headers: Column[] = [];
 export default function Dashboard() {
   const data = useSelector((state) => state.dashBoard.data);
   const role = useSelector((state) => state.authentication.role);
@@ -65,17 +70,24 @@ export default function Dashboard() {
     (state) => state.attendance.attendanceClass.attendanceStudent
   );
 
-  headers = role == Roles.TEACHER ? headerAttendanceClassDashboardTable : headerDashboardTable;
+  headers =
+    role == Roles.TEACHER
+      ? headerAttendanceClassDashboardTable
+      : headerDashboardTable;
 
   const rows = role == Roles.TEACHER ? attendanceStudent : data;
   return (
     <Container>
-      <Breadcrumbs aria-label="breadcrumb">
+      {/* <Breadcrumbs aria-label="breadcrumb">
         <Typography variant="h6" style={{ color: "#4154F1" }}>
           Trang chủ
         </Typography>
         <Typography color="text.primary">Phân tích</Typography>
-      </Breadcrumbs>
+      </Breadcrumbs> */}
+      <BreadcrumbsComponent
+        breadcrumbs={breadcrumbDashboardItems}
+        haveAddButton={false}
+      ></BreadcrumbsComponent>
       <Report></Report>
       <ChartLayout>
         <Chart />
@@ -124,12 +136,12 @@ const Report = () => {
 
 const Chart = () => {
   const data = [
-    { name: "A", uv: 400, pv: 2400, amt: 2400 },
-    { name: "B", uv: 300, pv: 4567, amt: 2400 },
-    { name: "C", uv: 200, pv: 1398, amt: 2400 },
-    { name: "D", uv: 278, pv: 9800, amt: 2400 },
-    { name: "E", uv: 189, pv: 3908, amt: 2400 },
-    { name: "F", uv: 239, pv: 4800, amt: 2400 },
+    { name: "6A1", uv: 400, pv: 2400, amt: 2400 },
+    { name: "6A2", uv: 300, pv: 4567, amt: 2400 },
+    { name: "7A1", uv: 200, pv: 1398, amt: 2400 },
+    { name: "7A2", uv: 278, pv: 9800, amt: 2400 },
+    { name: "8A1", uv: 189, pv: 3908, amt: 2400 },
+    { name: "8A2", uv: 239, pv: 4800, amt: 2400 },
   ];
   return (
     <ResponsiveContainer className="chart">
@@ -139,7 +151,7 @@ const Chart = () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="pv" fill="#8884d8" />
+        <Bar dataKey="pv" fill="#8884d8" label="Lớp" />
         <Bar dataKey="uv" fill="#82ca9d" />
       </BarChart>
     </ResponsiveContainer>
@@ -152,28 +164,11 @@ const TableReport = ({ rows }: { rows: any[] }) => {
       className="table"
       sx={{ overflow: "hidden", width: "50%", height: "100%" }}
     >
-      <Typography variant="h6" style={{ color: "#4154F1" }}>
+      <Typography variant="h6" style={{ color: "rgb(227, 113, 12)" }}>
         Thống kê
       </Typography>
       <TableContainer sx={{ maxHeight: 400, paddingBottom: "30px" }}>
         <Table stickyHeader aria-label="sticky table">
-          {/* <TableHead>
-            <TableRow>
-              {headers.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{
-                    minWidth: column.minWidth,
-                    fontWeight: "bold",
-                    padding: "8px",
-                  }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead> */}
           <TableHeaders headers={headers} />
           <TableBody>
             {rows.map((row) => (

@@ -6,23 +6,18 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../store/authentication/operation";
-import {
-  selectAuthenticated,
-  selectErrorMessage,
-  selectLoading,
-} from "../../store/authentication/slice";
+import { selectAuthenticated } from "../../store/authentication/slice";
 import { AppDispatch, useSelector } from "../../store/configstore";
-import { useState } from "react";
 
 export default function SignIn() {
-  const isLoading = useSelector(selectLoading);
-  const error = useSelector(state => state.authentication.error);
+  const error = useSelector((state) => state.authentication.error);
   const isLoggedIn = useSelector(selectAuthenticated);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
@@ -34,7 +29,7 @@ export default function SignIn() {
       email: data.get("username"),
       password: data.get("password"),
     };
-    dispatch(loginUser(user))
+    dispatch(loginUser(user));
   };
 
   if (isLoggedIn) {

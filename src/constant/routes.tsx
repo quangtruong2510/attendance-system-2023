@@ -1,7 +1,9 @@
 import IRoute from "../models/route";
-import Attendance from "../pages/attendance/Attendance";
-import AttendanceClass from "../pages/attendance/AttendanceClass";
-import AttendanceToday from "../pages/attendance/AttendanceToday";
+import Attendance from "../pages/attendance/pageList/Attendance";
+import AttendanceClass from "../pages/attendance/pageList/AttendanceClass";
+import AttendanceToday from "../pages/attendance/pageList/AttendanceToday";
+import DetailAttendanceStudentPeriod from "../pages/attendance/pageList/DetailAttendanceStudent";
+import PeriodAttendance from "../pages/attendance/pageList/PeriodAttendance";
 import Class from "../pages/class/classList";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Login from "../pages/login/Login";
@@ -56,6 +58,18 @@ const routeList: IRoute[] = [
   {
     path: "/attendanceToday/class/:id",
     component: <AttendanceClass />,
+    exact: true,
+    role: [Roles.ADMIN, Roles.TEACHER],
+  },
+  {
+    path: "/attendance/class/:id/:from/:to",
+    component: <PeriodAttendance />,
+    exact: true,
+    role: [Roles.ADMIN, Roles.TEACHER],
+  },
+  {
+    path: "/attendance/student/:id/:from/:to",
+    component: <DetailAttendanceStudentPeriod />,
     exact: true,
     role: [Roles.ADMIN, Roles.TEACHER],
   },

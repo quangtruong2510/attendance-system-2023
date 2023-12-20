@@ -8,27 +8,27 @@ export interface Column {
 }
 
 const headerDashboardTable: Column[] = [
-  { id: "class", label: "Lớp", minWidth: 50, align: "left" },
-  { id: "quantity", label: "Sỉ số", minWidth: 50, align: "left" },
+  { id: "class", label: "Lớp", minWidth: 50, align: "center" },
+  { id: "quantity", label: "Sỉ số", minWidth: 50, align: "center" },
   {
     id: "absenceWithPermission",
     label: "Vắng(CP)",
     minWidth: 50,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
   {
     id: "absenceWithoutPermission",
     label: "Vắng(KP)",
     minWidth: 50,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
   {
     id: "late",
     label: "Đi trễ",
     minWidth: 50,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
 ];
@@ -369,6 +369,112 @@ const headerClassTable: Column[] = [
   },
 ];
 
+const headerAttendanceClassPeriod: Column[] = [
+  { id: "id", label: "STT", minWidth: 50, align: "center", maxWidth: 300 },
+  {
+    id: "name",
+    label: "Họ và tên",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 100,
+  },
+  {
+    id: "phone",
+    label: "Số điện thoại",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "address",
+    label: "Địa chỉ",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "present",
+    label: "Có mặt",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "absenceWithPermission",
+    label: "Vắng(CP)",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "absenceWithoutPermission",
+    label: "Vắng(KP)",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "late",
+    label: "Đi trễ",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "action",
+    label: "Chi tiết",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+];
+
+const headerDetailAttendanceStudentPeriod: Column[] = [
+  { id: "id", label: "STT", minWidth: 50, align: "center", maxWidth: 300 },
+  {
+    id: "day",
+    label: "Ngày",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 100,
+  },
+  {
+    id: "timeCheckIn",
+    label: "Thời gian vào lớp",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "timeCheckOut",
+    label: "Thời gian checkout",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "status",
+    label: "Trạng thái",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "note",
+    label: "Ghi chú",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "action",
+    label: "Chỉnh sửa",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+];
+
 export {
   headerStudentTable,
   headerDashboardTable,
@@ -378,4 +484,6 @@ export {
   headerTeacherTable,
   headerClassTable,
   headerAttendanceClassDashboardTable,
+  headerAttendanceClassPeriod,
+  headerDetailAttendanceStudentPeriod,
 };

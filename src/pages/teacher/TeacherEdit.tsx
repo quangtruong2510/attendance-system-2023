@@ -14,21 +14,28 @@ import { CustomInput } from "../../components/common/FormInput/InputField";
 import { Teacher } from "../../models/teacher";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import { initTeacher } from "../../store/teachers/initialize";
-import { addTeacher, fetchTeacher, updateTeacher } from "../../store/teachers/operation";
+import { addTeacher, updateTeacher } from "../../store/teachers/operation";
 import { clearValidationErrors } from "../../store/teachers/slice";
 
 interface Props {
-  isNew: boolean
-  isOpen: boolean
-  selectedTeacher?: Teacher | null
+  isNew: boolean;
+  isOpen: boolean;
+  selectedTeacher?: Teacher | null;
   handleClose: () => void;
   onClickEdit: (isSuccess: boolean) => void;
 }
 
-const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleClose, onClickEdit }) => {
-
+const TeacherEdit: React.FC<Props> = ({
+  isNew,
+  isOpen,
+  selectedTeacher,
+  handleClose,
+  onClickEdit,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const validationErrors = useSelector(state => state.teacher.validationErrors);
+  const validationErrors = useSelector(
+    (state) => state.teacher.validationErrors
+  );
 
   const [teacher, setTeacher] = useState<Teacher>({
     homeroomClass: "",
@@ -39,44 +46,48 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
 
   const handleInputChange =
     (property: keyof Teacher) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setTeacher((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setTeacher((prev) => ({ ...prev, [property]: event.target.value }));
+    };
   const handleAddTeacher = async () => {
     if (isNew) {
-      dispatch(addTeacher(teacher)).unwrap()
+      dispatch(addTeacher(teacher))
+        .unwrap()
         .then(() => {
           handleClose();
-          onClickEdit(true)
+          onClickEdit(true);
         })
         .catch(() => {
-          onClickEdit(false)
-        })
+          onClickEdit(false);
+        });
     } else {
-      dispatch(updateTeacher(teacher)).unwrap()
+      dispatch(updateTeacher(teacher))
+        .unwrap()
         .then(() => {
           handleClose();
-          onClickEdit(true)
+          onClickEdit(true);
         })
         .catch(() => {
-          onClickEdit(false)
-        })
+          onClickEdit(false);
+        });
     }
   };
-
 
   useEffect(() => {
     dispatch(clearValidationErrors());
     if (!isNew) {
-      setTeacher(selectedTeacher || initTeacher)
+      setTeacher(selectedTeacher || initTeacher);
     } else {
-      setTeacher(initTeacher)
+      setTeacher(initTeacher);
     }
   }, [selectedTeacher]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle color={"rgb(65, 84, 241)"}> {`${isNew ? "Thêm mới " : "Chỉnh sửa"} giáo viên`}</DialogTitle>
+      <DialogTitle color={"rgb(65, 84, 241)"}>
+        {" "}
+        {`${isNew ? "Thêm mới " : "Chỉnh sửa"} giáo viên`}
+      </DialogTitle>
       <DialogContent>
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput
@@ -87,7 +98,11 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             style={{ width: "300px" }}
             value={teacher.name}
             onChange={handleInputChange("name")}
-            messageError={validationErrors && validationErrors.name ? validationErrors.name : ''}
+            messageError={
+              validationErrors && validationErrors.name
+                ? validationErrors.name
+                : ""
+            }
           />
         </FormControl>
         <Stack flexDirection={"row"} gap={2} paddingTop={2}>
@@ -99,7 +114,11 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             size="small"
             value={teacher.phone}
             onChange={handleInputChange("phone")}
-            messageError={validationErrors && validationErrors.phone ? validationErrors.phone : ''}
+            messageError={
+              validationErrors && validationErrors.phone
+                ? validationErrors.phone
+                : ""
+            }
           />
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
@@ -110,7 +129,11 @@ const TeacherEdit: React.FC<Props> = ({ isNew, isOpen, selectedTeacher, handleCl
             size="small"
             value={teacher.address}
             onChange={handleInputChange("address")}
-            messageError={validationErrors && validationErrors.address ? validationErrors.address : ''}
+            messageError={
+              validationErrors && validationErrors.address
+                ? validationErrors.address
+                : ""
+            }
           />
         </FormControl>
       </DialogContent>
