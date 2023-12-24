@@ -30,6 +30,9 @@ const TableRows: React.FC<Props> = (props: Props) => {
                   value as StatusAttendanceType;
                 value = StatusAttendanceTypeList[type];
               }
+              if (column.id == "id") {
+                value = index + 1
+              }
               return (
                 <TableCell
                   style={{

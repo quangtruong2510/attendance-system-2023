@@ -7,10 +7,14 @@ import {
   fetchClassSelection,
 } from "./operation";
 
-export const studentSlice = createSlice({
-  name: "student",
+export const initialSlice = createSlice({
+  name: "initial",
   initialState,
-  reducers: {},
+  reducers: {
+    filterClassesByGrade: (state, action) => {
+      state.selectedClasses = state.classSelectionList.filter((classOption) => classOption.foreignKey === action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchUnAssignTeacherList.fulfilled,
@@ -22,6 +26,7 @@ export const studentSlice = createSlice({
       fetchGradeList.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.gradeList = action.payload.data;
+        state.selectedClasses = action.payload.data;
       }
     );
     builder.addCase(
@@ -33,4 +38,5 @@ export const studentSlice = createSlice({
   },
 });
 
-export default studentSlice.reducer;
+export const { filterClassesByGrade } = initialSlice.actions;
+export default initialSlice.reducer;

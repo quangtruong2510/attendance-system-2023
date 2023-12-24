@@ -16,10 +16,7 @@ export const studentSlice = createSlice({
   initialState,
   reducers: {
     setFilterStudent(state, action) {
-      state.data.slice(
-        action.payload.current * action.payload.perPage,
-        action.payload.current * action.payload.perPage + action.payload.perPage
-      );
+      state.curentData = action.payload;
     },
     clearValidationErrors: (state) => {
       state.validationErrors = null;
@@ -37,6 +34,7 @@ export const studentSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.data = action.payload.data;
+        state.curentData = action.payload.data;
       }
     );
     // Request fail
@@ -84,7 +82,6 @@ export const studentSlice = createSlice({
       updateStudent.rejected,
       (state, action: PayloadAction<any>) => {
         state.validationErrors = action.payload.errors;
-        console.log("updateStudentaaaaaaaaaaa");
       }
     );
 

@@ -92,7 +92,7 @@ interface State {
 const initialState: State = {
   data: teachers,
   selectedTeacher: initTeacher,
-  isLoading: true,
+  isLoading: false,
   validationErrors: null,
 };
 

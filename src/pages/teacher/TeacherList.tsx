@@ -22,7 +22,7 @@ import { OptionSelect } from "../../models/Utils";
 import { Teacher } from "../../models/teacher";
 import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
-import {} from "../../store/students/operation";
+import { } from "../../store/students/operation";
 import {
   deleteTeacherById,
   fetchTeacher,
@@ -56,7 +56,7 @@ const TeacherList = () => {
 
   useEffect(() => {
     dispatch(initializeState());
-    dispatch(fetchTeacher());
+    // dispatch(fetchTeacher());
   }, []);
 
   const addNewTeacher = async () => {
@@ -95,7 +95,7 @@ const TeacherList = () => {
     );
   };
 
-  const handleReload = () => {};
+  const handleReload = () => { };
 
   const options: OptionSelect[] = [
     { value: 1, label: "6" },
@@ -113,9 +113,9 @@ const TeacherList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   return (
     <ContentLayout>

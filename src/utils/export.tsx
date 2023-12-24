@@ -1,5 +1,12 @@
 import * as XLSX from "xlsx";
 
+export interface FilterCriteria {
+  [key: string]: {
+    value: any;
+    strict?: boolean;
+  };
+}
+
 class CommonUtils {
   async exportToExcel(
     fileName: string,
@@ -41,6 +48,36 @@ class CommonUtils {
       URL.revokeObjectURL(url);
 
       resolve();
+    });
+  }
+
+  filterData<T extends Record<string, any>>(
+    dataList: T[],
+    filterCriteria: FilterCriteria
+  ): T[] {
+    const activeFilters = Object.fromEntries(
+      Object.entries(filterCriteria).filter(([_, filter]) => filter.value !== "")
+    );
+
+    return dataList.filter((item) => {
+      return Object.entries(activeFilters).every(([property, filter]) => {
+        const { value, strict } = filter;
+        const itemValue = item[property];
+
+        if (itemValue === undefined) {
+          return true; // Bỏ qua nếu giá trị không tồn tại
+        }
+
+        if (typeof itemValue === 'string' && typeof value === 'string') {
+          return strict ? itemValue === value : itemValue.includes(value);
+        }
+
+        if (typeof itemValue === 'number' && typeof value === 'number') {
+          return strict ? itemValue === value : String(itemValue).includes(String(value));
+        }
+
+        return false;
+      });
     });
   }
 }

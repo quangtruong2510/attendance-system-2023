@@ -55,18 +55,14 @@ const updateStudent = createAsyncThunk(
         method: "PATCH",
       };
 
-      console.log("4444444444444444444444444444444444444444");
       const response = await execute(request, student);
       return response.data
 
     } catch (err: any) {
       if (!err.response) {
-        console.log("11111111111111111111111111111111");
 
         throw err
       }
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
       return rejectWithValue(err.response.data)
     }
   }

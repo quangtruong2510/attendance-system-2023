@@ -40,8 +40,6 @@ export const studentSlice = createSlice({
       fetchTeacher.rejected,
       (state, action: PayloadAction<any>) => {
         state.validationErrors = action.payload.errors;
-        console.log(" state.validationErrors", state.validationErrors);
-
         state.isLoading = false;
       }
     );

@@ -51,7 +51,7 @@ const StudentList = () => {
 
   useEffect(() => {
     dispatch(initializeState());
-    dispatch(fetchClasses());
+    // dispatch(fetchClasses());
   }, []);
 
   const addNewClass = () => {
@@ -83,9 +83,9 @@ const StudentList = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel("lop-hoc", "Danh sách lớp học", classList);

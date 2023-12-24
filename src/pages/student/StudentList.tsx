@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper,
   SelectChangeEvent,
   Stack,
@@ -25,42 +26,76 @@ import {
   deleteStudentById,
   fetchStudents,
 } from "../../store/students/operation";
-import { clearValidationErrors } from "../../store/students/slice";
+import { clearValidationErrors, setFilterStudent } from "../../store/students/slice";
 import CommonUtil from "../../utils/export";
 import { Roles } from "../../utils/role";
 import EditStudent from "./StudentEdit";
-import TableRows from "./part/TableRows";
+// import TableRows from "./part/TableRows";
+import { Search } from "@mui/icons-material";
+import { filterClassesByGrade } from "../../store/initdata/slice";
+import TableRows from "../../components/common/Table/TableRows";
 
-interface GroupFilterSearch {
-  class: string;
-  grade: string;
-  name: string;
-  phone: string;
+interface FilterCriteria {
+  [key: string]: {
+    value: any;
+    strict?: boolean;
+    foreignKey?: number
+  };
 }
 
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const studentList: Student[] = useSelector((state) => state.students.data);
+  const curentData: Student[] = useSelector((state) => state.students.curentData);
+  const grades: OptionSelect[] = useSelector((state) => state.initial.gradeList)
+  let classes: OptionSelect[] = useSelector((state) => state.initial.selectedClasses);
+  const { current, perPage } = useSelector((state) => state.pagination);
+  const isLoading = useSelector((state) => state.students.isLoading);
+  const role = useSelector((state) => state.authentication.role);
+
   // const [isDialogOpen, setDialogOpen] = useState(false);
   // const selectedStudent: Student = useSelector(
   //   (state) => state.students.selectedStudent
   // );
 
-  const role = useSelector((state) => state.authentication.role);
-  // const [isNew, setIsNewStudent] = useState(false);
-  const { current, perPage } = useSelector((state) => state.pagination);
-  const isLoading = useSelector((state) => state.students.isLoading);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isNew, setIsNewStudent] = useState(false);
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    class: "",
-    grade: "",
-    name: "",
-    phone: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    classID: { value: '', strict: true },
+    grade: { value: '', strict: true },
+    name: { value: '', strict: false },
   });
 
-  console.log("studentList", studentList);
+  const handleChangeFilter = (property: keyof FilterCriteria) => (
+    event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>
+  ) => {
+    if (property === 'grade') {
+      dispatch(filterClassesByGrade(event.target.value))
+    }
+
+    setFilter((prev) => ({
+      ...prev,
+      [property]: {
+        value: event.target.value,
+        strict: prev[property]?.strict ?? true,
+      },
+    }));
+  };
+
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterStudent(studentList))
+      return;
+    }
+
+    const filterData: Student[] = CommonUtil.filterData(studentList, filter);
+    dispatch(setFilterStudent(filterData))
+  };
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -103,29 +138,9 @@ const StudentList = () => {
     dispatch(fetchStudents());
   };
 
-  const options: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
-
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
-
-  const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
-
   useEffect(() => {
     dispatch(initializeState());
-    dispatch(fetchStudents());
+    // dispatch(fetchStudents());
   }, []);
 
   return (
@@ -165,23 +180,23 @@ const StudentList = () => {
                 <SelectDropdown
                   id={"grade"}
                   label="Khối"
-                  options={options}
-                  value={filter.grade}
+                  options={grades}
+                  value={filter.grade.value}
                   onChange={handleChangeFilter("grade")}
                 />
                 <SelectDropdown
                   id={"class"}
                   label="Lớp"
-                  options={GradeOptions}
-                  value={filter.class}
-                  onChange={handleChangeFilter("class")}
+                  options={classes}
+                  value={filter.classId.value}
+                  onChange={handleChangeFilter("classId")}
                 />
               </>
             )}
 
             <CustomInput
               label={"Họ và tên"}
-              value={filter.name}
+              value={filter.name.value}
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}
@@ -190,15 +205,29 @@ const StudentList = () => {
               <>
                 <CustomInput
                   label={"Số điện thoại"}
-                  value={filter.name}
-                  onChange={handleChangeFilter("phone")}
+                  value={filter.name.value}
+                  onChange={handleChangeFilter("name")}
                   placeholder={"Số điện thoại"}
                   fullWidth={false}
                 />
               </>
             )}
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
-          <NavigationTable count={studentList.length} />
+          <NavigationTable count={curentData.length} />
         </Stack>
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
           <Table
@@ -211,7 +240,7 @@ const StudentList = () => {
               <TableRowsLoader rowsNum={10} numColumns={7} />
             ) : (
               <TableRows
-                rows={studentList.slice(
+                rows={curentData.slice(
                   current * perPage,
                   current * perPage + perPage
                 )}
