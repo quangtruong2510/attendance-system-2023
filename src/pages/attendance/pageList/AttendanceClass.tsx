@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper,
   SelectChangeEvent,
   Stack,
@@ -24,52 +25,50 @@ import { statusAttendace } from "../../../constant/Utils";
 import { breadcrumbAttendanceToday } from "../../../constant/breadcrums";
 import { AttendanceStudent } from "../../../models/attendance";
 import { fetchAttendanceClass } from "../../../store/attendances/operation";
-import { setSelectedStudent } from "../../../store/attendances/slice";
 import CommonUtil from "../../../utils/export";
 import AttendanceStudentEdit from "../edit/AttendanceStudent";
-
-interface GroupFilterSearch {
-  status: string;
-  name: string;
-  phone: string;
-}
+import { FilterCriteria } from "../../../Type/Utils";
+import { Search } from "@mui/icons-material";
+import { setFilterAttendanceClasse } from "../../../store/attendancesclass/slice";
 
 const AttendanceClass = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const attendanceStudent: AttendanceStudent[] = useSelector(
-    (state) => state.attendanceClass.data
-  );
+  const attendanceStudent: AttendanceStudent[] = useSelector((state) => state.attendanceClass.data);
+  const curentData: AttendanceStudent[] = useSelector((state) => state.attendanceClass.curentData);
   const isLoading = useSelector((state) => state.attendanceClass.isLoading);
   const { id } = useParams();
 
-  const selectedAttendanceStudent: AttendanceStudent | null = useSelector(
-    (state) => state.attendance.attendanceClass.selectedStudent
-  );
+  const [selectedAttendanceStudent, setSelectedAttendanceStudent] = useState<AttendanceStudent | null>(null);
 
   const className = useSelector(
     (state) => state.attendance.attendanceClass.nameClass
   );
 
   const { current, perPage } = useSelector((state) => state.pagination);
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    phone: "",
-    name: "",
-    status: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    status: { value: "", strict: true },
+    name: { value: "", strict: false },
   });
 
   const handleClose = () => {
     setDialogOpen(false);
   };
   const editStudent = (id: number) => {
-    dispatch(setSelectedStudent(id));
     setDialogOpen(true);
+    setSelectedAttendanceStudent(attendanceStudent.find((attendance) => attendance.id === id) || null)
   };
 
   const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
+    (property: keyof FilterCriteria) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
       };
 
   const handleExport = async () => {
@@ -78,6 +77,27 @@ const AttendanceClass = () => {
       "Chuyên cần lớp " + className,
       attendanceStudent
     );
+  };
+
+  const handeSuccessEdit = async (isSuccess: boolean) => {
+    if (isSuccess) {
+      const idClass = id ? parseInt(id, 10) : 0;
+      await dispatch(fetchAttendanceClass(idClass));
+      setDialogOpen(false);
+    }
+  };
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterAttendanceClasse(attendanceStudent));
+      return;
+    }
+
+    const filterData: AttendanceStudent[] = CommonUtil.filterData(attendanceStudent, filter);
+    dispatch(setFilterAttendanceClasse(filterData));
   };
 
   const handleReload = () => { };
@@ -122,20 +142,34 @@ const AttendanceClass = () => {
               label="Trạng thái"
               minWidth={120}
               options={statusAttendace}
-              value={filter.status}
+              value={filter.status.value}
               onChange={handleChangeFilter("status")}
             />
             <CustomInput
               label={"Tên"}
-              value={filter.name}
+              value={filter.name.value}
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}
               style={{ maxWidth: "3000px" }}
             />
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
 
-          <NavigationTable count={attendanceStudent.length} />
+          <NavigationTable count={curentData.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -149,7 +183,7 @@ const AttendanceClass = () => {
               <TableRowsLoader rowsNum={10} numColumns={7} />
             ) : (
               <TableRows
-                rows={attendanceStudent.slice(
+                rows={curentData.slice(
                   current * perPage,
                   current * perPage + perPage
                 )}
@@ -162,6 +196,7 @@ const AttendanceClass = () => {
             isOpen={isDialogOpen}
             selectedAttendanceStudent={selectedAttendanceStudent}
             handleClose={handleClose}
+            onClickEdit={handeSuccessEdit}
           ></AttendanceStudentEdit>
         </TableContainer>
       </Paper>

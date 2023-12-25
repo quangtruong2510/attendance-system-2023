@@ -8,7 +8,7 @@ export interface Column {
 }
 
 const headerDashboardTable: Column[] = [
-  { id: "class", label: "Lớp", minWidth: 50, align: "center" },
+  { id: "className", label: "Lớp", minWidth: 50, align: "center" },
   { id: "quantity", label: "Sỉ số", minWidth: 50, align: "center" },
   {
     id: "absenceWithPermission",

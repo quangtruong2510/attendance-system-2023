@@ -5,6 +5,7 @@ const initialState = {
   role: Roles.ADMIN,
   name: "Admin",
   isAuthenticated: false,
+  classId: 0,
   loading: false,
   error: null,
 };

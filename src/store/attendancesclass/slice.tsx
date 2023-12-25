@@ -13,6 +13,9 @@ export const attendanceSlice = createSlice({
       state.selectedStudent =
         state.data.find((student) => student.id === action.payload) ?? null;
     },
+    setFilterAttendanceClasse(state, action) {
+      state.curentData = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAttendanceClass.pending, (state) => {
@@ -24,6 +27,7 @@ export const attendanceSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.data = action.payload.data;
+        state.curentData = action.payload.data;
       }
     );
     builder.addCase(fetchAttendanceClass.rejected, (state) => {
@@ -42,5 +46,5 @@ export const attendanceSlice = createSlice({
 
 export const selectLoading = (state: RootState) => state.attendance.isLoading;
 
-export const { setSelectedStudent } = attendanceSlice.actions;
+export const { setSelectedStudent, setFilterAttendanceClasse } = attendanceSlice.actions;
 export default attendanceSlice.reducer;

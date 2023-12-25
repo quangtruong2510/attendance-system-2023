@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,54 +9,62 @@ import {
   Radio,
   RadioGroup,
   SelectChangeEvent,
-  Stack,
+  Stack
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { StatusAttendanceType } from "../../../Type/Utils";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
 import { AttendanceStudent } from "../../../models/attendance";
-import { StatusAttendanceType } from "../../../Type/Utils";
+import { updateAttendanceStudent } from "../../../store/attendances/operation";
+import { AppDispatch } from "../../../store/configstore";
 
 interface Props {
   isOpen: boolean;
   selectedAttendanceStudent: AttendanceStudent | null;
   handleClose: () => void;
+  onClickEdit: (isSuccess: boolean) => void;
 }
 
 const AttendanceStudentEdit: React.FC<Props> = ({
   isOpen,
   handleClose,
   selectedAttendanceStudent,
+  onClickEdit
 }) => {
-  // const dispatch = useDispatch<AppDispatch>();
-  const [attendanceStudent, setAttendanceStudent] =
-    useState<AttendanceStudent | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const [attendanceStudent, setAttendanceStudent] = useState<AttendanceStudent | null>(selectedAttendanceStudent);
 
   useEffect(() => {
+    console.log("selectedAttendanceStudent", selectedAttendanceStudent);
+
     setAttendanceStudent(selectedAttendanceStudent);
   }, [selectedAttendanceStudent]);
 
   const handleEditAttendanceStudent = () => {
-    // if (!isNew) {
-    //   dispatch(updateStudent({ id: editedStudent.id, payload: editedStudent }));
-    //   return;
-    // }
-    // dispatch(addStudent({ student: editedStudent }));
+    dispatch(updateAttendanceStudent(attendanceStudent)).unwrap()
+      .then(() => {
+        handleClose();
+        onClickEdit(true);
+      })
+      .catch(() => {
+        onClickEdit(false);
+      });
   };
-
   const handleChangeData =
     (property: keyof AttendanceStudent) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setAttendanceStudent((prev) => {
-        if (!prev) {
-          return { [property]: event.target.value } as AttendanceStudent;
-        }
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
+        setAttendanceStudent((prev) => {
+          if (!prev) {
+            return { [property]: event.target.value } as AttendanceStudent;
+          }
 
-        return {
-          ...prev,
-          [property]: event.target.value,
-        };
-      });
-    };
+          return {
+            ...prev,
+            [property]: event.target.value,
+          };
+        });
+      };
   return (
     <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle color={"rgb(0, 130, 146)"}>Chỉnh sửa thông tin</DialogTitle>
@@ -98,7 +105,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
         <RadioGroup
           aria-label="attendance"
           name="attendance"
-          value={attendanceStudent?.status}
+          value={attendanceStudent?.status || 2}
           onChange={handleChangeData("status")}
           row
         >

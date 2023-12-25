@@ -17,6 +17,8 @@ const loginUser = createAsyncThunk("auth/login", async (user: any) => {
     const data = await response.json();
     if (!response.ok) {
       return Promise.reject(data.error || "Mật khẩu hoặc tài khoản không chính xác");
+    } else {
+      localStorage.setItem('token', data.data.token);
     }
 
     return data;

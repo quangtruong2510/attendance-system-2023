@@ -25,14 +25,34 @@ const getStudentById = createAsyncThunk(
   }
 );
 
+// const updateAttendanceStudent = createAsyncThunk(
+//   "attendance/updateAttendance",
+//   async (attendance: any) => {
+//     const request: Request = {
+//       endpoint: `${BASE_URL_API}attendance/student/${attendance.id}`,
+//       method: "PATCH",
+//     };
+//     return await execute(request);
+//   }
+// );
+
 const updateAttendanceStudent = createAsyncThunk(
   "attendance/updateAttendance",
-  async (attendance: any) => {
-    const request: Request = {
-      endpoint: `${BASE_URL_API}attendance/${attendance.id}`,
-      method: "PATCH",
-    };
-    return await execute(request);
+  async (attendance: any, { rejectWithValue }) => {
+    try {
+      const request: Request = {
+        endpoint: `${BASE_URL_API}attendance_update/${attendance.id}`,
+        method: "PATCH",
+      };
+
+      const response = await execute(request, attendance);
+      return response.data;
+    } catch (err: any) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 

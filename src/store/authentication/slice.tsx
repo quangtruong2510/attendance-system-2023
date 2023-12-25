@@ -8,7 +8,11 @@ import { Roles } from "../../utils/role";
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.isAuthenticated = false;
+    }
+  },
   extraReducers: (builder) => {
     // Login
     builder.addCase(loginUser.pending, (state) => {
@@ -21,12 +25,12 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.role = action.payload.data.role;
       if (action.payload.data.role === Roles.TEACHER) {
-        state.name = "Giao vien Truong"
+        state.name = action.payload.data.teacherName
+        state.classId = action.payload.data.classId
       }
     });
     builder.addCase(loginUser.rejected, (state, action: any) => {
       state.loading = false;
-      console.log("aaaaaaaaaaaaaaaaa", action.error.message);
       state.error = action.error.message;
     });
 
@@ -52,4 +56,6 @@ export const selectErrorMessage = (state: RootState) =>
 export const selectAuthenticated = (state: RootState) =>
   state.authentication.isAuthenticated;
 export const selectRole = (state: RootState) => state.authentication.role;
+export const { logout } = authSlice.actions;
+
 export default authSlice.reducer;

@@ -27,6 +27,7 @@ import { AppDispatch, useSelector } from "../../store/configstore";
 import CommonUtil from "../../utils/export";
 import ClassEditDialog from "./ClassEdit";
 import TableRows from "./part/TableRows";
+import { FilterCriteria } from "../../Type/Utils";
 
 interface GroupFilterSearch {
   class: string;
@@ -42,11 +43,9 @@ const StudentList = () => {
   const { current, perPage } = useSelector((state) => state.pagination);
   const isLoading = useSelector((state) => state.class.isLoading);
 
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    class: "",
-    grade: "",
-    name: "",
-    phone: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    status: { value: "", strict: true },
+    name: { value: "", strict: false },
   });
 
   useEffect(() => {

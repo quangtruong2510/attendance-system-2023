@@ -6,13 +6,16 @@ import {
   PersonRemove,
   WatchLater,
 } from "@mui/icons-material";
-import { Typography } from "@mui/material";
+import { Tab, Tabs, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import { format, subDays } from "date-fns";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   Bar,
   BarChart,
@@ -34,8 +37,9 @@ import {
   headerAttendanceClassDashboardTable,
   headerDashboardTable,
 } from "../../constant/headerTable";
-import { AttendanceStudent } from "../../models/attendance";
-import { useSelector } from "../../store/configstore";
+import { AttendanceReport } from "../../models/attendance";
+import { fetchAttendanceClassPeriod } from "../../store/attendances/operation";
+import { AppDispatch, useSelector } from "../../store/configstore";
 import { Roles } from "../../utils/role";
 import "./Dashboard.scss";
 import CartReport from "./parts/Cart";
@@ -64,69 +68,72 @@ const iconStyle = {
 
 let headers: Column[] = [];
 export default function Dashboard() {
-  const data = useSelector((state) => state.dashBoard.data);
+  const dispatch = useDispatch<AppDispatch>();
+  // const attendanceClass = useSelector((state) => state.dashBoard.data);
   const role = useSelector((state) => state.authentication.role);
-  const attendanceStudent: AttendanceStudent[] = useSelector(
-    (state) => state.attendance.attendanceClass.attendanceStudent
+  const attendanceClasses: AttendanceReport[] = useSelector(
+    (state) => state.attendance.attendanceClasses
   );
 
+  const summary = useSelector((state) => state.attendance.summary);
   headers =
     role == Roles.TEACHER
       ? headerAttendanceClassDashboardTable
       : headerDashboardTable;
 
-  const rows = role == Roles.TEACHER ? attendanceStudent : data;
+  useEffect(() => {
+    let period = {
+      from: format(new Date(), 'dd-MM-yyyy'),
+      to: format(new Date(), 'dd-MM-yyyy'),
+    }
+    dispatch(fetchAttendanceClassPeriod(period));
+  }, []);
+
   return (
     <Container>
-      {/* <Breadcrumbs aria-label="breadcrumb">
-        <Typography variant="h6" style={{ color: "#4154F1" }}>
-          Trang chủ
-        </Typography>
-        <Typography color="text.primary">Phân tích</Typography>
-      </Breadcrumbs> */}
       <BreadcrumbsComponent
         breadcrumbs={breadcrumbDashboardItems}
         haveAddButton={false}
       ></BreadcrumbsComponent>
-      <Report></Report>
+      <Report summary={summary}></Report>
       <ChartLayout>
         <Chart />
-        <TableReport rows={rows} />
+        <TableReport rows={attendanceClasses} />
       </ChartLayout>
     </Container>
   );
 }
 
-const Report = () => {
+const Report = ({ summary }: { summary: any }) => {
   return (
     <ReportLayout>
       <CartReport
-        value="6"
+        value={summary.total_classes}
         description="Tổng số lớp"
         icon={<ClassOutlined style={iconStyle} />}
       />
       <CartReport
-        value="1350"
+        value={summary.total_students}
         description="Tổng số học sinh"
         icon={<EmojiPeople style={iconStyle} />}
       />
       <CartReport
-        value="1300"
+        value={summary.total_present}
         description="Số lượng có mặt"
         icon={<PersonAdd style={iconStyle} />}
       />
       <CartReport
-        value="20"
+        value={summary.total_absence_with_permission}
         description="Vắng có phép"
         icon={<PersonRemove style={iconStyle} />}
       />
       <CartReport
-        value="30"
+        value={summary.total_absence_without_permission}
         description="Vắng không phép"
         icon={<PersonOff style={iconStyle} />}
       />
       <CartReport
-        value="5"
+        value={summary.total_late}
         description="Số lượng đi trễ"
         icon={<WatchLater style={iconStyle} />}
       />
@@ -158,20 +165,72 @@ const Chart = () => {
   );
 };
 
-const TableReport = ({ rows }: { rows: any[] }) => {
+interface Props {
+  rows: any,
+}
+
+const TableReport: React.FC<Props> = ({ rows }) => {
+  const [value, setValue] = React.useState("today");
+  const dispatch = useDispatch<AppDispatch>();
+  console.log("aaaaaaaaa", rows);
+
+  const handleChange = async (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+    console.log(event);
+
+    let period = {
+      from: "",
+      to: "",
+    }
+    if (newValue == "today") {
+      period.from = format(new Date(), 'dd-MM-yyyy');
+      period.to = format(new Date(), 'dd-MM-yyyy');
+    } else if (newValue == "week") {
+      const sevenDaysAgo = subDays(new Date(), 7);
+      period.from = format(sevenDaysAgo, 'dd-MM-yyyy')
+      period.to = format(new Date(), 'dd-MM-yyyy');
+    } else {
+      const oneMonthAgo = subDays(new Date(), 30);
+      period.from = format(oneMonthAgo, 'dd-MM-yyyy')
+      period.to = format(new Date(), 'dd-MM-yyyy');
+    }
+    dispatch(fetchAttendanceClassPeriod(period))
+
+  };
+  const TabDay = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+`;
   return (
     <Paper
       className="table"
       sx={{ overflow: "hidden", width: "50%", height: "100%" }}
     >
-      <Typography variant="h6" style={{ color: "rgb(227, 113, 12)" }}>
-        Thống kê
-      </Typography>
+      <TabDay >
+        <Typography variant="h6" style={{ color: "rgb(227, 113, 12)" }}>
+          Thống kê
+        </Typography>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          aria-label="secondary tabs example"
+        >
+          <Tab value="today" label="Hôm nay" />
+          <Tab value="week" label="Tuần" />
+          <Tab value="month" label="Tháng" />
+        </Tabs>
+      </TabDay>
+
       <TableContainer sx={{ maxHeight: 400, paddingBottom: "30px" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHeaders headers={headers} />
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((row: any) => (
               <TableRow hover role="checkbox" tabIndex={-1} key={row.class}>
                 {headers.map((column) => {
                   let value = row[column.id];
@@ -202,4 +261,6 @@ const TableReport = ({ rows }: { rows: any[] }) => {
       </TableContainer>
     </Paper>
   );
+
+
 };

@@ -53,6 +53,9 @@ export const attendanceSlice = createSlice({
         state.isLoading = false;
         state.attendanceClasses = action.payload.data;
         state.currentAttendanceClasses = action.payload.data;
+        state.summary = action.payload.summary;
+        console.log("action.payload.summary", action.payload.summary);
+        console.log("state.summary", state.summary);
       }
     );
   },

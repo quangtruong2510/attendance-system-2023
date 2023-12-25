@@ -16,9 +16,12 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "../../../store/configstore";
+import { AppDispatch, useSelector } from "../../../store/configstore";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/authentication/slice";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const userName = useSelector((state) => state.authentication.name);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -31,8 +34,8 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    console.log("logged out");
-
+    localStorage.removeItem('token');
+    dispatch(logout())
     navigate(`login`);
   }
   return (

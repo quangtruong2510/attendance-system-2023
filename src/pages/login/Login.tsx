@@ -33,7 +33,7 @@ export default function SignIn() {
   };
 
   if (isLoggedIn) {
-    navigate("/student");
+    navigate("/dashboard");
   }
 
   return (

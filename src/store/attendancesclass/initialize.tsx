@@ -99,6 +99,7 @@ export const initSelectedStudent: AttendanceStudent = {
 interface State {
   nameClass: string;
   data: AttendanceStudent[];
+  curentData: AttendanceStudent[];
   selectedStudent: AttendanceStudent | null;
   isLoading: boolean,
   validationErrors: any,
@@ -106,6 +107,7 @@ interface State {
 
 const initialState: State = {
   data: attendanceStudent,
+  curentData: attendanceStudent,
   selectedStudent: initSelectedStudent,
   nameClass: "6A1",
   isLoading: false,

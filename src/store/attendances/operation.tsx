@@ -49,10 +49,10 @@ const updateAttendanceStudent = createAsyncThunk(
   "attendance/updateAttendance",
   async (attendance: any) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}attendance/${attendance.id}`,
+      endpoint: `${BASE_URL_API}attendance_update/${attendance.id}`,
       method: "PATCH",
     };
-    return await execute(request);
+    return await execute(request, attendance);
   }
 );
 
