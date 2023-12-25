@@ -1,4 +1,4 @@
-import { StatusAttendanceType } from "../Type/Utils";
+import { Gender, StatusAttendanceType } from "../Type/Utils";
 import { OptionSelect } from "../models/Utils";
 
 const authTypes = {
@@ -20,4 +20,10 @@ const StatusAttendanceTypeList = {
   [StatusAttendanceType.LATE]: "Đi trễ",
 };
 
-export { StatusAttendanceTypeList, genders, authTypes };
+const genderList = {
+  [Gender.MALE]: "Nam",
+  [Gender.FEMALE]: "Nữ",
+
+};
+
+export { StatusAttendanceTypeList, genders, authTypes, genderList };

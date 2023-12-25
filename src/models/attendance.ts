@@ -4,6 +4,7 @@ export interface AttendanceReport {
   [key: number | string]: string | number | boolean | undefined;
   id: number;
   grade: string;
+  gradeId?: number;
   classId?: number;
   className?: string;
   quantity: number;

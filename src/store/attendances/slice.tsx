@@ -4,6 +4,7 @@ import { RootState } from "../configstore";
 import initialState from "./initialize";
 
 import {
+  fetchAttendanceClassPeriod,
   fetchStatisticsAttendance,
   updateAttendanceStudent,
 } from "./operation";
@@ -18,6 +19,9 @@ export const attendanceSlice = createSlice({
           (student) => student.id === action.payload
         ) ?? null;
     },
+    setFilterAttendanceClasses(state, action) {
+      state.currentAttendanceClasses = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchStatisticsAttendance.pending, (state) => {
@@ -29,6 +33,7 @@ export const attendanceSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.attendanceClasses = action.payload.data;
+        state.currentAttendanceClasses = action.payload.data;
       }
     );
     builder.addCase(fetchStatisticsAttendance.rejected, (state) => {
@@ -41,10 +46,19 @@ export const attendanceSlice = createSlice({
         state.isLoading = false;
       }
     );
+
+    builder.addCase(
+      fetchAttendanceClassPeriod.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        state.attendanceClasses = action.payload.data;
+        state.currentAttendanceClasses = action.payload.data;
+      }
+    );
   },
 });
 
 export const selectLoading = (state: RootState) => state.attendance.isLoading;
 
-export const { setSelectedStudent } = attendanceSlice.actions;
+export const { setSelectedStudent, setFilterAttendanceClasses } = attendanceSlice.actions;
 export default attendanceSlice.reducer;

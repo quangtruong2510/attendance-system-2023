@@ -84,13 +84,13 @@ const TeacherEdit: React.FC<Props> = ({
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle color={"rgb(65, 84, 241)"}>
-        {" "}
+      <DialogTitle color={"rgb(0, 130, 146)"}>
         {`${isNew ? "Thêm mới " : "Chỉnh sửa"} giáo viên`}
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput
+            id="name"
             label="Tên giáo viên"
             type="text"
             fullWidth={true}
@@ -123,6 +123,7 @@ const TeacherEdit: React.FC<Props> = ({
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
           <CustomInput
+            id="address"
             label="Địa chỉ"
             type="text"
             fullWidth={true}

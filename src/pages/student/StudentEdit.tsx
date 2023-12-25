@@ -40,6 +40,7 @@ const EditStudent: React.FC<Props> = ({
   onClickEdit,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  console.log("selectedStudent", selectedStudent);
 
   const [student, setStudent] = useState<Student>(initStudent);
   const validationErrors = useSelector(

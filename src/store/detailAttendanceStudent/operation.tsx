@@ -6,7 +6,7 @@ const fetchDetailAttendanceStudent = createAsyncThunk(
   "student/attendancePeriod",
   async (periodClass: any) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}attendance/student/${periodClass.idStudent}/${periodClass.from}/${periodClass.to}`,
+      endpoint: `${BASE_URL_API}attendance_student?student_id=${periodClass.studentId}&from_date=${periodClass.from}&to_date=${periodClass.to}`,
       method: "GET",
     };
     return await execute(request);

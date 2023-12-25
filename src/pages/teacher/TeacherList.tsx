@@ -1,18 +1,21 @@
+import { Search } from "@mui/icons-material";
 import {
+  Button,
   Paper,
   SelectChangeEvent,
   Stack,
   Table,
-  TableBody,
   TableContainer,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { FilterCriteria } from "../../Type/Utils";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
 import TableHeaders from "../../components/common/Table/TableHeader";
+import TableRows from "../../components/common/Table/TableRows";
 import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../components/common/Table/TableTitle";
 import BreadcrumbsComponent from "../../components/common/Utils";
@@ -22,41 +25,43 @@ import { OptionSelect } from "../../models/Utils";
 import { Teacher } from "../../models/teacher";
 import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
+import { filterClassesByGrade } from "../../store/initdata/slice";
 import { } from "../../store/students/operation";
 import {
   deleteTeacherById,
   fetchTeacher,
 } from "../../store/teachers/operation";
+import { setFilterTeacher } from "../../store/teachers/slice";
 import CommonUtil from "../../utils/export";
 import TeacherEdit from "./TeacherEdit";
-import TableRows from "./part/TableRows";
-
-interface GroupFilterSearch {
-  class: string;
-  grade: string;
-  name: string;
-  phone: string;
-}
 
 const TeacherList = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const teacherList: Teacher[] = useSelector((state) => state.teacher.data);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
-  const [isNew, setIsNewTeacher] = useState(false);
-  const { current, perPage } = useSelector((state) => state.pagination);
-  const isLoading = useSelector((state) => state.teacher.isLoading);
+  let classes: OptionSelect[] = useSelector(
+    (state) => state.initial.classSelectionList
+  );
 
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    class: "",
-    grade: "",
-    name: "",
-    phone: "",
+  console.log("classes", classes);
+
+  const teacherList: Teacher[] = useSelector((state) => state.teacher.data);
+  const currentData: Teacher[] = useSelector(
+    (state) => state.teacher.currentData
+  );
+
+  const { current, perPage } = useSelector((state) => state.pagination);
+
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isNew, setIsNewTeacher] = useState(false);
+  const isLoading = useSelector((state) => state.teacher.isLoading);
+  const [filter, setFilter] = useState<FilterCriteria>({
+    classId: { value: "", strict: true },
+    name: { value: "", strict: false },
   });
 
   useEffect(() => {
     dispatch(initializeState());
-    // dispatch(fetchTeacher());
+    dispatch(fetchTeacher());
   }, []);
 
   const addNewTeacher = async () => {
@@ -87,6 +92,21 @@ const TeacherList = () => {
     setDialogOpen(false);
   };
 
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterTeacher(teacherList));
+      return;
+    }
+    console.log("filter", filter);
+
+    const filterData: Teacher[] = CommonUtil.filterData(teacherList, filter);
+    dispatch(setFilterTeacher(filterData));
+  };
+
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
       "giao-vien",
@@ -95,26 +115,21 @@ const TeacherList = () => {
     );
   };
 
-  const handleReload = () => { };
-
-  const options: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
-
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
-
+  const handleReload = () => { dispatch(fetchTeacher()) };
   const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
+    (property: keyof FilterCriteria) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+        if (property === "grade") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
+
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
       };
 
   return (
@@ -150,31 +165,37 @@ const TeacherList = () => {
             alignItems={"center"}
           >
             <SelectDropdown
-              id={"grade"}
-              label="Khối"
-              options={options}
-              value={filter.grade}
-              onChange={handleChangeFilter("grade")}
-            />
-            <SelectDropdown
               id={"class"}
               label="Lớp"
-              options={GradeOptions}
-              value={filter.class}
-              onChange={handleChangeFilter("class")}
+              options={classes}
+              value={filter.classId.value}
+              onChange={handleChangeFilter("classId")}
             />
             <CustomInput
               label={"Họ và tên"}
-              value={filter.name}
+              value={filter.name.value}
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}
             />
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
 
-          <NavigationTable count={teacherList.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
-
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
           <Table
             className="border-collapse"
@@ -182,21 +203,19 @@ const TeacherList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerTeacherTable} />
-            <TableBody>
-              {isLoading ? (
-                <TableRowsLoader rowsNum={10} numColumns={5} />
-              ) : (
-                <TableRows
-                  rows={teacherList.slice(
-                    current * perPage,
-                    current * perPage + perPage
-                  )}
-                  headers={headerTeacherTable}
-                  onDeleteClick={onDeleteClick}
-                  onEditClick={editTeacher}
-                />
-              )}
-            </TableBody>
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={currentData.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerTeacherTable}
+                onDeleteClick={onDeleteClick}
+                onEditClick={editTeacher}
+              />
+            )}
           </Table>
         </TableContainer>
       </Paper>

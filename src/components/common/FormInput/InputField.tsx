@@ -159,9 +159,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
   require,
 }) => {
   const classes = useStyles();
-  const inputProps =
+  const inputProps: React.InputHTMLAttributes<HTMLInputElement> =
     type === "phone"
       ? {
+          inputMode: "numeric",
           pattern: "[0-9]*",
           maxLength: 10,
         }
@@ -178,7 +179,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       placeholder={placeholder}
       fullWidth={fullWidth}
       size={"small"}
-      type={type ? type : undefined}
+      type={type || undefined}
       inputProps={inputProps}
       style={style}
       sx={{

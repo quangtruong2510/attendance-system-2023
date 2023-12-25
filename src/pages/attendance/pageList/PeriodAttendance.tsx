@@ -1,5 +1,7 @@
 import {
   Breadcrumbs,
+  Button,
+  Link,
   Paper,
   SelectChangeEvent,
   Stack,
@@ -16,55 +18,93 @@ import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
 
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
+import TableRows from "../../../components/common/Table/TableRows";
+import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { AttendanceClassPeriod } from "../../../models/attendance";
-import DetailPeriodRows from "../part/DetailAttendanceClassPeriod";
-import TableRows from "../../../components/common/Table/TableRows";
-
-interface GroupFilterSearch {
-  name: string;
-  phone: string;
-}
+import { fetchPeriodAttendanceClass } from "../../../store/attendancesperiod/operation";
+import { Search } from "@mui/icons-material";
+import { setFilterPeriodAttendanceClasses } from "../../../store/attendancesperiod/slice";
+import { FilterCriteria } from "../../../Type/Utils";
 
 const PeriodAttendance = () => {
-  const { id, from, to } = useParams();
+  const { id } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const startDate = searchParams.get("start_date");
+  const endDate = searchParams.get("end_date");
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const studentAttendanceList: AttendanceClassPeriod[] = useSelector(
     (state) => state.attendancesPeriod.data
   );
+  const currentData: AttendanceClassPeriod[] = useSelector(
+    (state) => state.attendancesPeriod.currentData
+  );
   const className: string = useSelector(
     (state) => state.attendancesPeriod.nameClass
   );
+  const isLoading = useSelector((state) => state.attendancesPeriod.isLoading);
 
   const { current, perPage } = useSelector((state) => state.pagination);
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    phone: "",
-    name: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    phone: { value: "", strict: false },
+    name: { value: "", strict: false },
   });
 
-  const handleReload = () => {};
+  const handleReload = () => {
+    const payload = {
+      classId: id,
+      from: startDate,
+      to: endDate,
+    };
+    dispatch(fetchPeriodAttendanceClass(payload));
+  };
+
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterPeriodAttendanceClasses(studentAttendanceList));
+      return;
+    }
+
+    const filterData: AttendanceClassPeriod[] = CommonUtil.filterData(studentAttendanceList, filter);
+    dispatch(setFilterPeriodAttendanceClasses(filterData));
+  };
+
 
   useEffect(() => {
     const payload = {
       classId: id,
-      from: from,
-      to: to,
+      from: startDate,
+      to: endDate,
     };
-    // dispatch(fetchPeriodAttendanceClass(payload));
+    dispatch(fetchPeriodAttendanceClass(payload));
   }, []);
 
-  const onDetailClick = (idStudent: number) => {
-    navigate(`/attendance/student/${idStudent}/${from}/${to}`);
+  const onDetailClick = () => {
+    navigate(
+      `/attendance/student?student_id=${id}&start_date=${startDate}&end_date=${endDate}`
+    );
   };
 
   const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+    (property: keyof FilterCriteria) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: false,
+          },
+        }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
@@ -78,10 +118,15 @@ const PeriodAttendance = () => {
     <ContentLayout>
       <Stack flexDirection={"row"} justifyContent={"space-between"}>
         <Breadcrumbs aria-label="breadcrumb">
-          <Typography variant="h5" style={{ color: "rgb(0, 130, 146)" }}>
-            Thống kê chuyên cần
+          <Link underline="hover" color="inherit" href="/attendance">
+            <Typography variant="h5" style={{ color: "rgb(0, 130, 146)" }}>
+              Thống kê
+            </Typography>
+          </Link>
+          <Typography variant="h6" style={{ color: "rgb(0, 130, 146)" }}>
+            {`Lớp ${className}`}
           </Typography>
-          <Typography color="textPrimary">{`(${from} ~ ${to})`}</Typography>
+          <Typography color="textPrimary">{`(${startDate} ~ ${endDate})`}</Typography>
         </Breadcrumbs>
       </Stack>
       <Paper
@@ -94,7 +139,7 @@ const PeriodAttendance = () => {
         }}
       >
         <TableTitle
-          title={`Lớp ${className}`}
+          title={`Chuyên cần lớp ${className}`}
           handleExport={handleExport}
           reload={handleReload}
         />
@@ -111,7 +156,7 @@ const PeriodAttendance = () => {
           >
             <CustomInput
               label={"Tên"}
-              value={filter.name}
+              value={filter.name.value}
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}
@@ -119,15 +164,29 @@ const PeriodAttendance = () => {
             />
             <CustomInput
               label={"SĐT"}
-              value={filter.name}
+              value={filter.phone.value}
               onChange={handleChangeFilter("phone")}
               placeholder={"Số điện thoại"}
               fullWidth={false}
               style={{ maxWidth: "3000px" }}
             />
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
 
-          <NavigationTable count={studentAttendanceList.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -137,14 +196,17 @@ const PeriodAttendance = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerAttendanceClassPeriod} />
-            <TableRows
-              rows={studentAttendanceList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerAttendanceClassPeriod}
-              onEditClick={onDetailClick}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={currentData.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerAttendanceClassPeriod}
+                onEditClick={onDetailClick}
+              />)}
           </Table>
         </TableContainer>
       </Paper>

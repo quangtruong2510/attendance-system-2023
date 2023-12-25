@@ -60,7 +60,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
     };
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle color={"rgb(65, 84, 241)"}>Chỉnh sửa thông tin</DialogTitle>
+      <DialogTitle color={"rgb(0, 130, 146)"}>Chỉnh sửa thông tin</DialogTitle>
       <DialogContent>
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput

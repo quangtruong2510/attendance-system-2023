@@ -8,7 +8,7 @@ import {
   deleteStudentById,
   fetchStudents,
   getStudentById,
-  updateStudent,
+  updateStudent
 } from "./operation";
 
 export const studentSlice = createSlice({
@@ -16,7 +16,7 @@ export const studentSlice = createSlice({
   initialState,
   reducers: {
     setFilterStudent(state, action) {
-      state.curentData = action.payload;
+      state.currentData = action.payload;
     },
     clearValidationErrors: (state) => {
       state.validationErrors = null;
@@ -33,8 +33,9 @@ export const studentSlice = createSlice({
       fetchStudents.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
+        console.log("aaaaaaaaaaaaaa", action.payload.data);
         state.data = action.payload.data;
-        state.curentData = action.payload.data;
+        state.currentData = action.payload.data;
       }
     );
     // Request fail
@@ -69,7 +70,6 @@ export const studentSlice = createSlice({
       }
     );
 
-
     // Request fail
     builder.addCase(
       addStudent.rejected,
@@ -91,7 +91,7 @@ export const studentSlice = createSlice({
     builder.addCase(deleteStudentById.fulfilled, (state) => {
       state.isLoading = false;
     });
-  }
+  },
 });
 
 export const selectStudents = (state: RootState) => state.students.data;

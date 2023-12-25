@@ -26,62 +26,64 @@ import {
   deleteStudentById,
   fetchStudents,
 } from "../../store/students/operation";
-import { clearValidationErrors, setFilterStudent } from "../../store/students/slice";
+import {
+  clearValidationErrors,
+  setFilterStudent,
+} from "../../store/students/slice";
 import CommonUtil from "../../utils/export";
 import { Roles } from "../../utils/role";
 import EditStudent from "./StudentEdit";
 // import TableRows from "./part/TableRows";
 import { Search } from "@mui/icons-material";
-import { filterClassesByGrade } from "../../store/initdata/slice";
+import {
+  filterClassesByGrade,
+  initializeClassState,
+} from "../../store/initdata/slice";
 import TableRows from "../../components/common/Table/TableRows";
-
-interface FilterCriteria {
-  [key: string]: {
-    value: any;
-    strict?: boolean;
-    foreignKey?: number
-  };
-}
+import { FilterCriteria } from "../../Type/Utils";
 
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const studentList: Student[] = useSelector((state) => state.students.data);
-  const curentData: Student[] = useSelector((state) => state.students.curentData);
-  const grades: OptionSelect[] = useSelector((state) => state.initial.gradeList)
-  let classes: OptionSelect[] = useSelector((state) => state.initial.selectedClasses);
+  const curentData: Student[] = useSelector(
+    (state) => state.students.currentData
+  );
+  const grades: OptionSelect[] = useSelector(
+    (state) => state.initial.gradeList
+  );
+  let classes: OptionSelect[] = useSelector(
+    (state) => state.initial.selectedClasses
+  );
+  console.log("classes", classes);
+
   const { current, perPage } = useSelector((state) => state.pagination);
   const isLoading = useSelector((state) => state.students.isLoading);
   const role = useSelector((state) => state.authentication.role);
-
-  // const [isDialogOpen, setDialogOpen] = useState(false);
-  // const selectedStudent: Student = useSelector(
-  //   (state) => state.students.selectedStudent
-  // );
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isNew, setIsNewStudent] = useState(false);
   const [filter, setFilter] = useState<FilterCriteria>({
-    classID: { value: '', strict: true },
-    grade: { value: '', strict: true },
-    name: { value: '', strict: false },
+    classId: { value: "", strict: true },
+    gradeId: { value: "", strict: true },
+    name: { value: "", strict: false },
   });
 
-  const handleChangeFilter = (property: keyof FilterCriteria) => (
-    event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>
-  ) => {
-    if (property === 'grade') {
-      dispatch(filterClassesByGrade(event.target.value))
-    }
+  const handleChangeFilter =
+    (property: keyof FilterCriteria) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        if (property === "gradeId") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
 
-    setFilter((prev) => ({
-      ...prev,
-      [property]: {
-        value: event.target.value,
-        strict: prev[property]?.strict ?? true,
-      },
-    }));
-  };
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
+      };
 
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {
@@ -89,12 +91,12 @@ const StudentList = () => {
     });
 
     if (allValuesEmpty) {
-      dispatch(setFilterStudent(studentList))
+      dispatch(setFilterStudent(studentList));
       return;
     }
 
     const filterData: Student[] = CommonUtil.filterData(studentList, filter);
-    dispatch(setFilterStudent(filterData))
+    dispatch(setFilterStudent(filterData));
   };
 
   const handleClose = () => {
@@ -139,8 +141,9 @@ const StudentList = () => {
   };
 
   useEffect(() => {
+    dispatch(initializeClassState());
     dispatch(initializeState());
-    // dispatch(fetchStudents());
+    dispatch(fetchStudents());
   }, []);
 
   return (
@@ -181,8 +184,8 @@ const StudentList = () => {
                   id={"grade"}
                   label="Khối"
                   options={grades}
-                  value={filter.grade.value}
-                  onChange={handleChangeFilter("grade")}
+                  value={filter.gradeId.value}
+                  onChange={handleChangeFilter("gradeId")}
                 />
                 <SelectDropdown
                   id={"class"}

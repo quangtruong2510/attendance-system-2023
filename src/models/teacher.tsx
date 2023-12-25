@@ -3,6 +3,7 @@ export interface Teacher {
   id?: number;
   name?: string;
   homeroomClass?: string;
+  classId?: number;
   address?: string;
   phone?: string;
 }

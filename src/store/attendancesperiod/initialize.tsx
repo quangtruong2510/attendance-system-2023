@@ -97,6 +97,7 @@ export const initSelectedStudent: AttendanceClassPeriod = {
 interface State {
   nameClass: string;
   data: AttendanceClassPeriod[];
+  currentData: AttendanceClassPeriod[];
   selectedStudent: AttendanceClassPeriod | null;
   isLoading: boolean;
   validationErrors: any;
@@ -104,6 +105,7 @@ interface State {
 
 const initialState: State = {
   data: attendanceStudent,
+  currentData: attendanceStudent,
   selectedStudent: initSelectedStudent,
   nameClass: "6A1",
   isLoading: false,

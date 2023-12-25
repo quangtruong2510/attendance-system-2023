@@ -51,7 +51,7 @@ const students: Student[] = [
     id: 4,
     name: "Hộ Thị Thùy Linh",
     studentCode: "142Ad456",
-    grade: 1,
+    gradeId: 1,
     dateOfBirth: "25/10/2000",
     className: "10A1",
     classId: 2,
@@ -151,14 +151,14 @@ const students: Student[] = [
 ];
 interface State {
   data: Student[];
-  curentData: Student[];
+  currentData: Student[];
   selectedStudent: Student;
   isLoading: Boolean;
   validationErrors: any;
 }
 const initialState: State = {
   data: students,
-  curentData: students,
+  currentData: students,
   selectedStudent: initStudent,
   isLoading: false,
   validationErrors: null,

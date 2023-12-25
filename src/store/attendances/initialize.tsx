@@ -236,6 +236,7 @@ const initAttendanceClass: attendanceClass = {
 
 const initialState = {
   attendanceClasses: attendances,
+  currentAttendanceClasses: attendances,
   attendanceClass: initAttendanceClass,
   isLoading: false,
   errorMessage: null,

@@ -71,6 +71,7 @@ export const initAttendanceStudent: DetailAttendanceStudent = {
 interface State {
   nameStudent: string;
   data: DetailAttendanceStudent[];
+  currentData: DetailAttendanceStudent[];
   selectedStudent: DetailAttendanceStudent | null;
   isLoading: boolean;
   validationErrors: any;
@@ -78,6 +79,7 @@ interface State {
 
 const initialState: State = {
   data: attendanceStudent,
+  currentData: attendanceStudent,
   selectedStudent: initAttendanceStudent,
   nameStudent: "Nguyễn Quang Trường",
   isLoading: false,

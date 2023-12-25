@@ -22,6 +22,17 @@ const fetchAttendanceClass = createAsyncThunk(
   }
 );
 
+const fetchAttendanceClassPeriod = createAsyncThunk(
+  "search/today",
+  async (period: any) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}search_statistic?from_date=${period.from}&to_date=${period.to}`,
+      method: "GET",
+    };
+    return await execute(request);
+  }
+);
+
 // get student by id
 const getStudentById = createAsyncThunk(
   "student/getStudent",
@@ -45,4 +56,4 @@ const updateAttendanceStudent = createAsyncThunk(
   }
 );
 
-export { fetchStatisticsAttendance, fetchAttendanceClass, getStudentById, updateAttendanceStudent };
+export { fetchStatisticsAttendance, fetchAttendanceClass, getStudentById, updateAttendanceStudent, fetchAttendanceClassPeriod };

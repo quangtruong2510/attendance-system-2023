@@ -51,7 +51,7 @@ const StudentList = () => {
 
   useEffect(() => {
     dispatch(initializeState());
-    // dispatch(fetchClasses());
+    dispatch(fetchClasses());
   }, []);
 
   const addNewClass = () => {

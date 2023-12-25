@@ -16,6 +16,8 @@ import { headerAttendanceClassTable } from "../../../constant/headerTable";
 import { AppDispatch, useSelector } from "../../../store/configstore";
 
 import { useParams } from "react-router-dom";
+import TableRows from "../../../components/common/Table/TableRows";
+import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import BreadcrumbsComponent from "../../../components/common/Utils";
 import { statusAttendace } from "../../../constant/Utils";
@@ -25,8 +27,6 @@ import { fetchAttendanceClass } from "../../../store/attendances/operation";
 import { setSelectedStudent } from "../../../store/attendances/slice";
 import CommonUtil from "../../../utils/export";
 import AttendanceStudentEdit from "../edit/AttendanceStudent";
-import DetailRows from "../part/DetailAttendanceClass";
-import TableRows from "../../../components/common/Table/TableRows";
 
 interface GroupFilterSearch {
   status: string;
@@ -40,7 +40,7 @@ const AttendanceClass = () => {
   const attendanceStudent: AttendanceStudent[] = useSelector(
     (state) => state.attendanceClass.data
   );
-
+  const isLoading = useSelector((state) => state.attendanceClass.isLoading);
   const { id } = useParams();
 
   const selectedAttendanceStudent: AttendanceStudent | null = useSelector(
@@ -68,9 +68,9 @@ const AttendanceClass = () => {
 
   const handleChangeFilter =
     (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
@@ -80,7 +80,7 @@ const AttendanceClass = () => {
     );
   };
 
-  const handleReload = () => {};
+  const handleReload = () => { };
 
   useEffect(() => {
     const idClass = id ? parseInt(id, 10) : 0;
@@ -145,14 +145,18 @@ const AttendanceClass = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerAttendanceClassTable} />
-            <TableRows
-              rows={attendanceStudent.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerAttendanceClassTable}
-              onEditClick={editStudent}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={attendanceStudent.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerAttendanceClassTable}
+                onEditClick={editStudent}
+              />
+            )}
           </Table>
           <AttendanceStudentEdit
             isOpen={isDialogOpen}

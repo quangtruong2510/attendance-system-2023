@@ -62,13 +62,13 @@ const routeList: IRoute[] = [
     role: [Roles.ADMIN, Roles.TEACHER],
   },
   {
-    path: "/attendance/class/:id/:from/:to",
+    path: "/attendance/class/:id",
     component: <PeriodAttendance />,
     exact: true,
     role: [Roles.ADMIN, Roles.TEACHER],
   },
   {
-    path: "/attendance/student/:id/:from/:to",
+    path: "/attendance/student",
     component: <DetailAttendanceStudentPeriod />,
     exact: true,
     role: [Roles.ADMIN, Roles.TEACHER],

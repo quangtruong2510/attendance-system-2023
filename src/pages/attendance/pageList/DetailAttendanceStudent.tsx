@@ -1,5 +1,6 @@
 import {
   Breadcrumbs,
+  Button,
   Paper,
   SelectChangeEvent,
   Stack,
@@ -13,60 +14,87 @@ import styled from "styled-components";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
 import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerDetailAttendanceStudentPeriod } from "../../../constant/headerTable";
-import { useSelector } from "../../../store/configstore";
+import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
 
-import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import TableRows from "../../../components/common/Table/TableRows";
+import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { DetailAttendanceStudent } from "../../../models/attendance";
-import DetailPeriodRows from "../part/DetailAttendanceClassPeriod";
-import TableRows from "../../../components/common/Table/TableRows";
-
-interface GroupFilterSearch {
-  dayOfBirth: string;
-}
+import { fetchDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/operation";
+import { FilterCriteria } from "../../../Type/Utils";
+import { setFilterDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/slice";
+import { Search } from "@mui/icons-material";
 
 const DetailAttendanceStudentPeriod = () => {
-  const { id, from, to } = useParams();
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch<AppDispatch>();
-  const studentAttendanceList: DetailAttendanceStudent[] = useSelector(
-    (state) => state.detailAttendancesStudent.data
-  );
-  const studentName: string = useSelector(
-    (state) => state.detailAttendancesStudent.nameStudent
-  );
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const startDate = searchParams.get("start_date");
+  const endDate = searchParams.get("end_date");
+  const studentId = searchParams.get("student_id");
+
+  const dispatch = useDispatch<AppDispatch>();
+  const studentAttendanceList: DetailAttendanceStudent[] = useSelector((state) => state.detailAttendancesStudent.data);
+  const currentData: DetailAttendanceStudent[] = useSelector((state) => state.detailAttendancesStudent.currentData);
+
+  const studentName: string = useSelector((state) => state.detailAttendancesStudent.nameStudent);
+  const isLoading = useSelector((state) => state.detailAttendancesStudent.isLoading);
 
   const { current, perPage } = useSelector((state) => state.pagination);
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    dayOfBirth: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    day: { value: "", strict: true },
   });
 
-  const handleReload = () => {};
+  const handleReload = () => {
+    const payload = {
+      studentId: studentId,
+      from: startDate,
+      to: endDate,
+    };
+    dispatch(fetchDetailAttendanceStudent(payload));
+  };
 
   useEffect(() => {
     const payload = {
-      studentId: id,
-      from: from,
-      to: to,
+      studentId: studentId,
+      from: startDate,
+      to: endDate,
     };
-    // dispatch(fetchPeriodAttendanceClass(payload));
+    dispatch(fetchDetailAttendanceStudent(payload));
   }, []);
 
-  const onDetailClick = (idClass: number) => {
-    // navigate(`/attendance/${idClass}/${filter.from}/${filter.to}`);
+  const handleChangeFilter =
+    (property: keyof FilterCriteria) =>
+      (event: any) => {
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: (event.target as HTMLInputElement).value,
+            strict: false,
+          },
+        }));
+      };
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterDetailAttendanceStudent(studentAttendanceList));
+      return;
+    }
+
+    const filterData: DetailAttendanceStudent[] = CommonUtil.filterData(studentAttendanceList, filter);
+    console.log("filterData", filterData);
+
+    dispatch(setFilterDetailAttendanceStudent(filterData));
   };
-
-  const handleFilterChange =
-    (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
-
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
-      "chuyen-can-cac-lop",
-      "Chuyên cần các lớp",
+      `chuyen-can-${studentName}-${startDate} ~ ${endDate})`,
+      `Chuyên cần ${studentName}`,
       studentAttendanceList
     );
   };
@@ -78,7 +106,7 @@ const DetailAttendanceStudentPeriod = () => {
           <Typography variant="h5" style={{ color: "rgb(0, 130, 146)" }}>
             {`Thống kê chuyên cần`}
           </Typography>
-          <Typography color="textPrimary">{`(${from} ~ ${to})`}</Typography>
+          <Typography color="textPrimary">{`(${startDate} ~ ${endDate})`}</Typography>
         </Breadcrumbs>
       </Stack>
       <Paper
@@ -111,14 +139,38 @@ const DetailAttendanceStudentPeriod = () => {
               size="small"
               name="dateOfBirth"
               label="Ngày"
-              value={filter.dayOfBirth}
+              inputProps={{
+                min: CommonUtil.formatDate(
+                  startDate ? startDate : CommonUtil.getCurrentDate()
+                ),
+                max: CommonUtil.formatDate(
+                  endDate ? endDate : CommonUtil.getCurrentDate()
+                ),
+                pattern: "\\d{2}-\\d{2}-\\d{4}",
+              }}
               InputLabelProps={{ shrink: true }}
               type="date"
-              onChange={handleFilterChange("dayOfBirth")}
+              onChange={handleChangeFilter("day")}
             />
+
+            <Button
+              style={{
+                height: "40px",
+                minWidth: "100px",
+                width: 150,
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
 
-          <NavigationTable count={studentAttendanceList.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -128,14 +180,16 @@ const DetailAttendanceStudentPeriod = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerDetailAttendanceStudentPeriod} />
-            <TableRows
-              rows={studentAttendanceList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerDetailAttendanceStudentPeriod}
-              onEditClick={onDetailClick}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={currentData.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerDetailAttendanceStudentPeriod}
+              />)}
           </Table>
         </TableContainer>
       </Paper>

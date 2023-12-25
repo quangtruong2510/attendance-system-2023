@@ -23,12 +23,12 @@ const SelectDropdown: React.FC<Props> = ({
   onChange,
   minWidth,
   width,
-  errorMessage
+  errorMessage,
 }) => {
   return (
     <FormControl
       style={{
-        minWidth: minWidth ? minWidth : 100,
+        minWidth: minWidth ? minWidth : 80,
         maxWidth: "300px",
         width: width,
       }}

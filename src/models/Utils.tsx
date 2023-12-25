@@ -1,4 +1,3 @@
-import { Id } from "@reduxjs/toolkit/dist/tsHelpers";
 
 export default interface Payload {
   key: any;
@@ -9,14 +8,8 @@ export interface PaginationState {
   current: number;
   perPage: number;
 }
-
-// export interface Options {
-//   id: number;
-//   value: string;
-// }
-
 export interface OptionSelect {
   value: number;
   label: string | number;
-  foreignKey?: number
+  gradeId?: number
 }

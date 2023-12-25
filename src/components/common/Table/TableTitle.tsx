@@ -11,15 +11,13 @@ interface Props {
 const TableTitle: React.FC<Props> = ({ title, handleExport, reload }) => {
   return (
     <TitleTable>
-      <TitleTable>
-        <Typography
-          sx={{ margin: "0" }}
-          variant="h6"
-          style={{ color: "rgb(227 113 12)" }}
-        >
-          {title}
-        </Typography>
-      </TitleTable>
+      <Typography
+        sx={{ margin: "0" }}
+        variant="h6"
+        style={{ color: "rgb(227 113 12)" }}
+      >
+        {title}
+      </Typography>
       <Stack direction="row" spacing={2}>
         <Button
           style={{
@@ -59,5 +57,6 @@ const TitleTable = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  margin-bottom: 10px;
 `;
 export default TableTitle;

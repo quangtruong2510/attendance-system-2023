@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper,
   SelectChangeEvent,
   Stack,
@@ -27,13 +28,11 @@ import { Roles } from "../../../utils/role";
 // import TableRows from "../part/TableRows";
 import AttendanceClass from "./AttendanceClass";
 import TableRows from "../../../components/common/Table/TableRows";
-
-interface GroupFilterSearch {
-  class: string;
-  grade: string;
-  name: string;
-  phone: string;
-}
+import { FilterCriteria } from "../../../Type/Utils";
+import { filterClassesByGrade } from "../../../store/initdata/slice";
+import { Search } from "@mui/icons-material";
+import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
+import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 
 const AttendanceList = () => {
   const navigate = useNavigate();
@@ -42,41 +41,58 @@ const AttendanceList = () => {
   const attendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
   );
+  const currentAttendanceClasses: AttendanceReport[] = useSelector(
+    (state) => state.attendance.currentAttendanceClasses
+  );
+  const grades: OptionSelect[] = useSelector(
+    (state) => state.initial.gradeList
+  );
+  let classes: OptionSelect[] = useSelector(
+    (state) => state.initial.selectedClasses
+  );
+  const isLoading = useSelector((state) => state.attendance.isLoading);
 
   const role = useSelector((state) => state.authentication.role);
   const { current, perPage } = useSelector((state) => state.pagination);
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    class: "",
-    grade: "",
-    name: "",
-    phone: "",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    gradeId: { value: "", strict: true },
+    classId: { value: "", strict: true },
+    homeroomTeacher: { value: "", strict: false },
   });
 
   const onDetailClick = (id: number) => {
-    console.log("onDetailClick", id);
-
     navigate(`class/${id}`);
   };
 
-  const options: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
-
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
-
   const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+    (property: keyof FilterCriteria) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        if (property === "gradeId") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
+
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
+      };
+
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterAttendanceClasses(attendanceList));
+      return;
+    }
+
+    const filterData: AttendanceReport[] = CommonUtil.filterData(attendanceList, filter);
+    dispatch(setFilterAttendanceClasses(filterData));
+  };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
@@ -86,8 +102,7 @@ const AttendanceList = () => {
     );
   };
 
-  const handleReload = () => {};
-
+  const handleReload = () => { dispatch(fetchStatisticsAttendance()) };
   useEffect(() => {
     dispatch(fetchStatisticsAttendance());
   }, []);
@@ -130,26 +145,40 @@ const AttendanceList = () => {
             <SelectDropdown
               id={"grade"}
               label="Khối"
-              options={options}
-              value={filter.grade}
-              onChange={handleChangeFilter("grade")}
+              options={grades}
+              value={filter.gradeId.value}
+              onChange={handleChangeFilter("gradeId")}
             />
             <SelectDropdown
               id={"class"}
               label="Lớp"
-              options={GradeOptions}
-              value={filter.class}
-              onChange={handleChangeFilter("class")}
+              options={classes}
+              value={filter.classId.value}
+              onChange={handleChangeFilter("classId")}
             />
             <CustomInput
               label={"GVCN"}
-              value={filter.name}
-              onChange={handleChangeFilter("name")}
+              value={filter.homeroomTeacher.value}
+              onChange={handleChangeFilter("homeroomTeacher")}
               placeholder={"Tên giáo viên"}
               fullWidth={false}
             />
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
-          <NavigationTable count={attendanceList.length} />
+          <NavigationTable count={currentAttendanceClasses.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -159,14 +188,17 @@ const AttendanceList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerAttendanceTable} />
-            <TableRows
-              rows={attendanceList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerAttendanceTable}
-              onEditClick={onDetailClick}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={7} />
+            ) : (
+              <TableRows
+                rows={currentAttendanceClasses.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerAttendanceTable}
+                onEditClick={onDetailClick}
+              />)}
           </Table>
         </TableContainer>
       </Paper>

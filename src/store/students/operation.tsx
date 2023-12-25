@@ -27,6 +27,19 @@ const getStudentById = createAsyncThunk(
   }
 );
 
+// get student by id
+const getStudentByClassId = createAsyncThunk(
+  "student/getStudent",
+  async (idClass: number) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}student/class/${idClass}`,
+      method: "GET",
+    };
+    // const request: Request = { endpoint: `${BASE_URL_API}getStudentByID/${arg.id}`, method: 'GET' };
+    return await execute(request);
+  }
+);
+
 const addStudent = createAsyncThunk(
   "student/addStudent",
   async (student: any, { rejectWithValue }) => {
@@ -36,12 +49,12 @@ const addStudent = createAsyncThunk(
         method: "POST",
       };
       const response = await execute(request, student);
-      return response.data
+      return response.data;
     } catch (err: any) {
       if (!err.response) {
-        throw err
+        throw err;
       }
-      return rejectWithValue(err.response.data)
+      return rejectWithValue(err.response.data);
     }
   }
 );
@@ -56,14 +69,12 @@ const updateStudent = createAsyncThunk(
       };
 
       const response = await execute(request, student);
-      return response.data
-
+      return response.data;
     } catch (err: any) {
       if (!err.response) {
-
-        throw err
+        throw err;
       }
-      return rejectWithValue(err.response.data)
+      return rejectWithValue(err.response.data);
     }
   }
 );
@@ -85,4 +96,5 @@ export {
   addStudent,
   updateStudent,
   deleteStudentById,
+  getStudentByClassId,
 };

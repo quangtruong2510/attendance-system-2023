@@ -1,4 +1,4 @@
-import { Cached, CloudUpload } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import {
   Breadcrumbs,
   Button,
@@ -9,72 +9,109 @@ import {
   TableContainer,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import SelectDropdown from "../../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
 import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerAttendanceReportTable } from "../../../constant/headerTable";
 import { OptionSelect } from "../../../models/Utils";
-import { useSelector } from "../../../store/configstore";
+import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
 
+import { format, subDays } from "date-fns";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { FilterCriteria } from "../../../Type/Utils";
 import DateRangePickerCommon from "../../../components/common/FormInput/SingleInputDateRangePickerWithAdornment";
-import { AttendanceReport } from "../../../models/attendance";
 import TableRows from "../../../components/common/Table/TableRows";
-// import TableRows from "../part/TableRows";
+import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import TableTitle from "../../../components/common/Table/TableTitle";
+import { AttendanceReport } from "../../../models/attendance";
+import { fetchAttendanceClassPeriod, fetchStatisticsAttendance } from "../../../store/attendances/operation";
+import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
+import { initializeState } from "../../../store/common/pagination";
+import { filterClassesByGrade, initializeClassState } from "../../../store/initdata/slice";
 
 interface GroupFilterSearch {
-  class: string;
-  grade: string;
   from: string;
   to: string;
 }
 
 const AttendanceList = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const attendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
   );
+  const currentaAtendanceList: AttendanceReport[] = useSelector(
+    (state) => state.attendance.currentAttendanceClasses
+  );
 
+  const isLoading = useSelector((state) => state.attendance.isLoading);
   const { current, perPage } = useSelector((state) => state.pagination);
-
-  const [filter, setFilter] = useState<GroupFilterSearch>({
-    class: "",
-    grade: "",
-    from: "3",
-    to: "4",
+  const [filter, setFilter] = useState<FilterCriteria>({
+    classId: { value: "", strict: true },
+    gradeId: { value: "", strict: true },
   });
+  const sevenDaysAgo = subDays(new Date(), 7);
+  const [period, setPeriod] = useState<GroupFilterSearch>({
+    from: format(sevenDaysAgo, 'dd-MM-yyyy'),
+    to: CommonUtil.getCurrentDate(),
+  })
 
-  const handleDateUpdate = (startDay: string, endDay: string) => {
-    setFilter((prev) => ({ ...prev, from: startDay, to: endDay }));
+  const grades: OptionSelect[] = useSelector(
+    (state) => state.initial.gradeList
+  );
+  let classes: OptionSelect[] = useSelector(
+    (state) => state.initial.selectedClasses
+  );
+
+  const handleDateUpdate = async (startDay: string, endDay: string) => {
+    const period = {
+      from: startDay,
+      to: endDay,
+    }
+    await dispatch(fetchAttendanceClassPeriod(period))
+    setPeriod((prev) => ({ ...prev, from: startDay, to: endDay }));
+
   };
 
   const onDetailClick = (idClass: number) => {
-    navigate(`/attendance/class/${idClass}/${filter.from}/${filter.to}`);
+    navigate(
+      `/attendance/class/${idClass}?start_date=${period.from}&end_date=${period.to}`
+    );
   };
 
-  const options: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
 
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
+    if (allValuesEmpty) {
+      dispatch(setFilterAttendanceClasses(attendanceList));
+      return;
+    }
+
+    const filterData: AttendanceReport[] = CommonUtil.filterData(attendanceList, filter);
+    dispatch(setFilterAttendanceClasses(filterData));
+  };
 
   const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+    (property: keyof FilterCriteria) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        if (property === "gradeId") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
+
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
+      };
 
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
@@ -83,6 +120,16 @@ const AttendanceList = () => {
       attendanceList
     );
   };
+
+  const handleReload = async () => {
+    dispatch(fetchStatisticsAttendance());
+  };
+
+  useEffect(() => {
+    dispatch(initializeClassState());
+    dispatch(initializeState());
+    dispatch(fetchStatisticsAttendance());
+  }, []);
 
   return (
     <ContentLayout>
@@ -93,6 +140,9 @@ const AttendanceList = () => {
           </Typography>
         </Breadcrumbs>
       </Stack>
+      <Stack alignItems={"end"}>
+        <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
+      </Stack>
       <Paper
         sx={{
           width: "100%",
@@ -102,45 +152,11 @@ const AttendanceList = () => {
           boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
-        <GroupFilter>
-          <Typography
-            sx={{ margin: "0" }}
-            variant="h6"
-            style={{ color: "rgb(227 113 12)" }}
-          >
-            Thông tin chuyên cần của các lớp
-          </Typography>
-          <Stack direction="row" spacing={2} justifyContent={"end"}>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-                backgroundColor: "#117957",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<CloudUpload />}
-              onClick={handleExport}
-            >
-              Xuất Excel
-            </Button>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<Cached />}
-            >
-              Làm mới
-            </Button>
-          </Stack>
-        </GroupFilter>
+        <TableTitle
+          title="Thông tin chuyên cần của các lớp"
+          handleExport={handleExport}
+          reload={handleReload}
+        />
         <Stack
           flexDirection={"row"}
           justifyContent={"space-between"}
@@ -155,23 +171,35 @@ const AttendanceList = () => {
             <SelectDropdown
               id={"grade"}
               label="Khối"
-              options={options}
-              value={filter.grade}
-              onChange={handleChangeFilter("grade")}
+              options={grades}
+              value={filter.gradeId.value}
+              onChange={handleChangeFilter("gradeId")}
             />
             <SelectDropdown
               id={"class"}
               label="Lớp"
-              options={GradeOptions}
-              value={filter.class}
-              onChange={handleChangeFilter("class")}
+              options={classes}
+              value={filter.classId.value}
+              onChange={handleChangeFilter("classId")}
             />
-            <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
+
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
-
-          <NavigationTable count={attendanceList.length} />
+          <NavigationTable count={currentaAtendanceList.length} />
         </Stack>
-
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
           <Table
             className="border-collapse"
@@ -179,14 +207,18 @@ const AttendanceList = () => {
             aria-label="sticky table"
           >
             <TableHeaders headers={headerAttendanceReportTable} />
-            <TableRows
-              rows={attendanceList.slice(
-                current * perPage,
-                current * perPage + perPage
-              )}
-              headers={headerAttendanceReportTable}
-              onEditClick={onDetailClick}
-            />
+            {isLoading ? (
+              <TableRowsLoader rowsNum={10} numColumns={8} />
+            ) : (
+              <TableRows
+                rows={currentaAtendanceList.slice(
+                  current * perPage,
+                  current * perPage + perPage
+                )}
+                headers={headerAttendanceReportTable}
+                onEditClick={onDetailClick}
+              />
+            )}
           </Table>
         </TableContainer>
       </Paper>
@@ -198,11 +230,5 @@ const ContentLayout = styled("div")(() => ({
   padding: "15px 20px 0px 20px",
   overflowY: "auto",
 }));
-
-const GroupFilter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-`;
 
 export default AttendanceList;

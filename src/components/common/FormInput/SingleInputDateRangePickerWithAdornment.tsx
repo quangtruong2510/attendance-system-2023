@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, isAfter, subDays } from 'date-fns';
 import React from 'react';
 import { DateRangePicker } from 'rsuite';
 import 'rsuite/dist/rsuite-rtl.css';
@@ -10,6 +10,8 @@ interface Props {
 }
 
 const DateRangePickerCommon: React.FC<Props> = ({ onUpdateDateRange }) => {
+  const endDate = new Date(); // Today
+  const startDate = subDays(endDate, 7);
   const handleDateChange = (value: DateRange | null) => {
     if (value) {
       const formattedStartDate = format(value[0], 'dd-MM-yyyy');
@@ -18,20 +20,31 @@ const DateRangePickerCommon: React.FC<Props> = ({ onUpdateDateRange }) => {
     }
   };
 
+  const disabledDate = (date: Date) => {
+    // Disable dates after the current date
+    return isAfter(date, new Date());
+  };
+
   return (
     <div>
-      <DateRangePicker onChange={handleDateChange} format="dd-MM-yyyy" cleanable={false} style={{ opacity: 1 }} locale={{ // Set the locale for rsuite
-        ok: 'Chọn',
-        today: 'Hôm nay',
-        yesterday: 'Hôm qua',
-        last7Days: '7 ngày trước',
-        custom: 'Tùy chỉnh',
-      }}
-        placement="bottomStart"
-        defaultValue={[new Date(), new Date()]}
+      <DateRangePicker
+        onChange={handleDateChange}
+        format="dd-MM-yyyy"
+        cleanable={false}
+        style={{ opacity: 1 }}
+        locale={{
+          ok: 'Chọn',
+          today: 'Hôm nay',
+          yesterday: 'Hôm qua',
+          last7Days: '7 ngày trước',
+          custom: 'Tùy chỉnh',
+        }}
+        placement="leftStart"
+        defaultValue={[startDate, endDate]}
+        disabledDate={disabledDate} // Set the disabledDate prop
       />
     </div>
   );
-}
+};
 
 export default DateRangePickerCommon;

@@ -1,12 +1,5 @@
 import * as XLSX from "xlsx";
-
-export interface FilterCriteria {
-  [key: string]: {
-    value: any;
-    strict?: boolean;
-  };
-}
-
+import { FilterCriteria } from "../Type/Utils";
 class CommonUtils {
   async exportToExcel(
     fileName: string,
@@ -56,7 +49,9 @@ class CommonUtils {
     filterCriteria: FilterCriteria
   ): T[] {
     const activeFilters = Object.fromEntries(
-      Object.entries(filterCriteria).filter(([_, filter]) => filter.value !== "")
+      Object.entries(filterCriteria).filter(
+        ([_, filter]) => filter.value !== ""
+      )
     );
 
     return dataList.filter((item) => {
@@ -68,18 +63,41 @@ class CommonUtils {
           return true; // Bỏ qua nếu giá trị không tồn tại
         }
 
-        if (typeof itemValue === 'string' && typeof value === 'string') {
+        if (typeof itemValue === "string" && typeof value === "string") {
           return strict ? itemValue === value : itemValue.includes(value);
         }
 
-        if (typeof itemValue === 'number' && typeof value === 'number') {
-          return strict ? itemValue === value : String(itemValue).includes(String(value));
+        if (typeof itemValue === "number" && typeof value === "number") {
+          return strict
+            ? itemValue === value
+            : String(itemValue).includes(String(value));
         }
 
         return false;
       });
     });
   }
+
+  getCurrentDate = (): string => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1; // January is 0
+    const year = today.getFullYear();
+
+    // Ensure that day and month are formatted with leading zeros if needed
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+
+    return `${formattedDay}-${formattedMonth}-${year}`;
+  };
+
+  formatDate = (inputDate: string): string => {
+    if (!inputDate) {
+      return "";
+    }
+    const [day, month, year] = inputDate.split("-");
+    return `${year}-${month}-${day}`;
+  };
 }
 
 export default new CommonUtils();

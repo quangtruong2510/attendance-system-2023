@@ -36,38 +36,42 @@ const ClassEditDialog: React.FC<AddClassDialogProps> = ({ open, onClose }) => {
     teacherId: "",
   });
 
-  const grades: OptionSelect[] = useSelector(state => state.initial.gradeList)
-  const teachers: OptionSelect[] = useSelector(state => state.initial.unAssignedTeachers)
-  const validationErrors = useSelector(state => state.class.validationErrors);
+  const grades: OptionSelect[] = useSelector(
+    (state) => state.initial.gradeList
+  );
+  const teachers: OptionSelect[] = useSelector(
+    (state) => state.initial.unAssignedTeachers
+  );
+  const validationErrors = useSelector((state) => state.class.validationErrors);
 
   const handleChangeFilter =
     (property: keyof NewClass) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setNewClass((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      setNewClass((prev) => ({ ...prev, [property]: event.target.value }));
+    };
 
   const handleAddClass = () => {
-    dispatch(addClass(newClass)).unwrap()
+    dispatch(addClass(newClass))
+      .unwrap()
       .then(() => {
         setNewClass({
           gradeId: "",
           className: "",
           teacherId: "",
-        })
+        });
         onClose();
         dispatch(fetchClasses());
       })
-      .catch(() => {
-      })
+      .catch(() => {});
   };
 
   useEffect(() => {
-    dispatch(clearValidationErrors())
+    dispatch(clearValidationErrors());
   }, []);
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle color={"rgb(65, 84, 241)"}>Thêm mới lớp học</DialogTitle>
+      <DialogTitle color={"rgb(0, 130, 146)"}>Thêm mới lớp học</DialogTitle>
       <DialogContent>
         <FormControl fullWidth style={{ margin: "5px 0px" }}>
           <CustomInput
@@ -77,7 +81,11 @@ const ClassEditDialog: React.FC<AddClassDialogProps> = ({ open, onClose }) => {
             size="small"
             value={newClass.className}
             onChange={handleChangeFilter("className")}
-            messageError={validationErrors && validationErrors.className ? validationErrors.className : ''}
+            messageError={
+              validationErrors && validationErrors.className
+                ? validationErrors.className
+                : ""
+            }
           />
         </FormControl>
         <Stack flexDirection={"row"} gap={2} paddingTop={2} marginTop={1}>

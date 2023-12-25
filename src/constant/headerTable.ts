@@ -3,7 +3,7 @@ export interface Column {
   label: string;
   minWidth?: number;
   maxWidth?: number;
-  align?: "right" | "center" | "left";
+  align?: "right" | "center" | "center";
   format?: (value: number) => string;
 }
 
@@ -60,14 +60,14 @@ const headerTeacherTable: Column[] = [
     id: "phone",
     label: "Số điện thoại",
     minWidth: 100,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
   {
     id: "action",
     label: "Tác vụ",
     minWidth: 100,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
 ];
@@ -92,7 +92,7 @@ const headerStudentTable: Column[] = [
     id: "dateOfBirth",
     label: "Ngày sinh",
     minWidth: 100,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
   {
@@ -120,7 +120,7 @@ const headerStudentTable: Column[] = [
     id: "action",
     label: "Tác vụ",
     minWidth: 100,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
 ];
@@ -293,7 +293,7 @@ const headerAttendanceClassTable: Column[] = [
     id: "action",
     label: "Chỉnh sửa",
     minWidth: 120,
-    align: "left",
+    align: "center",
     maxWidth: 300,
   },
 ];
@@ -462,13 +462,6 @@ const headerDetailAttendanceStudentPeriod: Column[] = [
   {
     id: "note",
     label: "Ghi chú",
-    minWidth: 50,
-    align: "center",
-    maxWidth: 300,
-  },
-  {
-    id: "action",
-    label: "Chỉnh sửa",
     minWidth: 50,
     align: "center",
     maxWidth: 300,
