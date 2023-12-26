@@ -54,8 +54,6 @@ const StudentList = () => {
   let classes: OptionSelect[] = useSelector(
     (state) => state.initial.selectedClasses
   );
-  console.log("classes", classes);
-
   const { current, perPage } = useSelector((state) => state.pagination);
   const isLoading = useSelector((state) => state.students.isLoading);
   const role = useSelector((state) => state.authentication.role);
@@ -107,7 +105,9 @@ const StudentList = () => {
   const handeSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
       await dispatch(fetchStudents());
+      dispatch(clearValidationErrors());
       setDialogOpen(false);
+      setSelectedStudent(null);
     }
   };
   const addNewStudent = () => {

@@ -65,6 +65,22 @@ const AttendanceList = () => {
     to: CommonUtil.getCurrentDate(),
   })
 
+  const currentDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(currentDate.getDate() - 7);
+
+  const formatDateString = (date: any) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const defaultDay = {
+    from: formatDateString(startDate),
+    to: formatDateString(currentDate),
+  };
+
   const grades: OptionSelect[] = useSelector(
     (state) => state.initial.gradeList
   );
@@ -127,13 +143,14 @@ const AttendanceList = () => {
   };
 
   const handleReload = async () => {
-    dispatch(fetchStatisticsAttendance());
+
+    dispatch(fetchAttendanceClassPeriod(defaultDay));
   };
 
   useEffect(() => {
     dispatch(initializeClassState());
     dispatch(initializeState());
-    dispatch(fetchStatisticsAttendance());
+    dispatch(fetchAttendanceClassPeriod(defaultDay));
   }, []);
 
   return (

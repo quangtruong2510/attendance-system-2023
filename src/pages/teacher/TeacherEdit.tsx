@@ -37,18 +37,13 @@ const TeacherEdit: React.FC<Props> = ({
     (state) => state.teacher.validationErrors
   );
 
-  const [teacher, setTeacher] = useState<Teacher>({
-    homeroomClass: "",
-    name: "",
-    address: "",
-    phone: "",
-  });
+  const [teacher, setTeacher] = useState<Teacher>(initTeacher);
 
   const handleInputChange =
     (property: keyof Teacher) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      setTeacher((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        setTeacher((prev) => ({ ...prev, [property]: event.target.value }));
+      };
   const handleAddTeacher = async () => {
     if (isNew) {
       dispatch(addTeacher(teacher))
@@ -56,6 +51,7 @@ const TeacherEdit: React.FC<Props> = ({
         .then(() => {
           handleClose();
           onClickEdit(true);
+          setTeacher(initTeacher)
         })
         .catch(() => {
           onClickEdit(false);

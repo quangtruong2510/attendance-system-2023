@@ -41,8 +41,6 @@ const EditStudent: React.FC<Props> = ({
   onClickEdit,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  console.log("selectedStudent", selectedStudent);
-
   const [student, setStudent] = useState<Student>(initStudent);
   const validationErrors = useSelector(
     (state) => state.students.validationErrors
@@ -64,7 +62,9 @@ const EditStudent: React.FC<Props> = ({
         .unwrap()
         .then(() => {
           handleClose();
+          setStudent(initStudent)
           onClickEdit(true);
+
         })
         .catch(() => {
           onClickEdit(false);
@@ -90,8 +90,6 @@ const EditStudent: React.FC<Props> = ({
       setStudent(initStudent);
     }
   }, [selectedStudent, dispatch]);
-
-  console.log("selectedStudent", selectedStudent);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>

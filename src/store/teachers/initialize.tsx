@@ -1,6 +1,5 @@
 import { Teacher } from "../../models/teacher";
 export const initTeacher: Teacher = {
-  id: 0,
   homeroomClass: "",
   name: "",
   address: "",
