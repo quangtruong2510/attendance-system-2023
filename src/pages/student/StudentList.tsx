@@ -67,8 +67,8 @@ const StudentList = () => {
     classId: { value: "", strict: true },
     gradeId: { value: "", strict: true },
     name: { value: "", strict: false },
+    phone: { value: "", strict: false },
   });
-
   const handleChangeFilter =
     (property: keyof FilterCriteria) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
@@ -208,8 +208,8 @@ const StudentList = () => {
               <>
                 <CustomInput
                   label={"Số điện thoại"}
-                  value={filter.name.value}
-                  onChange={handleChangeFilter("name")}
+                  value={filter.phone.value}
+                  onChange={handleChangeFilter("phone")}
                   placeholder={"Số điện thoại"}
                   fullWidth={false}
                 />

@@ -23,6 +23,7 @@ import { AppDispatch, useSelector } from "../../store/configstore";
 import { initStudent } from "../../store/students/initialize";
 import { addStudent, updateStudent } from "../../store/students/operation";
 import { clearValidationErrors } from "../../store/students/slice";
+import { Roles } from "../../utils/role";
 
 interface Props {
   isNew: boolean;
@@ -50,12 +51,12 @@ const EditStudent: React.FC<Props> = ({
   const classes: OptionSelect[] = useSelector(
     (state) => state.initial.classSelectionList
   );
-
+  const role = useSelector(state => state.authentication.role)
   const handleInputChange =
     (property: keyof Student) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
-      setStudent((prev) => ({ ...prev, [property]: event.target.value }));
-    };
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
+        setStudent((prev) => ({ ...prev, [property]: event.target.value }));
+      };
 
   const handleEditStudent = async () => {
     if (isNew) {
@@ -151,7 +152,7 @@ const EditStudent: React.FC<Props> = ({
           marginTop={1}
           style={{ maxWidth: "100%" }}
         >
-          <SelectDropdown
+          {role === Roles.ADMIN && (<SelectDropdown
             id={"class"}
             minWidth={120}
             label="Lớp"
@@ -163,7 +164,8 @@ const EditStudent: React.FC<Props> = ({
                 ? validationErrors.classId
                 : ""
             }
-          />
+          />)}
+
           <TextField
             fullWidth={true}
             size="small"
@@ -181,7 +183,7 @@ const EditStudent: React.FC<Props> = ({
                 ? validationErrors.dateOfBirth
                 : ""
             }
-            // defaultValue={"2000-10-25"}
+          // defaultValue={"2000-10-25"}
           />
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>

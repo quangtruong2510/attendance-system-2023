@@ -76,10 +76,6 @@ export default function Dashboard() {
   );
 
   const summary = useSelector((state) => state.attendance.summary);
-  headers =
-    role == Roles.TEACHER
-      ? headerAttendanceClassDashboardTable
-      : headerDashboardTable;
 
   useEffect(() => {
     let period = {
@@ -95,7 +91,7 @@ export default function Dashboard() {
         breadcrumbs={breadcrumbDashboardItems}
         haveAddButton={false}
       ></BreadcrumbsComponent>
-      <Report summary={summary}></Report>
+      <Report summary={summary} role={role}></Report>
       <ChartLayout>
         <Chart />
         <TableReport rows={attendanceClasses} />
@@ -104,12 +100,12 @@ export default function Dashboard() {
   );
 }
 
-const Report = ({ summary }: { summary: any }) => {
+const Report = ({ summary, role }: { summary: any, role: any }) => {
   return (
     <ReportLayout>
       <CartReport
         value={summary.total_classes}
-        description="Tổng số lớp"
+        description={role === Roles.TEACHER ? "Tên lớp" : "Tổng số lớp"}
         icon={<ClassOutlined style={iconStyle} />}
       />
       <CartReport
@@ -172,8 +168,6 @@ interface Props {
 const TableReport: React.FC<Props> = ({ rows }) => {
   const [value, setValue] = React.useState("today");
   const dispatch = useDispatch<AppDispatch>();
-  console.log("aaaaaaaaa", rows);
-
   const handleChange = async (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
     console.log(event);
@@ -228,11 +222,11 @@ const TableReport: React.FC<Props> = ({ rows }) => {
 
       <TableContainer sx={{ maxHeight: 400, paddingBottom: "30px" }}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHeaders headers={headers} />
+          <TableHeaders headers={headerDashboardTable} />
           <TableBody>
             {rows.map((row: any) => (
               <TableRow hover role="checkbox" tabIndex={-1} key={row.class}>
-                {headers.map((column) => {
+                {headerDashboardTable.map((column) => {
                   let value = row[column.id];
                   if (column.id === "status") {
                     const type: StatusAttendanceType =

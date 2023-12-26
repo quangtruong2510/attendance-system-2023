@@ -34,7 +34,7 @@ import { Search } from "@mui/icons-material";
 import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
 import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 
-const AttendanceList = () => {
+const AttendanceToday = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   // const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +53,10 @@ const AttendanceList = () => {
   const isLoading = useSelector((state) => state.attendance.isLoading);
 
   const role = useSelector((state) => state.authentication.role);
+  if (role == Roles.TEACHER) {
+    return <AttendanceClass></AttendanceClass>;
+  }
+
   const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     gradeId: { value: "", strict: true },
@@ -107,9 +111,7 @@ const AttendanceList = () => {
     dispatch(fetchStatisticsAttendance());
   }, []);
 
-  if (role == Roles.TEACHER) {
-    return <AttendanceClass></AttendanceClass>;
-  }
+
 
   return (
     <ContentLayout>
@@ -211,4 +213,4 @@ const ContentLayout = styled("div")(() => ({
   overflowY: "auto",
 }));
 
-export default AttendanceList;
+export default AttendanceToday;

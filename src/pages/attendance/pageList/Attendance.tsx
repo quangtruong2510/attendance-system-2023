@@ -32,6 +32,7 @@ import { fetchAttendanceClassPeriod, fetchStatisticsAttendance } from "../../../
 import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
 import { initializeState } from "../../../store/common/pagination";
 import { filterClassesByGrade, initializeClassState } from "../../../store/initdata/slice";
+import { Roles } from "../../../utils/role";
 
 interface GroupFilterSearch {
   from: string;
@@ -47,6 +48,10 @@ const AttendanceList = () => {
   const currentaAtendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.currentAttendanceClasses
   );
+  const role = useSelector(
+    (state) => state.authentication.role
+  );
+  let className = role === Roles.TEACHER ? useSelector((state) => state.authentication.className) : ""
 
   const isLoading = useSelector((state) => state.attendance.isLoading);
   const { current, perPage } = useSelector((state) => state.pagination);
@@ -140,9 +145,9 @@ const AttendanceList = () => {
           </Typography>
         </Breadcrumbs>
       </Stack>
-      <Stack alignItems={"end"}>
+      {role === Roles.ADMIN && (<Stack alignItems={"end"}>
         <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
-      </Stack>
+      </Stack>)}
       <Paper
         sx={{
           width: "100%",
@@ -153,16 +158,17 @@ const AttendanceList = () => {
         }}
       >
         <TableTitle
-          title="Thông tin chuyên cần của các lớp"
+          title={role === Roles.TEACHER ? `Thông tin chuyên cần lớp ${className}` : "Thông tin chuyên cần của các lớp"}
           handleExport={handleExport}
           reload={handleReload}
         />
+
         <Stack
           flexDirection={"row"}
           justifyContent={"space-between"}
           sx={{ borderBottom: "1px solid rgba(224, 224, 224, 1)" }}
         >
-          <Stack
+          {role === Roles.ADMIN && (<Stack
             direction="row"
             spacing={2}
             justifyContent={"center"}
@@ -197,7 +203,10 @@ const AttendanceList = () => {
             >
               Tìm kiếm
             </Button>
-          </Stack>
+          </Stack>)}
+          {role === Roles.TEACHER && (<Stack alignItems={"end"}>
+            <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
+          </Stack>)}
           <NavigationTable count={currentaAtendanceList.length} />
         </Stack>
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>

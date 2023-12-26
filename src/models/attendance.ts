@@ -17,11 +17,11 @@ export interface AttendanceReport {
 
 export interface AttendanceStudent {
   [key: number | string]:
-    | string
-    | number
-    | boolean
-    | undefined
-    | StatusAttendanceType;
+  | string
+  | number
+  | boolean
+  | undefined
+  | StatusAttendanceType;
   id: number;
   name: string;
   phone?: string;
@@ -29,15 +29,16 @@ export interface AttendanceStudent {
   timeCheckOut?: string;
   status?: StatusAttendanceType;
   note?: string;
+  className?: string;
 }
 
 export interface AttendanceClassPeriod {
   [key: number | string]:
-    | string
-    | number
-    | boolean
-    | undefined
-    | StatusAttendanceType;
+  | string
+  | number
+  | boolean
+  | undefined
+  | StatusAttendanceType;
   id: number;
   name: string;
   phone?: string;
@@ -50,11 +51,11 @@ export interface AttendanceClassPeriod {
 
 export interface DetailAttendanceStudent {
   [key: number | string]:
-    | string
-    | number
-    | boolean
-    | undefined
-    | StatusAttendanceType;
+  | string
+  | number
+  | boolean
+  | undefined
+  | StatusAttendanceType;
   id: number;
   day: string;
   timeCheckIn?: string;

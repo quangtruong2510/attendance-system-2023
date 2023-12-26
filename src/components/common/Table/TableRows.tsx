@@ -56,9 +56,11 @@ const TableRows: React.FC<Props> = ({
                 value = index + 1;
               }
               if (column.id == "gender") {
-                value = "Nữ"
+
                 if (value == 1) {
                   value = "Nam"
+                } else {
+                  value = "Nữ"
                 }
               }
               return (

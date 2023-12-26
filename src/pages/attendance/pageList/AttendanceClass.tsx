@@ -35,6 +35,8 @@ const AttendanceClass = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const attendanceStudent: AttendanceStudent[] = useSelector((state) => state.attendanceClass.data);
+  const defaultClassId = useSelector((state) => state.authentication.classId);
+
   const curentData: AttendanceStudent[] = useSelector((state) => state.attendanceClass.curentData);
   const isLoading = useSelector((state) => state.attendanceClass.isLoading);
   const { id } = useParams();
@@ -52,6 +54,7 @@ const AttendanceClass = () => {
   });
 
   const handleClose = () => {
+    setSelectedAttendanceStudent(null)
     setDialogOpen(false);
   };
   const editStudent = (id: number) => {
@@ -81,9 +84,10 @@ const AttendanceClass = () => {
 
   const handeSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
-      const idClass = id ? parseInt(id, 10) : 0;
+      const idClass = id ? parseInt(id, 10) : defaultClassId;
       await dispatch(fetchAttendanceClass(idClass));
       setDialogOpen(false);
+      setSelectedAttendanceStudent(null)
     }
   };
   const handleFilterData = () => {
@@ -103,7 +107,7 @@ const AttendanceClass = () => {
   const handleReload = () => { };
 
   useEffect(() => {
-    const idClass = id ? parseInt(id, 10) : 0;
+    const idClass = id ? parseInt(id, 10) : defaultClassId;
     dispatch(fetchAttendanceClass(idClass));
   }, []);
   return (
@@ -122,7 +126,7 @@ const AttendanceClass = () => {
         }}
       >
         <TableTitle
-          title={`Chuyên cần lớp ${className}`}
+          title={`Chuyên cần lớp ${attendanceStudent[0].className}`}
           handleExport={handleExport}
           reload={handleReload}
         />

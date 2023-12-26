@@ -33,7 +33,6 @@ export const studentSlice = createSlice({
       fetchStudents.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        console.log("aaaaaaaaaaaaaa", action.payload.data);
         state.data = action.payload.data;
         state.currentData = action.payload.data;
       }

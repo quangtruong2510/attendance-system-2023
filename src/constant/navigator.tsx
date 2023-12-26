@@ -35,7 +35,7 @@ const navigatorList: NavigatorItemModel[] = [
       {
         title: 'Thống kê',
         path: '/attendance',
-        roles: [Roles.ADMIN]
+        roles: [Roles.ADMIN, Roles.TEACHER]
       },
     ],
     icon: <EventNoteOutlined />

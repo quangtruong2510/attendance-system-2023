@@ -15,8 +15,6 @@ export const execute = async (
 };
 const requestAPI = async (request: Request, payload?: JSON): Promise<any> => {
   const apiToken = localStorage.getItem('token');
-  console.log("API token", apiToken);
-
   const headers: any = {
     'Content-Type': 'application/json',
     Accept: 'application/json',

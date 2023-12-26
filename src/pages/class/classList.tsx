@@ -174,7 +174,7 @@ const StudentList = () => {
             />
             <CustomInput
               label={"GVCN"}
-              value={filter.name}
+              value={filter.name.value}
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}

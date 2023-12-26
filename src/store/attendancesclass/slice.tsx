@@ -28,6 +28,7 @@ export const attendanceSlice = createSlice({
         state.isLoading = false;
         state.data = action.payload.data;
         state.curentData = action.payload.data;
+        console.log("Payload", action.payload.data);
       }
     );
     builder.addCase(fetchAttendanceClass.rejected, (state) => {

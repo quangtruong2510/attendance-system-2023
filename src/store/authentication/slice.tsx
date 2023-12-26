@@ -27,6 +27,7 @@ export const authSlice = createSlice({
       if (action.payload.data.role === Roles.TEACHER) {
         state.name = action.payload.data.teacherName
         state.classId = action.payload.data.classId
+        state.className = action.payload.data.className
       }
     });
     builder.addCase(loginUser.rejected, (state, action: any) => {

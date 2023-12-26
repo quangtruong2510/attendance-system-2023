@@ -36,10 +36,8 @@ const AttendanceStudentEdit: React.FC<Props> = ({
   const [attendanceStudent, setAttendanceStudent] = useState<AttendanceStudent | null>(selectedAttendanceStudent);
 
   useEffect(() => {
-    console.log("selectedAttendanceStudent", selectedAttendanceStudent);
-
     setAttendanceStudent(selectedAttendanceStudent);
-  }, [selectedAttendanceStudent]);
+  }, [selectedAttendanceStudent, dispatch, attendanceStudent]);
 
   const handleEditAttendanceStudent = () => {
     dispatch(updateAttendanceStudent(attendanceStudent)).unwrap()
@@ -105,7 +103,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
         <RadioGroup
           aria-label="attendance"
           name="attendance"
-          value={attendanceStudent?.status || 2}
+          value={() => { attendanceStudent?.status }}
           onChange={handleChangeData("status")}
           row
         >

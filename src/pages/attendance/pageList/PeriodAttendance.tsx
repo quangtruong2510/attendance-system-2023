@@ -44,9 +44,7 @@ const PeriodAttendance = () => {
   const currentData: AttendanceClassPeriod[] = useSelector(
     (state) => state.attendancesPeriod.currentData
   );
-  const className: string = useSelector(
-    (state) => state.attendancesPeriod.nameClass
-  );
+
   const isLoading = useSelector((state) => state.attendancesPeriod.isLoading);
 
   const { current, perPage } = useSelector((state) => state.pagination);
@@ -124,7 +122,7 @@ const PeriodAttendance = () => {
             </Typography>
           </Link>
           <Typography variant="h6" style={{ color: "rgb(0, 130, 146)" }}>
-            {`Lớp ${className}`}
+            {`Lớp ${studentAttendanceList[0].className}`}
           </Typography>
           <Typography color="textPrimary">{`(${startDate} ~ ${endDate})`}</Typography>
         </Breadcrumbs>
@@ -139,7 +137,7 @@ const PeriodAttendance = () => {
         }}
       >
         <TableTitle
-          title={`Chuyên cần lớp ${className}`}
+          title={`Chuyên cần lớp ${studentAttendanceList[0].className}`}
           handleExport={handleExport}
           reload={handleReload}
         />

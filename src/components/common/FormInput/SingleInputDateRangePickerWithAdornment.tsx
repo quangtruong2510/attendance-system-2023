@@ -4,12 +4,15 @@ import { DateRangePicker } from 'rsuite';
 import 'rsuite/dist/rsuite-rtl.css';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
 import './style.scss';
+import { useSelector } from '../../../store/configstore';
+import { Roles } from '../../../utils/role';
 
 interface Props {
   onUpdateDateRange: (startDay: string, endDay: string) => void;
 }
 
 const DateRangePickerCommon: React.FC<Props> = ({ onUpdateDateRange }) => {
+  const role = useSelector(state => state.authentication.role)
   const endDate = new Date(); // Today
   const startDate = subDays(endDate, 7);
   const handleDateChange = (value: DateRange | null) => {
@@ -39,7 +42,7 @@ const DateRangePickerCommon: React.FC<Props> = ({ onUpdateDateRange }) => {
           last7Days: '7 ngày trước',
           custom: 'Tùy chỉnh',
         }}
-        placement="leftStart"
+        placement={role === Roles.ADMIN ? "leftStart" : "bottom"}
         defaultValue={[startDate, endDate]}
         disabledDate={disabledDate} // Set the disabledDate prop
       />
