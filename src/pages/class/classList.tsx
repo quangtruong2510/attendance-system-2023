@@ -1,12 +1,11 @@
-import { Cached, CloudUpload } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import {
   Button,
   Paper,
   SelectChangeEvent,
   Stack,
   Table,
-  TableContainer,
-  Typography,
+  TableContainer
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -26,27 +25,43 @@ import { initializeState } from "../../store/common/pagination";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import CommonUtil from "../../utils/export";
 import ClassEditDialog from "./ClassEdit";
-import TableRows from "./part/TableRows";
+// import TableRows from "./part/TableRows";
 import { FilterCriteria } from "../../Type/Utils";
-
-interface GroupFilterSearch {
-  class: string;
-  grade: string;
-  name: string;
-  phone: string;
-}
+import TableRows from "../../components/common/Table/TableRows";
+import TableTitle from "../../components/common/Table/TableTitle";
+import { clearValidationErrors, setFilterClass } from "../../store/class/slice";
+import { filterClassesByGrade } from "../../store/initdata/slice";
 
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const classList: Class[] = useSelector((state) => state.class.data);
+  const curentData: Class[] = useSelector((state) => state.class.currentData);
   const [IsOpenEditDialog, setIsOpenEditDialog] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const { current, perPage } = useSelector((state) => state.pagination);
   const isLoading = useSelector((state) => state.class.isLoading);
+  const [isNew, setIsNewClass] = useState(false);
 
   const [filter, setFilter] = useState<FilterCriteria>({
-    status: { value: "", strict: true },
-    name: { value: "", strict: false },
+    gradeId: { value: "", strict: true },
+    homeroomTeacher: { value: "", strict: false },
   });
+
+  const handleChangeFilter =
+    (property: keyof FilterCriteria) =>
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        if (property === "gradeId") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
+
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
+      };
 
   useEffect(() => {
     dispatch(initializeState());
@@ -66,28 +81,53 @@ const StudentList = () => {
     setIsOpenEditDialog(false);
   };
 
-  const options: OptionSelect[] = [
-    { value: 1, label: "6" },
-    { value: 2, label: "7" },
-    { value: 3, label: "8" },
-    { value: 4, label: "9" },
-  ];
+  const grades: OptionSelect[] = useSelector(
+    (state) => state.initial.gradeList
+  );
 
-  const GradeOptions: OptionSelect[] = [
-    { value: 1, label: "6A1" },
-    { value: 2, label: "7A2" },
-    { value: 3, label: "8B6" },
-    { value: 4, label: "9B3" },
-  ];
+  const editCLass = (id: number) => {
+    setIsNewClass(false);
+    setIsOpenEditDialog(true);
+    setSelectedClass(
+      classList.find((classRoom) => classRoom.id === id) || null
+    );
+  };
 
-  const handleChangeFilter =
-    (property: keyof GroupFilterSearch) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-      };
+  const handeSuccessEdit = async (isSuccess: boolean) => {
+    if (isSuccess) {
+      await dispatch(fetchClasses());
+      dispatch(clearValidationErrors());
+      setIsOpenEditDialog(false);
+      setSelectedClass(null);
+    }
+  };
+
+  // const handleChangeFilter =
+  //   (property: keyof GroupFilterSearch) =>
+  //     (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+  //       setFilter((prev) => ({ ...prev, [property]: event.target.value }));
+  //     };
+
+  const handleFilterData = () => {
+    const allValuesEmpty = Object.values(filter).every((filterItem) => {
+      return filterItem.value === "";
+    });
+
+    if (allValuesEmpty) {
+      dispatch(setFilterClass(classList));
+      return;
+    }
+
+    const filterData: Class[] = CommonUtil.filterData(classList, filter);
+    dispatch(setFilterClass(filterData));
+  };
 
   const handleExport = async () => {
-    await CommonUtil.exportToExcel("lop-hoc", "Danh sách lớp học", classList);
+    await CommonUtil.exportToExcel("danh_sach_lop_hoc", "Danh sách lớp học", classList);
+  };
+
+  const handleReload = async () => {
+    dispatch(fetchClasses());
   };
 
   return (
@@ -106,47 +146,11 @@ const StudentList = () => {
           boxShadow: "rgba(99, 99, 99, 0.4) 0px 2px 8px 0px",
         }}
       >
-        <GroupFilter>
-          <GroupFilter>
-            <Typography
-              sx={{ margin: "0" }}
-              variant="h6"
-              style={{ color: "rgb(227 113 12)" }}
-            >
-              Danh sách lớp học
-            </Typography>
-          </GroupFilter>
-          <Stack direction="row" spacing={2}>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-                backgroundColor: "#117957",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<CloudUpload />}
-              onClick={handleExport}
-            >
-              Xuất Excel
-            </Button>
-            <Button
-              style={{
-                height: "35px",
-                minWidth: "80px",
-                textTransform: "none",
-              }}
-              size="small"
-              component="label"
-              variant="contained"
-              startIcon={<Cached />}
-            >
-              Làm mới
-            </Button>
-          </Stack>
-        </GroupFilter>
+        <TableTitle
+          title="Danh sách lớp học"
+          handleExport={handleExport}
+          reload={handleReload}
+        />
         <Stack
           flexDirection={"row"}
           justifyContent={"space-between"}
@@ -161,27 +165,34 @@ const StudentList = () => {
             <SelectDropdown
               id={"grade"}
               label="Khối"
-              options={options}
-              value={filter.grade}
-              onChange={handleChangeFilter("grade")}
-            />
-            <SelectDropdown
-              id={"class"}
-              label="Lớp"
-              options={GradeOptions}
-              value={filter.class}
-              onChange={handleChangeFilter("class")}
+              options={grades}
+              value={filter.gradeId.value}
+              onChange={handleChangeFilter("gradeId")}
             />
             <CustomInput
               label={"GVCN"}
-              value={filter.name.value}
-              onChange={handleChangeFilter("name")}
+              value={filter.homeroomTeacher.value}
+              onChange={handleChangeFilter("homeroomTeacher")}
               placeholder={"Họ và tên"}
               fullWidth={false}
             />
+            <Button
+              style={{
+                height: "35px",
+                minWidth: "80px",
+                textTransform: "none",
+              }}
+              size="small"
+              component="label"
+              variant="contained"
+              startIcon={<Search />}
+              onClick={handleFilterData}
+            >
+              Tìm kiếm
+            </Button>
           </Stack>
 
-          <NavigationTable count={classList.length} />
+          <NavigationTable count={curentData.length} />
         </Stack>
 
         <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
@@ -195,18 +206,19 @@ const StudentList = () => {
               <TableRowsLoader rowsNum={10} numColumns={5} />
             ) : (
               <TableRows
-                rows={classList.slice(
+                rows={curentData.slice(
                   current * perPage,
                   current * perPage + perPage
                 )}
                 headers={headerClassTable}
                 onDeleteClick={onDeleteClick}
+                onEditClick={editCLass}
               />
             )}
           </Table>
         </TableContainer>
       </Paper>
-      <ClassEditDialog open={IsOpenEditDialog} onClose={handleClose} />
+      <ClassEditDialog selectedClass={selectedClass} isNew={isNew} open={IsOpenEditDialog} onClickEdit={handeSuccessEdit} onClose={handleClose} />
     </ContentLayout>
   );
 };
@@ -215,11 +227,5 @@ const ContentLayout = styled("div")(() => ({
   padding: "15px 20px 0px 20px",
   overflowY: "auto",
 }));
-
-const GroupFilter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-`;
 
 export default StudentList;

@@ -21,7 +21,7 @@ const TableRowsLoader: React.FC<Props> = ({ rowsNum, numColumns }) => {
         return cells;
     };
 
-    return [...Array(rowsNum)].map((row, index) => (
+    return [...Array(rowsNum)].map((_, index) => (
         <TableRow key={index}>
             <TableCell component="th" scope="row">
                 <Skeleton animation="wave" variant="text" />

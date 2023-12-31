@@ -26,13 +26,14 @@ import { AttendanceReport } from "../../../models/attendance";
 import { fetchStatisticsAttendance } from "../../../store/attendances/operation";
 import { Roles } from "../../../utils/role";
 // import TableRows from "../part/TableRows";
-import AttendanceClass from "./AttendanceClass";
-import TableRows from "../../../components/common/Table/TableRows";
-import { FilterCriteria } from "../../../Type/Utils";
-import { filterClassesByGrade } from "../../../store/initdata/slice";
 import { Search } from "@mui/icons-material";
-import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
+import { FilterCriteria } from "../../../Type/Utils";
+import TableRows from "../../../components/common/Table/TableRows";
 import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
+import { filterClassesByGrade } from "../../../store/initdata/slice";
+import AttendanceAllClass from "../edit/AttendanceAllClass";
+import AttendanceClass from "./AttendanceClass";
 
 const AttendanceToday = () => {
   const navigate = useNavigate();
@@ -63,9 +64,27 @@ const AttendanceToday = () => {
     classId: { value: "", strict: true },
     homeroomTeacher: { value: "", strict: false },
   });
+  const [selectedClassId, setSelectedClass] = useState<number>(0);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const onDetailClick = (id: number) => {
     navigate(`class/${id}`);
+  };
+
+  const onAttendanceAllClassClick = (id: number) => {
+    setSelectedClass(id);
+    setDialogOpen(true)
+  };
+
+  const handleClose = () => {
+    setDialogOpen(false)
+  }
+
+  const handeSuccessEdit = async (isSuccess: boolean) => {
+    if (isSuccess) {
+      await dispatch(fetchStatisticsAttendance());
+      setDialogOpen(false);
+    }
   };
 
   const handleChangeFilter =
@@ -191,7 +210,7 @@ const AttendanceToday = () => {
           >
             <TableHeaders headers={headerAttendanceTable} />
             {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={7} />
+              <TableRowsLoader rowsNum={10} numColumns={9} />
             ) : (
               <TableRows
                 rows={currentAttendanceClasses.slice(
@@ -200,9 +219,16 @@ const AttendanceToday = () => {
                 )}
                 headers={headerAttendanceTable}
                 onEditClick={onDetailClick}
+                onAttendanceAllClassClick={onAttendanceAllClassClick}
               />)}
           </Table>
         </TableContainer>
+        <AttendanceAllClass
+          isOpen={isDialogOpen}
+          classId={selectedClassId}
+          handleClose={handleClose}
+          onClickEdit={handeSuccessEdit}
+        ></AttendanceAllClass>
       </Paper>
     </ContentLayout>
   );

@@ -56,4 +56,15 @@ const updateAttendanceStudent = createAsyncThunk(
   }
 );
 
-export { fetchStatisticsAttendance, fetchAttendanceClass, getStudentById, updateAttendanceStudent, fetchAttendanceClassPeriod };
+const updateAttendanceAllClass = createAsyncThunk(
+  "attendance/updateAttendanceAll",
+  async (attendance: any) => {
+    const request: Request = {
+      endpoint: `${BASE_URL_API}attendance_update/${attendance.id}`,
+      method: "PATCH",
+    };
+    return await execute(request, attendance);
+  }
+);
+
+export { fetchStatisticsAttendance, fetchAttendanceClass, getStudentById, updateAttendanceStudent, fetchAttendanceClassPeriod, updateAttendanceAllClass };

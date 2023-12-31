@@ -10,11 +10,7 @@ import Login from "../pages/login/Login";
 import Setting from "../pages/setting/Setting";
 import StudentList from "../pages/student/StudentList";
 import TeacherList from "../pages/teacher/TeacherList";
-import { useSelector } from "../store/configstore";
 import { Roles } from "../utils/role";
-
-// const role = useSelector(state => state.authentication.role)
-// const componentToday: any = role === Roles.TEACHER ? <AttendanceClass /> : <AttendanceToday />
 
 const routeList: IRoute[] = [
   {

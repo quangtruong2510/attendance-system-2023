@@ -65,7 +65,7 @@ const headerTeacherTable: Column[] = [
   },
   {
     id: "action",
-    label: "Tác vụ",
+    label: "Thao tác",
     minWidth: 100,
     align: "center",
     maxWidth: 300,
@@ -118,7 +118,7 @@ const headerStudentTable: Column[] = [
   },
   {
     id: "action",
-    label: "Tác vụ",
+    label: "Thao tác",
     minWidth: 100,
     align: "center",
     maxWidth: 300,
@@ -185,7 +185,7 @@ const headerAttendanceTable: Column[] = [
   },
   {
     id: "action",
-    label: "Chi tiết",
+    label: "Thao tác",
     minWidth: 100,
     align: "center",
     maxWidth: 300,
@@ -245,7 +245,7 @@ const headerAttendanceReportTable: Column[] = [
   },
   {
     id: "action",
-    label: "Chi tiết",
+    label: "Thao tác",
     minWidth: 100,
     align: "center",
     maxWidth: 300,
@@ -362,7 +362,7 @@ const headerClassTable: Column[] = [
   },
   {
     id: "action",
-    label: "Tác vụ",
+    label: "Thao tác",
     minWidth: 50,
     align: "center",
     maxWidth: 300,
@@ -422,7 +422,7 @@ const headerAttendanceClassPeriod: Column[] = [
   },
   {
     id: "action",
-    label: "Chi tiết",
+    label: "Thao tác",
     minWidth: 50,
     align: "center",
     maxWidth: 300,

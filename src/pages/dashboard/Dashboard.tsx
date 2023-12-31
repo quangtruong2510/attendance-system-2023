@@ -33,9 +33,7 @@ import BreadcrumbsComponent from "../../components/common/Utils";
 import { breadcrumbDashboardItems } from "../../constant/breadcrums";
 import { StatusAttendanceTypeList } from "../../constant/constant";
 import {
-  Column,
-  headerAttendanceClassDashboardTable,
-  headerDashboardTable,
+  headerDashboardTable
 } from "../../constant/headerTable";
 import { AttendanceReport } from "../../models/attendance";
 import { fetchAttendanceClassPeriod } from "../../store/attendances/operation";
@@ -66,7 +64,6 @@ const iconStyle = {
   height: "45px",
 };
 
-let headers: Column[] = [];
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
   // const attendanceClass = useSelector((state) => state.dashBoard.data);

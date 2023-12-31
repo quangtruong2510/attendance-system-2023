@@ -9,11 +9,13 @@ interface Props {
   headers: Column[];
   onEditClick?: (id: number) => void;
   onDeleteClick?: (id: number) => void;
+  onAttendanceAllClassClick?: (id: number) => void;
 }
 
 import { StatusAttendanceType } from "../../../Type/Utils";
 import { StatusAttendanceTypeList } from "../../../constant/constant";
 import { Column } from "../../../constant/headerTable";
+import AttendanceAll from "../Button/AttendanceAllCLass";
 import DeleteButton from "../Button/DeleteButton";
 import ConfirmDeleteDialog from "../Dialog/ConfirmDelete";
 
@@ -22,6 +24,7 @@ const TableRows: React.FC<Props> = ({
   headers,
   onEditClick,
   onDeleteClick,
+  onAttendanceAllClassClick
 }) => {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(0);
@@ -63,6 +66,7 @@ const TableRows: React.FC<Props> = ({
                   value = "Nữ"
                 }
               }
+              if (value == "" || value == null) value = "-"
               return (
                 <TableCell
                   style={{
@@ -80,7 +84,7 @@ const TableRows: React.FC<Props> = ({
                 </TableCell>
               );
             })}
-          {(onEditClick || onDeleteClick) && (
+          {(onEditClick || onDeleteClick || onAttendanceAllClassClick) && (
             <TableCell align="center" style={{ gap: "30px" }}>
               {onEditClick && (
                 <EditIconButton
@@ -93,6 +97,19 @@ const TableRows: React.FC<Props> = ({
                 <DeleteButton
                   id={row.id}
                   onIconClick={() => handleDeleteClick(row.id)}
+                />
+              )}
+              {onAttendanceAllClassClick && (
+                // <Tooltip title={"Duyệt tất cả"}>
+                //   <EditIconButton
+                //     id={row.id}
+                //     aria-label="edit"
+                //     onClick={onAttendanceAllClassClick}
+                //   />
+                // </Tooltip>
+                <AttendanceAll
+                  id={row.id}
+                  onIconClick={() => onAttendanceAllClassClick(row.id)}
                 />
               )}
             </TableCell>

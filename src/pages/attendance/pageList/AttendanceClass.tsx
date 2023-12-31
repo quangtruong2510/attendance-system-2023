@@ -30,6 +30,7 @@ import AttendanceStudentEdit from "../edit/AttendanceStudent";
 import { FilterCriteria } from "../../../Type/Utils";
 import { Search } from "@mui/icons-material";
 import { setFilterAttendanceClasse } from "../../../store/attendancesclass/slice";
+import { initSelectedStudent } from "../../../store/attendancesclass/initialize";
 
 const AttendanceClass = () => {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -41,11 +42,9 @@ const AttendanceClass = () => {
   const isLoading = useSelector((state) => state.attendanceClass.isLoading);
   const { id } = useParams();
 
-  const [selectedAttendanceStudent, setSelectedAttendanceStudent] = useState<AttendanceStudent | null>(null);
+  const [selectedAttendanceStudent, setSelectedAttendanceStudent] = useState<AttendanceStudent>(initSelectedStudent);
 
-  const className = useSelector(
-    (state) => state.attendance.attendanceClass.nameClass
-  );
+  const className = attendanceStudent[0]?.className || ""
 
   const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
@@ -54,12 +53,12 @@ const AttendanceClass = () => {
   });
 
   const handleClose = () => {
-    setSelectedAttendanceStudent(null)
+    setSelectedAttendanceStudent(initSelectedStudent)
     setDialogOpen(false);
   };
   const editStudent = (id: number) => {
     setDialogOpen(true);
-    setSelectedAttendanceStudent(attendanceStudent.find((attendance) => attendance.id === id) || null)
+    setSelectedAttendanceStudent(attendanceStudent.find((attendance) => attendance.id === id) || initSelectedStudent)
   };
 
   const handleChangeFilter =
@@ -87,7 +86,7 @@ const AttendanceClass = () => {
       const idClass = id ? parseInt(id, 10) : defaultClassId;
       await dispatch(fetchAttendanceClass(idClass));
       setDialogOpen(false);
-      setSelectedAttendanceStudent(null)
+      setSelectedAttendanceStudent(initSelectedStudent)
     }
   };
   const handleFilterData = () => {
@@ -126,7 +125,7 @@ const AttendanceClass = () => {
         }}
       >
         <TableTitle
-          title={`Chuyên cần lớp ${attendanceStudent[0].className}`}
+          title={`Chuyên cần lớp ${className}`}
           handleExport={handleExport}
           reload={handleReload}
         />

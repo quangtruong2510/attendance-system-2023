@@ -40,7 +40,7 @@ const Navigation: React.FC = () => {
         pt="20px"
       >
         <img src="./src/assets/logo.svg" alt="My Icon" />
-        <p>Attendance System</p>
+        <p>Điểm Danh Thông Minh</p>
       </Box>
       <List
         sx={{ width: "100%", maxWidth: 280 }}
@@ -52,9 +52,8 @@ const Navigation: React.FC = () => {
           <ListItemButton sx={{ pl: 2 }}>
             <HomeOutlinedIcon />
             <Typography
-              className={`no-underline ${
-                location.pathname === "/dashboard" && "active-navigation"
-              }`}
+              className={`no-underline ${location.pathname === "/dashboard" && "active-navigation"
+                }`}
               sx={{
                 ml: 1,
                 textDecoration: "none !important",

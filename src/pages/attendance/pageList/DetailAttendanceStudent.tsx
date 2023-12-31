@@ -2,14 +2,13 @@ import {
   Breadcrumbs,
   Button,
   Paper,
-  SelectChangeEvent,
   Stack,
   Table,
   TableContainer,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
 import TableHeaders from "../../../components/common/Table/TableHeader";
@@ -17,16 +16,16 @@ import { headerDetailAttendanceStudentPeriod } from "../../../constant/headerTab
 import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
 
+import { Search } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { FilterCriteria } from "../../../Type/Utils";
 import TableRows from "../../../components/common/Table/TableRows";
 import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { DetailAttendanceStudent } from "../../../models/attendance";
 import { fetchDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/operation";
-import { FilterCriteria } from "../../../Type/Utils";
 import { setFilterDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/slice";
-import { Search } from "@mui/icons-material";
 
 const DetailAttendanceStudentPeriod = () => {
   const location = useLocation();
@@ -87,8 +86,6 @@ const DetailAttendanceStudentPeriod = () => {
     }
 
     const filterData: DetailAttendanceStudent[] = CommonUtil.filterData(studentAttendanceList, filter);
-    console.log("filterData", filterData);
-
     dispatch(setFilterDetailAttendanceStudent(filterData));
   };
   const handleExport = async () => {

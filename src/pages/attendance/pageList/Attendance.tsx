@@ -28,7 +28,7 @@ import TableRows from "../../../components/common/Table/TableRows";
 import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { AttendanceReport } from "../../../models/attendance";
-import { fetchAttendanceClassPeriod, fetchStatisticsAttendance } from "../../../store/attendances/operation";
+import { fetchAttendanceClassPeriod } from "../../../store/attendances/operation";
 import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
 import { initializeState } from "../../../store/common/pagination";
 import { filterClassesByGrade, initializeClassState } from "../../../store/initdata/slice";
@@ -161,10 +161,11 @@ const AttendanceList = () => {
             Thống kê
           </Typography>
         </Breadcrumbs>
+        {role === Roles.ADMIN && (<Stack alignItems={"end"}>
+          <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
+        </Stack>)}
       </Stack>
-      {role === Roles.ADMIN && (<Stack alignItems={"end"}>
-        <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
-      </Stack>)}
+
       <Paper
         sx={{
           width: "100%",

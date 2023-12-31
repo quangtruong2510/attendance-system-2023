@@ -8,39 +8,43 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  SelectChangeEvent,
-  Stack
+  SelectChangeEvent
 } from "@mui/material";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { StatusAttendanceType } from "../../../Type/Utils";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
-import { AttendanceStudent } from "../../../models/attendance";
-import { updateAttendanceStudent } from "../../../store/attendances/operation";
 import { AppDispatch } from "../../../store/configstore";
+import { updateAttendanceAllClass } from "../../../store/attendances/operation";
 
 interface Props {
   isOpen: boolean;
-  selectedAttendanceStudent: AttendanceStudent | null;
+  classId: number;
   handleClose: () => void;
   onClickEdit: (isSuccess: boolean) => void;
 }
 
-const AttendanceStudentEdit: React.FC<Props> = ({
+interface AttendanceAll {
+  classId: number;
+  status: number;
+  note: string
+}
+
+const AttendanceAllClass: React.FC<Props> = ({
   isOpen,
   handleClose,
-  selectedAttendanceStudent,
+  classId,
   onClickEdit
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [attendanceStudent, setAttendanceStudent] = useState<AttendanceStudent | null>(selectedAttendanceStudent);
+  const [attendanceAll, setAttendanceAll] = useState<AttendanceAll | null>({
+    classId: classId,
+    status: 1,
+    note: ""
+  });
 
-  useEffect(() => {
-    setAttendanceStudent(selectedAttendanceStudent);
-  }, [selectedAttendanceStudent]);
-
-  const handleEditAttendanceStudent = () => {
-    dispatch(updateAttendanceStudent(attendanceStudent)).unwrap()
+  const handleEditAttendanceAll = () => {
+    dispatch(updateAttendanceAllClass(attendanceAll)).unwrap()
       .then(() => {
         handleClose();
         onClickEdit(true);
@@ -50,11 +54,11 @@ const AttendanceStudentEdit: React.FC<Props> = ({
       });
   };
   const handleChangeData =
-    (property: keyof AttendanceStudent) =>
+    (property: keyof AttendanceAll) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
-        setAttendanceStudent((prev) => {
+        setAttendanceAll((prev) => {
           if (!prev) {
-            return { [property]: event.target.value } as AttendanceStudent;
+            return { [property]: event.target.value } as AttendanceAll;
           }
 
           return {
@@ -65,45 +69,12 @@ const AttendanceStudentEdit: React.FC<Props> = ({
       };
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle color={"rgb(0, 130, 146)"}>Chỉnh sửa thông tin</DialogTitle>
+      <DialogTitle color={"rgb(0, 130, 146)"}>Duyệt tất cả</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth style={{ margin: "5px 0px" }}>
-          <CustomInput
-            label="Họ và tên"
-            type="text"
-            fullWidth={true}
-            size="small"
-            isDisable={true}
-            value={attendanceStudent?.name}
-          />
-        </FormControl>
-        <Stack flexDirection={"row"} gap={2} paddingTop={2}>
-          <FormControl fullWidth style={{ margin: "10px 0px" }}>
-            <CustomInput
-              label="Check in"
-              type="text"
-              fullWidth={true}
-              size="medium"
-              value={attendanceStudent?.timeCheckIn}
-              isDisable={true}
-            />
-          </FormControl>
-
-          <FormControl fullWidth style={{ margin: "10px 0px" }}>
-            <CustomInput
-              label="Check out"
-              type="text"
-              fullWidth={true}
-              size="medium"
-              isDisable={true}
-              value={attendanceStudent?.timeCheckOut}
-            />
-          </FormControl>
-        </Stack>
         <RadioGroup
           aria-label="attendance"
           name="attendance"
-          value={attendanceStudent?.status}
+          value={attendanceAll?.status}
           onChange={handleChangeData("status")}
           row
         >
@@ -137,7 +108,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
             maxRows={3}
             rows={2}
             fullWidth={true}
-            value={attendanceStudent?.note}
+            value={attendanceAll?.note}
             onChange={handleChangeData("note")}
           />
         </FormControl>
@@ -155,7 +126,7 @@ const AttendanceStudentEdit: React.FC<Props> = ({
         <Button
           variant="contained"
           size="medium"
-          onClick={handleEditAttendanceStudent}
+          onClick={handleEditAttendanceAll}
         >
           Cập nhật
         </Button>
@@ -164,4 +135,4 @@ const AttendanceStudentEdit: React.FC<Props> = ({
   );
 };
 
-export default AttendanceStudentEdit;
+export default AttendanceAllClass;

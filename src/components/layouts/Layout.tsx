@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { AppDispatch, useSelector } from "../../store/configstore";
+import { AppDispatch } from "../../store/configstore";
+import { fetchClassSelection, fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
-import { useDispatch } from "react-redux";
-import { fetchClassSelection, fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 
 const ContentLayout = styled("div")(() => ({
   flexGrow: 1,
@@ -16,7 +16,7 @@ const ContentLayout = styled("div")(() => ({
 
 const Layout = () => {
 
-  const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
+  // const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
   const dispatch = useDispatch<AppDispatch>();
 
   // if (!isAuthenticated) {
@@ -24,7 +24,7 @@ const Layout = () => {
   // }
   useEffect(() => {
     // get token from localStorage
-    const token = { token: localStorage.getItem("token") };
+    // const token = { token: localStorage.getItem("token") };
     dispatch(fetchUnAssignTeacherList());
     dispatch(fetchGradeList());
     dispatch(fetchClassSelection());

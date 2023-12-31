@@ -7,10 +7,13 @@ import {
   fetchClasses
 } from "./operation";
 
-export const studentSlice = createSlice({
-  name: "student",
+export const classSlice = createSlice({
+  name: "class",
   initialState,
   reducers: {
+    setFilterClass(state, action) {
+      state.currentData = action.payload;
+    },
     clearValidationErrors: (state) => {
       state.validationErrors = null;
     },
@@ -25,6 +28,7 @@ export const studentSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.data = action.payload.data;
+        state.currentData = action.payload.data;
       }
     );
     builder.addCase(
@@ -44,4 +48,6 @@ export const studentSlice = createSlice({
   },
 });
 
-export default studentSlice.reducer;
+export const { clearValidationErrors, setFilterClass } = classSlice.actions;
+
+export default classSlice.reducer;
