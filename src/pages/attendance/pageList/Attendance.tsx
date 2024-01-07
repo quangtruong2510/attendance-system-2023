@@ -5,15 +5,12 @@ import {
   Paper,
   SelectChangeEvent,
   Stack,
-  Table,
-  TableContainer,
-  Typography,
+  Typography
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import SelectDropdown from "../../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
-import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerAttendanceReportTable } from "../../../constant/headerTable";
 import { OptionSelect } from "../../../models/Utils";
 import { AppDispatch, useSelector } from "../../../store/configstore";
@@ -24,8 +21,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FilterCriteria } from "../../../Type/Utils";
 import DateRangePickerCommon from "../../../components/common/FormInput/SingleInputDateRangePickerWithAdornment";
-import TableRows from "../../../components/common/Table/TableRows";
-import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import TableList from "../../../components/common/Table/TableList";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { AttendanceReport } from "../../../models/attendance";
 import { fetchAttendanceClassPeriod } from "../../../store/attendances/operation";
@@ -45,7 +41,7 @@ const AttendanceList = () => {
   const attendanceList: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
   );
-  const currentaAtendanceList: AttendanceReport[] = useSelector(
+  const currentData: AttendanceReport[] = useSelector(
     (state) => state.attendance.currentAttendanceClasses
   );
   const role = useSelector(
@@ -54,7 +50,6 @@ const AttendanceList = () => {
   let className = role === Roles.TEACHER ? useSelector((state) => state.authentication.className) : ""
 
   const isLoading = useSelector((state) => state.attendance.isLoading);
-  const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     classId: { value: "", strict: true },
     gradeId: { value: "", strict: true },
@@ -225,29 +220,14 @@ const AttendanceList = () => {
           {role === Roles.TEACHER && (<Stack alignItems={"end"}>
             <DateRangePickerCommon onUpdateDateRange={handleDateUpdate} />
           </Stack>)}
-          <NavigationTable count={currentaAtendanceList.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerAttendanceReportTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={8} />
-            ) : (
-              <TableRows
-                rows={currentaAtendanceList.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerAttendanceReportTable}
-                onEditClick={onDetailClick}
-              />
-            )}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerAttendanceReportTable}
+          currentData={currentData}
+          onEditClick={onDetailClick}
+        ></TableList>
       </Paper>
     </ContentLayout>
   );

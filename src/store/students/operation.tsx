@@ -22,7 +22,6 @@ const getStudentById = createAsyncThunk(
       endpoint: `${BASE_URL_API}student/${arg.id}`,
       method: "GET",
     };
-    // const request: Request = { endpoint: `${BASE_URL_API}getStudentByID/${arg.id}`, method: 'GET' };
     return await execute(request);
   }
 );
@@ -35,7 +34,6 @@ const getStudentByClassId = createAsyncThunk(
       endpoint: `${BASE_URL_API}student/class/${idClass}`,
       method: "GET",
     };
-    // const request: Request = { endpoint: `${BASE_URL_API}getStudentByID/${arg.id}`, method: 'GET' };
     return await execute(request);
   }
 );

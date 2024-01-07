@@ -94,7 +94,7 @@ interface State {
   data: Teacher[];
   currentData: Teacher[];
   selectedTeacher: Teacher;
-  isLoading: Boolean;
+  isLoading: boolean;
   validationErrors: any;
 }
 

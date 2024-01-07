@@ -8,7 +8,7 @@ export const initClass: Class = {
 interface State {
   data: Class[],
   currentData: Class[],
-  isLoading: Boolean,
+  isLoading: boolean,
   validationErrors: any,
 }
 const initialState: State = {

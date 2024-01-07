@@ -9,12 +9,12 @@ import {
   Radio,
   RadioGroup,
   SelectChangeEvent,
-  Stack,
-  TextField,
+  Stack
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Gender } from "../../Type/Utils";
+import DatePickerValue from "../../components/common/DatePicker";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import { OptionSelect } from "../../models/Utils";
@@ -55,6 +55,10 @@ const EditStudent: React.FC<Props> = ({
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
         setStudent((prev) => ({ ...prev, [property]: event.target.value }));
       };
+
+  const onDateSelected = (date: string) => {
+    setStudent((prev) => ({ ...prev, dateOfBirth: date }));
+  }
 
   const handleEditStudent = async () => {
     if (isNew) {
@@ -150,28 +154,31 @@ const EditStudent: React.FC<Props> = ({
           marginTop={1}
           style={{ maxWidth: "100%" }}
         >
-          {role === Roles.ADMIN && (<SelectDropdown
-            id={"class"}
-            minWidth={120}
-            label="Lớp"
-            options={classes}
-            value={student.classId}
-            onChange={handleInputChange("classId")}
-            errorMessage={
-              validationErrors && validationErrors.classId
-                ? validationErrors.classId
-                : ""
-            }
-          />)}
+          {role === Roles.ADMIN && (
+            <SelectDropdown
+              id={"class"}
+              marginTop={9}
+              minWidth={120}
+              label="Lớp"
+              options={classes}
+              value={student.classId}
+              onChange={handleInputChange("classId")}
+              errorMessage={
+                validationErrors && validationErrors.classId
+                  ? validationErrors.classId
+                  : ""
+              }
+            />
+          )}
 
-          <TextField
+          {/* <TextField
             fullWidth={true}
             size="small"
             name="dateOfBirth"
             label="Ngày sinh"
             value={student.dateOfBirth}
             InputLabelProps={{ shrink: true, required: true }}
-            type="date"
+            type="datetime-local"
             onChange={handleInputChange("dateOfBirth")}
             error={
               validationErrors && validationErrors.dateOfBirth ? true : false
@@ -181,8 +188,20 @@ const EditStudent: React.FC<Props> = ({
                 ? validationErrors.dateOfBirth
                 : ""
             }
-          // defaultValue={"2000-10-25"}
-          />
+          /> */}
+          <DatePickerValue
+            onDateSelected={onDateSelected}
+            label={"Ngày sinh"}
+            initialValue={student.dateOfBirth}
+          ></DatePickerValue>
+          {/* <DatePickerCustom onDateSelected={onDateSelected}></DatePickerCustom> */}
+          {/* <DatePicker
+            label="Departure Date"
+            inputFormat="DD-MM-YYYY" // 13-09-2022
+            onChange={handleInputChange("dateOfBirth")}
+            value={student?.dateOfBirth}
+            renderInput={(params) => <TextField {...params} required />}
+          /> */}
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
           <CustomInput

@@ -12,6 +12,7 @@ interface Props {
   minWidth?: number;
   width?: number;
   errorMessage?: string;
+  marginTop?: number
   onChange: (event: SelectChangeEvent<any>) => void;
 }
 
@@ -24,6 +25,7 @@ const SelectDropdown: React.FC<Props> = ({
   minWidth,
   width,
   errorMessage,
+  marginTop
 }) => {
   return (
     <FormControl
@@ -31,6 +33,7 @@ const SelectDropdown: React.FC<Props> = ({
         minWidth: minWidth ? minWidth : 80,
         maxWidth: "300px",
         width: width,
+        marginTop: marginTop,
       }}
     >
       <InputLabel

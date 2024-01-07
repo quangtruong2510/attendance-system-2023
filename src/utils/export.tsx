@@ -98,6 +98,7 @@ class CommonUtils {
     const [day, month, year] = inputDate.split("-");
     return `${year}-${month}-${day}`;
   };
+
 }
 
 export default new CommonUtils();

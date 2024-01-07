@@ -59,7 +59,7 @@ const Header: React.FC = () => {
           <AppsOutlinedIcon />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ width: "400px" }}>
-          Điểm Danh Thông Minh
+          Trường THPT Hương Trà
         </Typography>
 
         <Stack

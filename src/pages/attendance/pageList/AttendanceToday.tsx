@@ -2,16 +2,13 @@ import {
   Button,
   Paper,
   SelectChangeEvent,
-  Stack,
-  Table,
-  TableContainer,
+  Stack
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
 import SelectDropdown from "../../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
-import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerAttendanceTable } from "../../../constant/headerTable";
 import { OptionSelect } from "../../../models/Utils";
 import { AppDispatch, useSelector } from "../../../store/configstore";
@@ -28,8 +25,7 @@ import { Roles } from "../../../utils/role";
 // import TableRows from "../part/TableRows";
 import { Search } from "@mui/icons-material";
 import { FilterCriteria } from "../../../Type/Utils";
-import TableRows from "../../../components/common/Table/TableRows";
-import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import TableList from "../../../components/common/Table/TableList";
 import { setFilterAttendanceClasses } from "../../../store/attendances/slice";
 import { filterClassesByGrade } from "../../../store/initdata/slice";
 import AttendanceAllClass from "../edit/AttendanceAllClass";
@@ -58,7 +54,7 @@ const AttendanceToday = () => {
     return <AttendanceClass></AttendanceClass>;
   }
 
-  const { current, perPage } = useSelector((state) => state.pagination);
+  // const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     gradeId: { value: "", strict: true },
     classId: { value: "", strict: true },
@@ -73,14 +69,14 @@ const AttendanceToday = () => {
 
   const onAttendanceAllClassClick = (id: number) => {
     setSelectedClass(id);
-    setDialogOpen(true)
+    setDialogOpen(true);
   };
 
   const handleClose = () => {
-    setDialogOpen(false)
-  }
+    setDialogOpen(false);
+  };
 
-  const handeSuccessEdit = async (isSuccess: boolean) => {
+  const handleSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
       await dispatch(fetchStatisticsAttendance());
       setDialogOpen(false);
@@ -89,19 +85,19 @@ const AttendanceToday = () => {
 
   const handleChangeFilter =
     (property: keyof FilterCriteria) =>
-      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-        if (property === "gradeId") {
-          dispatch(filterClassesByGrade(event.target.value));
-        }
+    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+      if (property === "gradeId") {
+        dispatch(filterClassesByGrade(event.target.value));
+      }
 
-        setFilter((prev) => ({
-          ...prev,
-          [property]: {
-            value: event.target.value,
-            strict: prev[property]?.strict ?? true,
-          },
-        }));
-      };
+      setFilter((prev) => ({
+        ...prev,
+        [property]: {
+          value: event.target.value,
+          strict: prev[property]?.strict ?? true,
+        },
+      }));
+    };
 
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {
@@ -113,7 +109,10 @@ const AttendanceToday = () => {
       return;
     }
 
-    const filterData: AttendanceReport[] = CommonUtil.filterData(attendanceList, filter);
+    const filterData: AttendanceReport[] = CommonUtil.filterData(
+      attendanceList,
+      filter
+    );
     dispatch(setFilterAttendanceClasses(filterData));
   };
 
@@ -125,12 +124,12 @@ const AttendanceToday = () => {
     );
   };
 
-  const handleReload = () => { dispatch(fetchStatisticsAttendance()) };
+  const handleReload = () => {
+    dispatch(fetchStatisticsAttendance());
+  };
   useEffect(() => {
     dispatch(fetchStatisticsAttendance());
   }, []);
-
-
 
   return (
     <ContentLayout>
@@ -201,33 +200,18 @@ const AttendanceToday = () => {
           </Stack>
           <NavigationTable count={currentAttendanceClasses.length} />
         </Stack>
-
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerAttendanceTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={9} />
-            ) : (
-              <TableRows
-                rows={currentAttendanceClasses.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerAttendanceTable}
-                onEditClick={onDetailClick}
-                onAttendanceAllClassClick={onAttendanceAllClassClick}
-              />)}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerAttendanceTable}
+          currentData={currentAttendanceClasses}
+          onEditClick={onDetailClick}
+          onAttendanceAllClassClick={onAttendanceAllClassClick}
+        ></TableList>
         <AttendanceAllClass
           isOpen={isDialogOpen}
           classId={selectedClassId}
           handleClose={handleClose}
-          onClickEdit={handeSuccessEdit}
+          onClickEdit={handleSuccessEdit}
         ></AttendanceAllClass>
       </Paper>
     </ContentLayout>

@@ -2,9 +2,7 @@ import {
   Button,
   Paper,
   SelectChangeEvent,
-  Stack,
-  Table,
-  TableContainer,
+  Stack
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -12,8 +10,6 @@ import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
-import TableHeaders from "../../components/common/Table/TableHeader";
-import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
 import TableTitle from "../../components/common/Table/TableTitle";
 import BreadcrumbsComponent from "../../components/common/Utils";
 import { breadcrumbStudentItems } from "../../constant/breadcrums";
@@ -33,29 +29,21 @@ import {
 import CommonUtil from "../../utils/export";
 import { Roles } from "../../utils/role";
 import EditStudent from "./StudentEdit";
-// import TableRows from "./part/TableRows";
 import { Search } from "@mui/icons-material";
+import { FilterCriteria } from "../../Type/Utils";
+import TableList from "../../components/common/Table/TableList";
 import {
   filterClassesByGrade,
   initializeClassState,
 } from "../../store/initdata/slice";
-import TableRows from "../../components/common/Table/TableRows";
-import { FilterCriteria } from "../../Type/Utils";
 
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const studentList: Student[] = useSelector((state) => state.students.data);
-  const curentData: Student[] = useSelector(
-    (state) => state.students.currentData
-  );
-  const grades: OptionSelect[] = useSelector(
-    (state) => state.initial.gradeList
-  );
-  let classes: OptionSelect[] = useSelector(
-    (state) => state.initial.selectedClasses
-  );
-  const { current, perPage } = useSelector((state) => state.pagination);
-  const isLoading = useSelector((state) => state.students.isLoading);
+  const currentData: Student[] = useSelector((state) => state.students.currentData);
+  const grades: OptionSelect[] = useSelector((state) => state.initial.gradeList);
+  const classes: OptionSelect[] = useSelector((state) => state.initial.selectedClasses);
+  const isLoading: boolean = useSelector((state) => state.students.isLoading);
   const role = useSelector((state) => state.authentication.role);
 
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -67,6 +55,7 @@ const StudentList = () => {
     name: { value: "", strict: false },
     phone: { value: "", strict: false },
   });
+
   const handleChangeFilter =
     (property: keyof FilterCriteria) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
@@ -102,7 +91,7 @@ const StudentList = () => {
     dispatch(clearValidationErrors());
   };
 
-  const handeSuccessEdit = async (isSuccess: boolean) => {
+  const handleSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
       await dispatch(fetchStudents());
       dispatch(clearValidationErrors());
@@ -110,6 +99,7 @@ const StudentList = () => {
       setSelectedStudent(null);
     }
   };
+
   const addNewStudent = () => {
     setSelectedStudent(null);
     setIsNewStudent(true);
@@ -120,6 +110,7 @@ const StudentList = () => {
     await dispatch(deleteStudentById({ id: id }));
     await dispatch(fetchStudents());
   };
+
   const editStudent = (id: number) => {
     setIsNewStudent(false);
     setDialogOpen(true);
@@ -230,30 +221,15 @@ const StudentList = () => {
               Tìm kiếm
             </Button>
           </Stack>
-          <NavigationTable count={curentData.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerStudentTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={7} />
-            ) : (
-              <TableRows
-                rows={curentData.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerStudentTable}
-                onDeleteClick={onDeleteClick}
-                onEditClick={editStudent}
-              />
-            )}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerStudentTable}
+          currentData={currentData}
+          onEditClick={editStudent}
+          onDeleteClick={onDeleteClick}
+        ></TableList>
       </Paper>
 
       <EditStudent
@@ -261,7 +237,7 @@ const StudentList = () => {
         isOpen={isDialogOpen}
         selectedStudent={selectedStudent}
         handleClose={handleClose}
-        onClickEdit={handeSuccessEdit}
+        onClickEdit={handleSuccessEdit}
       />
     </ContentLayout>
   );

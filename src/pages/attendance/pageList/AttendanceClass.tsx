@@ -2,9 +2,7 @@ import {
   Button,
   Paper,
   SelectChangeEvent,
-  Stack,
-  Table,
-  TableContainer,
+  Stack
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -12,53 +10,53 @@ import styled from "styled-components";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
 import SelectDropdown from "../../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
-import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerAttendanceClassTable } from "../../../constant/headerTable";
 import { AppDispatch, useSelector } from "../../../store/configstore";
 
+import { Search } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
-import TableRows from "../../../components/common/Table/TableRows";
-import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import { FilterCriteria } from "../../../Type/Utils";
+import TableList from "../../../components/common/Table/TableList";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import BreadcrumbsComponent from "../../../components/common/Utils";
 import { statusAttendace } from "../../../constant/Utils";
 import { breadcrumbAttendanceToday } from "../../../constant/breadcrums";
 import { AttendanceStudent } from "../../../models/attendance";
 import { fetchAttendanceClass } from "../../../store/attendances/operation";
+import { initSelectedStudent } from "../../../store/attendancesclass/initialize";
+import { setFilterAttendanceClasse } from "../../../store/attendancesclass/slice";
 import CommonUtil from "../../../utils/export";
 import AttendanceStudentEdit from "../edit/AttendanceStudent";
-import { FilterCriteria } from "../../../Type/Utils";
-import { Search } from "@mui/icons-material";
-import { setFilterAttendanceClasse } from "../../../store/attendancesclass/slice";
-import { initSelectedStudent } from "../../../store/attendancesclass/initialize";
 
 const AttendanceClass = () => {
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const attendanceStudent: AttendanceStudent[] = useSelector((state) => state.attendanceClass.data);
+  const currentData: AttendanceStudent[] = useSelector((state) => state.attendanceClass.currentData);
   const defaultClassId = useSelector((state) => state.authentication.classId);
-
-  const curentData: AttendanceStudent[] = useSelector((state) => state.attendanceClass.curentData);
   const isLoading = useSelector((state) => state.attendanceClass.isLoading);
-  const { id } = useParams();
 
-  const [selectedAttendanceStudent, setSelectedAttendanceStudent] = useState<AttendanceStudent>(initSelectedStudent);
-
-  const className = attendanceStudent[0]?.className || ""
-
-  const { current, perPage } = useSelector((state) => state.pagination);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedAttendanceStudent, setSelectedAttendanceStudent] =
+    useState<AttendanceStudent>(initSelectedStudent);
   const [filter, setFilter] = useState<FilterCriteria>({
     status: { value: "", strict: true },
     name: { value: "", strict: false },
   });
 
+  const className = attendanceStudent[0]?.className || "";
+
   const handleClose = () => {
-    setSelectedAttendanceStudent(initSelectedStudent)
+    setSelectedAttendanceStudent(initSelectedStudent);
     setDialogOpen(false);
   };
+
   const editStudent = (id: number) => {
     setDialogOpen(true);
-    setSelectedAttendanceStudent(attendanceStudent.find((attendance) => attendance.id === id) || initSelectedStudent)
+    setSelectedAttendanceStudent(
+      attendanceStudent.find((attendance) => attendance.id === id) ||
+      initSelectedStudent
+    );
   };
 
   const handleChangeFilter =
@@ -81,14 +79,15 @@ const AttendanceClass = () => {
     );
   };
 
-  const handeSuccessEdit = async (isSuccess: boolean) => {
+  const handleSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
       const idClass = id ? parseInt(id, 10) : defaultClassId;
       await dispatch(fetchAttendanceClass(idClass));
       setDialogOpen(false);
-      setSelectedAttendanceStudent(initSelectedStudent)
+      setSelectedAttendanceStudent(initSelectedStudent);
     }
   };
+
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {
       return filterItem.value === "";
@@ -99,16 +98,23 @@ const AttendanceClass = () => {
       return;
     }
 
-    const filterData: AttendanceStudent[] = CommonUtil.filterData(attendanceStudent, filter);
+    const filterData: AttendanceStudent[] = CommonUtil.filterData(
+      attendanceStudent,
+      filter
+    );
     dispatch(setFilterAttendanceClasse(filterData));
   };
 
-  const handleReload = () => { };
+  const handleReload = () => {
+    const idClass = id ? parseInt(id, 10) : defaultClassId;
+    dispatch(fetchAttendanceClass(idClass));
+  };
 
   useEffect(() => {
     const idClass = id ? parseInt(id, 10) : defaultClassId;
     dispatch(fetchAttendanceClass(idClass));
   }, []);
+
   return (
     <ContentLayout>
       <BreadcrumbsComponent
@@ -154,7 +160,7 @@ const AttendanceClass = () => {
               onChange={handleChangeFilter("name")}
               placeholder={"Họ và tên"}
               fullWidth={false}
-              style={{ maxWidth: "3000px" }}
+              style={{ maxWidth: "300px" }}
             />
             <Button
               style={{
@@ -172,36 +178,21 @@ const AttendanceClass = () => {
             </Button>
           </Stack>
 
-          <NavigationTable count={curentData.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
 
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerAttendanceClassTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={7} />
-            ) : (
-              <TableRows
-                rows={curentData.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerAttendanceClassTable}
-                onEditClick={editStudent}
-              />
-            )}
-          </Table>
-          <AttendanceStudentEdit
-            isOpen={isDialogOpen}
-            selectedAttendanceStudent={selectedAttendanceStudent}
-            handleClose={handleClose}
-            onClickEdit={handeSuccessEdit}
-          ></AttendanceStudentEdit>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerAttendanceClassTable}
+          currentData={currentData}
+          onEditClick={editStudent}
+        ></TableList>
+        <AttendanceStudentEdit
+          isOpen={isDialogOpen}
+          selectedAttendanceStudent={selectedAttendanceStudent}
+          handleClose={handleClose}
+          onClickEdit={handleSuccessEdit}
+        ></AttendanceStudentEdit>
       </Paper>
     </ContentLayout>
   );

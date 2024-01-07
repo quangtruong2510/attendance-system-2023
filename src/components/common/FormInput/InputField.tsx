@@ -14,38 +14,6 @@ interface PropsSelectField {
   onChange: (payload: Payload) => void;
 }
 
-interface PropsTextField {
-  id: string;
-  name: string;
-  value: any;
-  label: string;
-  onChange: (payload: Payload) => void;
-}
-
-const TextInputField: React.FC<PropsTextField> = (props: PropsTextField) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let payLoad: Payload = {
-      key: event.target.name,
-      value: event.target.value,
-    };
-    props.onChange(payLoad);
-  };
-  return (
-    <Box sx={{ display: "flex", pt: "10px" }}>
-      <Label>{props.label}</Label>
-      <TextField
-        id={props.id}
-        name={props.name}
-        value={props.value}
-        onChange={handleChange}
-        size="small"
-        fullWidth
-        helperText=""
-      ></TextField>
-    </Box>
-  );
-};
-
 const SelectInputField: React.FC<PropsSelectField> = (
   props: PropsSelectField
 ) => {
@@ -74,34 +42,6 @@ const SelectInputField: React.FC<PropsSelectField> = (
           </MenuItem>
         ))}
       </TextField>
-    </Box>
-  );
-};
-
-const DateTimeInputField: React.FC<PropsTextField> = (
-  props: PropsTextField
-) => {
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    let payLoad: Payload = {
-      key: event.target.name,
-      value: event.target.value,
-    };
-    props.onChange(payLoad);
-  };
-  return (
-    <Box sx={{ display: "flex", pt: "10px" }}>
-      <Label>{props.label}</Label>
-      <TextField
-        id={props.id}
-        name={props.name}
-        InputLabelProps={{ shrink: true, required: true }}
-        helperText={""}
-        type="date"
-        onChange={handleChange}
-        value={props.value}
-        fullWidth
-        size="small"
-      ></TextField>
     </Box>
   );
 };
@@ -203,4 +143,4 @@ const Label = styled.p`
   width: 130px;
 `;
 
-export { SelectInputField, TextInputField, DateTimeInputField, CustomInput };
+export { SelectInputField, CustomInput };

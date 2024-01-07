@@ -5,49 +5,39 @@ import {
   Paper,
   SelectChangeEvent,
   Stack,
-  Table,
-  TableContainer,
-  Typography,
+  Typography
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
-import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerAttendanceClassPeriod } from "../../../constant/headerTable";
 import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
 
+import { Search } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { FilterCriteria } from "../../../Type/Utils";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
-import TableRows from "../../../components/common/Table/TableRows";
-import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import TableList from "../../../components/common/Table/TableList";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { AttendanceClassPeriod } from "../../../models/attendance";
 import { fetchPeriodAttendanceClass } from "../../../store/attendancesperiod/operation";
-import { Search } from "@mui/icons-material";
 import { setFilterPeriodAttendanceClasses } from "../../../store/attendancesperiod/slice";
-import { FilterCriteria } from "../../../Type/Utils";
 
 const PeriodAttendance = () => {
-  const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams();
   const searchParams = new URLSearchParams(location.search);
   const startDate = searchParams.get("start_date");
   const endDate = searchParams.get("end_date");
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const studentAttendanceList: AttendanceClassPeriod[] = useSelector(
-    (state) => state.attendancesPeriod.data
-  );
-  const currentData: AttendanceClassPeriod[] = useSelector(
-    (state) => state.attendancesPeriod.currentData
-  );
-
+  const studentAttendanceList: AttendanceClassPeriod[] = useSelector((state) => state.attendancesPeriod.data);
+  const currentData: AttendanceClassPeriod[] = useSelector((state) => state.attendancesPeriod.currentData);
   const isLoading = useSelector((state) => state.attendancesPeriod.isLoading);
 
-  const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     phone: { value: "", strict: false },
     name: { value: "", strict: false },
@@ -75,7 +65,6 @@ const PeriodAttendance = () => {
     const filterData: AttendanceClassPeriod[] = CommonUtil.filterData(studentAttendanceList, filter);
     dispatch(setFilterPeriodAttendanceClasses(filterData));
   };
-
 
   useEffect(() => {
     const payload = {
@@ -186,27 +175,12 @@ const PeriodAttendance = () => {
 
           <NavigationTable count={currentData.length} />
         </Stack>
-
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerAttendanceClassPeriod} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={7} />
-            ) : (
-              <TableRows
-                rows={currentData.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerAttendanceClassPeriod}
-                onEditClick={onDetailClick}
-              />)}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerAttendanceClassPeriod}
+          currentData={currentData}
+          onEditClick={onDetailClick}
+        ></TableList>
       </Paper>
     </ContentLayout>
   );

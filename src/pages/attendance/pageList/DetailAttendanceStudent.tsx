@@ -3,15 +3,12 @@ import {
   Button,
   Paper,
   Stack,
-  Table,
-  TableContainer,
   TextField,
   Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NavigationTable from "../../../components/common/Table/NavigationTable";
-import TableHeaders from "../../../components/common/Table/TableHeader";
 import { headerDetailAttendanceStudentPeriod } from "../../../constant/headerTable";
 import { AppDispatch, useSelector } from "../../../store/configstore";
 import CommonUtil from "../../../utils/export";
@@ -20,28 +17,25 @@ import { Search } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { FilterCriteria } from "../../../Type/Utils";
-import TableRows from "../../../components/common/Table/TableRows";
-import TableRowsLoader from "../../../components/common/Table/TableRowsLoader";
+import TableList from "../../../components/common/Table/TableList";
 import TableTitle from "../../../components/common/Table/TableTitle";
 import { DetailAttendanceStudent } from "../../../models/attendance";
 import { fetchDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/operation";
 import { setFilterDetailAttendanceStudent } from "../../../store/detailAttendanceStudent/slice";
 
 const DetailAttendanceStudentPeriod = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const startDate = searchParams.get("start_date");
   const endDate = searchParams.get("end_date");
   const studentId = searchParams.get("student_id");
 
-  const dispatch = useDispatch<AppDispatch>();
   const studentAttendanceList: DetailAttendanceStudent[] = useSelector((state) => state.detailAttendancesStudent.data);
   const currentData: DetailAttendanceStudent[] = useSelector((state) => state.detailAttendancesStudent.currentData);
-
   const studentName: string = useSelector((state) => state.detailAttendancesStudent.nameStudent);
   const isLoading = useSelector((state) => state.detailAttendancesStudent.isLoading);
 
-  const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     day: { value: "", strict: true },
   });
@@ -75,6 +69,7 @@ const DetailAttendanceStudentPeriod = () => {
           },
         }));
       };
+
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {
       return filterItem.value === "";
@@ -88,6 +83,7 @@ const DetailAttendanceStudentPeriod = () => {
     const filterData: DetailAttendanceStudent[] = CommonUtil.filterData(studentAttendanceList, filter);
     dispatch(setFilterDetailAttendanceStudent(filterData));
   };
+
   const handleExport = async () => {
     await CommonUtil.exportToExcel(
       `chuyen-can-${studentName}-${startDate} ~ ${endDate})`,
@@ -143,7 +139,7 @@ const DetailAttendanceStudentPeriod = () => {
                 max: CommonUtil.formatDate(
                   endDate ? endDate : CommonUtil.getCurrentDate()
                 ),
-                pattern: "\\d{2}-\\d{2}-\\d{4}",
+                pattern: "\\d{2}-\\m{2}-\\d{4}",
               }}
               InputLabelProps={{ shrink: true }}
               type="date"
@@ -166,29 +162,13 @@ const DetailAttendanceStudentPeriod = () => {
               Tìm kiếm
             </Button>
           </Stack>
-
           <NavigationTable count={currentData.length} />
         </Stack>
-
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerDetailAttendanceStudentPeriod} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={7} />
-            ) : (
-              <TableRows
-                rows={currentData.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerDetailAttendanceStudentPeriod}
-              />)}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerDetailAttendanceStudentPeriod}
+          currentData={currentData}
+        ></TableList>
       </Paper>
     </ContentLayout>
   );

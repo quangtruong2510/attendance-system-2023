@@ -14,7 +14,7 @@ export const attendanceSlice = createSlice({
         state.data.find((student) => student.id === action.payload) ?? null;
     },
     setFilterAttendanceClasse(state, action) {
-      state.curentData = action.payload;
+      state.currentData = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -27,7 +27,7 @@ export const attendanceSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.data = action.payload.data;
-        state.curentData = action.payload.data;
+        state.currentData = action.payload.data;
         console.log("Payload", action.payload.data);
       }
     );

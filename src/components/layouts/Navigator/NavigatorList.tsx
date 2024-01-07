@@ -40,7 +40,10 @@ const Navigation: React.FC = () => {
         pt="20px"
       >
         <img src="./src/assets/logo.svg" alt="My Icon" />
-        <p>Điểm Danh Thông Minh</p>
+        <Typography sx={{ padding: "20px", textAlign: "center" }} variant='body1' style={{ fontWeight: '900' }}>
+          Hệ Thống Điểm Danh Thông Minh
+        </Typography>
+
       </Box>
       <List
         sx={{ width: "100%", maxWidth: 280 }}
@@ -57,9 +60,10 @@ const Navigation: React.FC = () => {
               sx={{
                 ml: 1,
                 textDecoration: "none !important",
-                fontWeight: "500",
+                fontWeight: "600",
                 mt: 1,
                 padding: 0,
+                lineHeight: 1.5,
               }}
               gutterBottom
             >

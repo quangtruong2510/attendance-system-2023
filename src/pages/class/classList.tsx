@@ -3,9 +3,7 @@ import {
   Button,
   Paper,
   SelectChangeEvent,
-  Stack,
-  Table,
-  TableContainer
+  Stack
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -13,8 +11,6 @@ import styled from "styled-components";
 import { CustomInput } from "../../components/common/FormInput/InputField";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import NavigationTable from "../../components/common/Table/NavigationTable";
-import TableHeaders from "../../components/common/Table/TableHeader";
-import TableRowsLoader from "../../components/common/Table/TableRowsLoader";
 import BreadcrumbsComponent from "../../components/common/Utils";
 import { breadcrumbClassItems } from "../../constant/breadcrums";
 import { headerClassTable } from "../../constant/headerTable";
@@ -27,7 +23,7 @@ import CommonUtil from "../../utils/export";
 import ClassEditDialog from "./ClassEdit";
 // import TableRows from "./part/TableRows";
 import { FilterCriteria } from "../../Type/Utils";
-import TableRows from "../../components/common/Table/TableRows";
+import TableList from "../../components/common/Table/TableList";
 import TableTitle from "../../components/common/Table/TableTitle";
 import { clearValidationErrors, setFilterClass } from "../../store/class/slice";
 import { filterClassesByGrade } from "../../store/initdata/slice";
@@ -35,13 +31,12 @@ import { filterClassesByGrade } from "../../store/initdata/slice";
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const classList: Class[] = useSelector((state) => state.class.data);
-  const curentData: Class[] = useSelector((state) => state.class.currentData);
+  const currentData: Class[] = useSelector((state) => state.class.currentData);
+  const isLoading = useSelector((state) => state.class.isLoading);
+
   const [IsOpenEditDialog, setIsOpenEditDialog] = useState(false);
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
-  const { current, perPage } = useSelector((state) => state.pagination);
-  const isLoading = useSelector((state) => state.class.isLoading);
   const [isNew, setIsNewClass] = useState(false);
-
   const [filter, setFilter] = useState<FilterCriteria>({
     gradeId: { value: "", strict: true },
     homeroomTeacher: { value: "", strict: false },
@@ -93,7 +88,7 @@ const StudentList = () => {
     );
   };
 
-  const handeSuccessEdit = async (isSuccess: boolean) => {
+  const handleSuccessEdit = async (isSuccess: boolean) => {
     if (isSuccess) {
       await dispatch(fetchClasses());
       dispatch(clearValidationErrors());
@@ -101,12 +96,6 @@ const StudentList = () => {
       setSelectedClass(null);
     }
   };
-
-  // const handleChangeFilter =
-  //   (property: keyof GroupFilterSearch) =>
-  //     (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-  //       setFilter((prev) => ({ ...prev, [property]: event.target.value }));
-  //     };
 
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {
@@ -123,7 +112,11 @@ const StudentList = () => {
   };
 
   const handleExport = async () => {
-    await CommonUtil.exportToExcel("danh_sach_lop_hoc", "Danh sách lớp học", classList);
+    await CommonUtil.exportToExcel(
+      "danh_sach_lop_hoc",
+      "Danh sách lớp học",
+      classList
+    );
   };
 
   const handleReload = async () => {
@@ -191,34 +184,24 @@ const StudentList = () => {
               Tìm kiếm
             </Button>
           </Stack>
-
-          <NavigationTable count={curentData.length} />
+          <NavigationTable count={currentData.length} />
         </Stack>
 
-        <TableContainer sx={{ width: "100%", maxHeight: "400px" }}>
-          <Table
-            className="border-collapse"
-            stickyHeader
-            aria-label="sticky table"
-          >
-            <TableHeaders headers={headerClassTable} />
-            {isLoading ? (
-              <TableRowsLoader rowsNum={10} numColumns={5} />
-            ) : (
-              <TableRows
-                rows={curentData.slice(
-                  current * perPage,
-                  current * perPage + perPage
-                )}
-                headers={headerClassTable}
-                onDeleteClick={onDeleteClick}
-                onEditClick={editCLass}
-              />
-            )}
-          </Table>
-        </TableContainer>
+        <TableList
+          isLoading={isLoading}
+          headers={headerClassTable}
+          currentData={currentData}
+          onDeleteClick={onDeleteClick}
+          onEditClick={editCLass}
+        ></TableList>
       </Paper>
-      <ClassEditDialog selectedClass={selectedClass} isNew={isNew} open={IsOpenEditDialog} onClickEdit={handeSuccessEdit} onClose={handleClose} />
+      <ClassEditDialog
+        selectedClass={selectedClass}
+        isNew={isNew}
+        open={IsOpenEditDialog}
+        onClickEdit={handleSuccessEdit}
+        onClose={handleClose}
+      />
     </ContentLayout>
   );
 };
