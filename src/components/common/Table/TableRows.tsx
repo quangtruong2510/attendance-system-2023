@@ -13,11 +13,12 @@ interface Props {
 }
 
 import { StatusAttendanceType } from "../../../Type/Utils";
-import { StatusAttendanceTypeList } from "../../../constant/constant";
+import { RolesList, StatusAttendanceTypeList } from "../../../constant/constant";
 import { Column } from "../../../constant/headerTable";
 import AttendanceAll from "../Button/AttendanceAllCLass";
 import DeleteButton from "../Button/DeleteButton";
 import ConfirmDeleteDialog from "../Dialog/ConfirmDelete";
+import { Roles } from "../../../utils/role";
 
 const TableRows: React.FC<Props> = ({
   rows,
@@ -66,6 +67,10 @@ const TableRows: React.FC<Props> = ({
                   value = "Nữ"
                 }
               }
+              if (column.id == "role") {
+                const role: Roles = value as Roles
+                value = RolesList[role];
+              }
               if (value == "" || value == null) value = "-"
               return (
                 <TableCell
@@ -100,13 +105,6 @@ const TableRows: React.FC<Props> = ({
                 />
               )}
               {onAttendanceAllClassClick && (
-                // <Tooltip title={"Duyệt tất cả"}>
-                //   <EditIconButton
-                //     id={row.id}
-                //     aria-label="edit"
-                //     onClick={onAttendanceAllClassClick}
-                //   />
-                // </Tooltip>
                 <AttendanceAll
                   id={row.id}
                   onIconClick={() => onAttendanceAllClassClick(row.id)}

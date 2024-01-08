@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { AppDispatch } from "../../store/configstore";
-import { fetchClassSelection, fetchGradeList, fetchUnAssignTeacherList } from "../../store/initdata/operation";
+import { fetchClassSelection, fetchGradeList, fetchTeacherWithoutAccount, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
 
@@ -28,6 +28,8 @@ const Layout = () => {
     dispatch(fetchUnAssignTeacherList());
     dispatch(fetchGradeList());
     dispatch(fetchClassSelection());
+    dispatch(fetchTeacherWithoutAccount());
+
 
     // dispatch(checkAuth());
     // if (!!token) {

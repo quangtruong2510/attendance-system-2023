@@ -21,6 +21,11 @@ const breadcrumbClassItems: breadcrumb[] = [
   { label: "Lớp học", link: "/" },
 ];
 
+const breadcrumbAccountItems: breadcrumb[] = [
+  { label: "Quản lý", link: "/" },
+  { label: "Tài khoản", link: "/" },
+];
+
 const breadcrumbDashboardItems: breadcrumb[] = [
   { label: "Trang chủ", link: "/" },
   { label: "Phân tích", link: "/" },
@@ -45,4 +50,5 @@ export {
   breadcrumbStudentItems,
   breadcrumbDashboardItems,
   breadcrumbAttendanceToday,
+  breadcrumbAccountItems
 };

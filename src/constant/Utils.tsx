@@ -23,4 +23,10 @@ const statusAttendace: OptionSelect[] = [
   },
 ];
 
-export { statusAttendace };
+
+const roles: OptionSelect[] = [
+  { value: 1, label: "Giáo viên" },
+  { value: 2, label: "Admin" },
+]
+
+export { statusAttendace, roles };

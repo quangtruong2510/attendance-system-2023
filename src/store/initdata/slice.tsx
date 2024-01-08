@@ -5,6 +5,7 @@ import {
   fetchUnAssignTeacherList,
   fetchGradeList,
   fetchClassSelection,
+  fetchTeacherWithoutAccount
 } from "./operation";
 
 export const initialSlice = createSlice({
@@ -19,6 +20,9 @@ export const initialSlice = createSlice({
     initializeClassState: (state) => {
       state.selectedClasses = state.classSelectionList;
     },
+    setCurrentTeacher: (state, action) => {
+      state.unAssignedTeachers = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -40,9 +44,15 @@ export const initialSlice = createSlice({
         state.selectedClasses = action.payload.data;
       }
     );
+    builder.addCase(
+      fetchTeacherWithoutAccount.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.teacherWithoutAccount = action.payload.data;
+      }
+    );
   },
 });
 
-export const { filterClassesByGrade, initializeClassState } =
+export const { filterClassesByGrade, initializeClassState, setCurrentTeacher } =
   initialSlice.actions;
 export default initialSlice.reducer;

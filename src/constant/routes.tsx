@@ -1,4 +1,5 @@
 import IRoute from "../models/route";
+import AccountList from "../pages/accounts/AccountList";
 import Attendance from "../pages/attendance/pageList/Attendance";
 import AttendanceClass from "../pages/attendance/pageList/AttendanceClass";
 import AttendanceToday from "../pages/attendance/pageList/AttendanceToday";
@@ -76,6 +77,12 @@ const routeList: IRoute[] = [
   {
     path: "/setting",
     component: <Setting />,
+    exact: true,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: "/accounts",
+    component: <AccountList />,
     exact: true,
     role: [Roles.ADMIN],
   },

@@ -15,6 +15,8 @@ import DetailAttendanceStudent from "./detailAttendanceStudent/slice";
 
 import TeacherReducer from "./teachers/slice";
 import ClassReducer from "./class/slice";
+import AccountReducer from "./accounts/slice";
+
 import initialReducer from "./initdata/slice";
 
 const reducer = combineReducers({
@@ -29,6 +31,7 @@ const reducer = combineReducers({
   initial: initialReducer,
   attendancesPeriod: PeriodAttendanceClassReducer,
   detailAttendancesStudent: DetailAttendanceStudent,
+  account: AccountReducer
 });
 
 const store = configureStore({ reducer });

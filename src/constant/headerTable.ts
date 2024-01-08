@@ -468,6 +468,38 @@ const headerDetailAttendanceStudentPeriod: Column[] = [
   },
 ];
 
+const headerAccount: Column[] = [
+  { id: "id", label: "STT", minWidth: 50, align: "center", maxWidth: 300 },
+  {
+    id: "email",
+    label: "Tài khoản",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 100,
+  },
+  {
+    id: "nameTeacher",
+    label: "Giáo viên",
+    minWidth: 100,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "role",
+    label: "Phân quyền",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+  {
+    id: "action",
+    label: "Thao tác",
+    minWidth: 50,
+    align: "center",
+    maxWidth: 300,
+  },
+];
+
 export {
   headerStudentTable,
   headerDashboardTable,
@@ -479,4 +511,5 @@ export {
   headerAttendanceClassDashboardTable,
   headerAttendanceClassPeriod,
   headerDetailAttendanceStudentPeriod,
+  headerAccount
 };

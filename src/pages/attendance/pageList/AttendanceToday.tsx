@@ -54,7 +54,6 @@ const AttendanceToday = () => {
     return <AttendanceClass></AttendanceClass>;
   }
 
-  // const { current, perPage } = useSelector((state) => state.pagination);
   const [filter, setFilter] = useState<FilterCriteria>({
     gradeId: { value: "", strict: true },
     classId: { value: "", strict: true },
@@ -68,7 +67,7 @@ const AttendanceToday = () => {
   };
 
   const onAttendanceAllClassClick = (id: number) => {
-    setSelectedClass(id);
+    setSelectedClass(id)
     setDialogOpen(true);
   };
 
@@ -85,19 +84,19 @@ const AttendanceToday = () => {
 
   const handleChangeFilter =
     (property: keyof FilterCriteria) =>
-    (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
-      if (property === "gradeId") {
-        dispatch(filterClassesByGrade(event.target.value));
-      }
+      (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
+        if (property === "gradeId") {
+          dispatch(filterClassesByGrade(event.target.value));
+        }
 
-      setFilter((prev) => ({
-        ...prev,
-        [property]: {
-          value: event.target.value,
-          strict: prev[property]?.strict ?? true,
-        },
-      }));
-    };
+        setFilter((prev) => ({
+          ...prev,
+          [property]: {
+            value: event.target.value,
+            strict: prev[property]?.strict ?? true,
+          },
+        }));
+      };
 
   const handleFilterData = () => {
     const allValuesEmpty = Object.values(filter).every((filterItem) => {

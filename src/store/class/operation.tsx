@@ -29,12 +29,21 @@ const getClassById = createAsyncThunk(
 
 const updateClass = createAsyncThunk(
   "class/updateClass",
-  async (arg: { id: number; payload: any }) => {
-    const request: Request = {
-      endpoint: `${BASE_URL_API}class/${arg.id}`,
-      method: "PUT",
-    };
-    return await execute(request, arg.payload);
+  async (newClass: any, { rejectWithValue }) => {
+    try {
+      const request: Request = {
+        endpoint: `${BASE_URL_API}class/${newClass.id}`,
+        method: "PATCH",
+      };
+
+      const response = await execute(request, newClass);
+      return response.data;
+    } catch (err: any) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 

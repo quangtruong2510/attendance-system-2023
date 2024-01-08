@@ -10,7 +10,7 @@ import {
   RadioGroup,
   SelectChangeEvent
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { StatusAttendanceType } from "../../../Type/Utils";
 import { CustomInput } from "../../../components/common/FormInput/InputField";
@@ -38,10 +38,18 @@ const AttendanceAllClass: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [attendanceAll, setAttendanceAll] = useState<AttendanceAll | null>({
-    classId: classId,
+    classId: 0,
     status: 1,
     note: ""
   });
+
+  useEffect(() => {
+    setAttendanceAll({
+      classId: classId,
+      status: 1,
+      note: ""
+    })
+  }, [classId]);
 
   const handleEditAttendanceAll = () => {
     dispatch(updateAttendanceAllClass(attendanceAll)).unwrap()

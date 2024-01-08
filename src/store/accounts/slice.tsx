@@ -3,16 +3,17 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import initialState from "./initialize";
 
 import {
-  addClass,
-  fetchClasses,
-  updateClass
+  addAccount,
+  deleteAccountById,
+  fetchAccounts,
+  updateAccount
 } from "./operation";
 
-export const classSlice = createSlice({
-  name: "class",
+export const accountSlice = createSlice({
+  name: "account",
   initialState,
   reducers: {
-    setFilterClass(state, action) {
+    setFilterAccount(state, action) {
       state.currentData = action.payload;
     },
     clearValidationErrors: (state) => {
@@ -20,12 +21,12 @@ export const classSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchClasses.pending, (state) => {
+    builder.addCase(fetchAccounts.pending, (state) => {
       state.isLoading = true;
     });
 
     builder.addCase(
-      fetchClasses.fulfilled,
+      fetchAccounts.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.data = action.payload.data;
@@ -33,7 +34,7 @@ export const classSlice = createSlice({
       }
     );
     builder.addCase(
-      fetchClasses.rejected,
+      fetchAccounts.rejected,
       (state, action: PayloadAction<any>) => {
         state.validationErrors = action.payload.errors;
         state.isLoading = false;
@@ -41,21 +42,27 @@ export const classSlice = createSlice({
     );
 
     builder.addCase(
-      addClass.rejected,
+      addAccount.rejected,
       (state, action: PayloadAction<any>) => {
         state.validationErrors = action.payload.errors;
       }
     );
 
     builder.addCase(
-      updateClass.rejected,
+      updateAccount.rejected,
       (state, action: PayloadAction<any>) => {
         state.validationErrors = action.payload.errors;
       }
     );
+
+    builder.addCase(deleteAccountById.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteAccountById.fulfilled, (state) => {
+      state.isLoading = false;
+    });
   },
 });
 
-export const { clearValidationErrors, setFilterClass } = classSlice.actions;
-
-export default classSlice.reducer;
+export const { setFilterAccount, clearValidationErrors } = accountSlice.actions;
+export default accountSlice.reducer;

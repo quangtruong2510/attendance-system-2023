@@ -1,4 +1,4 @@
-import { Logout, PersonAdd } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import {
   Box,
@@ -15,10 +15,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { AppDispatch, useSelector } from "../../../store/configstore";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../../store/authentication/slice";
+import { AppDispatch, useSelector } from "../../../store/configstore";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -122,12 +122,6 @@ const Header: React.FC = () => {
               <Avatar /> Hồ sơ
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <PersonAdd fontSize="small" />
-              </ListItemIcon>
-              Thêm mới account
-            </MenuItem>
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>
                 <Logout fontSize="small" />

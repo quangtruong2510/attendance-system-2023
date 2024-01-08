@@ -100,7 +100,6 @@ export default function SignIn() {
               display: "flex",
               width: "100%",
               height: "100%",
-              // justifyContent: "center",
               alignItems: "center",
               backgroundColor: "#EDF1F7",
               flexDirection: "row",

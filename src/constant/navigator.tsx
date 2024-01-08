@@ -44,6 +44,11 @@ const navigatorList: NavigatorItemModel[] = [
     groupName: 'Hệ thống',
     listItem: [
       {
+        title: 'Quản lý tài khoản',
+        path: '/accounts',
+        roles: [Roles.ADMIN]
+      },
+      {
         title: 'Cài đặt',
         path: '/setting',
         roles: [Roles.ADMIN, Roles.TEACHER]

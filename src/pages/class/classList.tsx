@@ -26,13 +26,16 @@ import { FilterCriteria } from "../../Type/Utils";
 import TableList from "../../components/common/Table/TableList";
 import TableTitle from "../../components/common/Table/TableTitle";
 import { clearValidationErrors, setFilterClass } from "../../store/class/slice";
-import { filterClassesByGrade } from "../../store/initdata/slice";
+import { filterClassesByGrade, setCurrentTeacher } from "../../store/initdata/slice";
 
 const StudentList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const classList: Class[] = useSelector((state) => state.class.data);
   const currentData: Class[] = useSelector((state) => state.class.currentData);
   const isLoading = useSelector((state) => state.class.isLoading);
+  const teachers: OptionSelect[] = useSelector(
+    (state) => state.initial.unAssignedTeachers
+  );
 
   const [IsOpenEditDialog, setIsOpenEditDialog] = useState(false);
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
@@ -41,6 +44,8 @@ const StudentList = () => {
     gradeId: { value: "", strict: true },
     homeroomTeacher: { value: "", strict: false },
   });
+
+
 
   const handleChangeFilter =
     (property: keyof FilterCriteria) =>
@@ -83,9 +88,13 @@ const StudentList = () => {
   const editCLass = (id: number) => {
     setIsNewClass(false);
     setIsOpenEditDialog(true);
-    setSelectedClass(
-      classList.find((classRoom) => classRoom.id === id) || null
-    );
+    const teacher = classList.find((classRoom) => classRoom.id === id) || null
+    setSelectedClass(teacher);
+    const teacherNew: OptionSelect = {
+      value: teacher?.teacher_id as number,
+      label: teacher?.homeroomTeacher as string
+    }
+    dispatch(setCurrentTeacher([...teachers, teacherNew]))
   };
 
   const handleSuccessEdit = async (isSuccess: boolean) => {

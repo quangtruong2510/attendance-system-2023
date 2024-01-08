@@ -60,8 +60,8 @@ const updateAttendanceAllClass = createAsyncThunk(
   "attendance/updateAttendanceAll",
   async (attendance: any) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}attendance_update/${attendance.id}`,
-      method: "PATCH",
+      endpoint: `${BASE_URL_API}approve_all/${attendance.classId}`,
+      method: "POST",
     };
     return await execute(request, attendance);
   }

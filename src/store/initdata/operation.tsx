@@ -29,5 +29,13 @@ const fetchClassSelection = createAsyncThunk("classes", async () => {
   return await execute(request);
 });
 
+const fetchTeacherWithoutAccount = createAsyncThunk("teacher/withoutAccount", async () => {
+  const request: Request = {
+    endpoint: `${BASE_URL_API}account/teacher_unassigned`,
+    method: "GET",
+  };
+  return await execute(request);
+});
 
-export { fetchUnAssignTeacherList, fetchGradeList, fetchClassSelection };
+
+export { fetchUnAssignTeacherList, fetchGradeList, fetchClassSelection, fetchTeacherWithoutAccount };
