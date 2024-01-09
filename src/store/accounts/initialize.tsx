@@ -2,6 +2,7 @@ import { Account } from "../../models/account";
 
 export const initAccount: Account = {
   id: 0,
+  userName: "",
   nameTeacher: "",
   role: 1,
   password: "",
