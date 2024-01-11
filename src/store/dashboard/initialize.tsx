@@ -11,7 +11,7 @@ export const initStudent: Student = {
   phone: "",
 };
 
-const rows = null
+const rows = [{}]
 
 const initialState = {
   data: rows,
