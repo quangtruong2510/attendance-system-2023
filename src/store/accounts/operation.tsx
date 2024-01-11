@@ -55,7 +55,7 @@ const deleteAccountById = createAsyncThunk(
   "account/delete",
   async (id: number) => {
     const request: Request = {
-      endpoint: `${BASE_URL_API}student/${id}`,
+      endpoint: `${BASE_URL_API}account/${id}`,
       method: "DELETE",
     };
     return await execute(request);

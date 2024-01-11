@@ -36,7 +36,8 @@ const NavigatorItem: React.FC<Props> = (props) => {
                 <List component='div' disablePadding>
                     {props.groupItem.listItem.filter(navigatorRow => navigatorRow.roles.includes(role)).map((navigatorRow: NavigatorRow, index: number) => {
                         return (
-                            <Link key={index} className='no-underline' to={navigatorRow.path}>
+                            <Link key={index} className={`no-underline ${location.pathname === navigatorRow.path && "active-navigation"
+                                }`} to={navigatorRow.path}>
                                 <ListItemButton sx={{ pl: 4 }}>
                                     <ListItemText sx={{ ml: 2, textDecoration: 'none !important' }} primary={navigatorRow.title} />
                                 </ListItemButton>

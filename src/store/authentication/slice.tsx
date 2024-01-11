@@ -11,6 +11,7 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.isAuthenticated = false;
+      state.name = "";
     }
   },
   extraReducers: (builder) => {
@@ -28,6 +29,8 @@ export const authSlice = createSlice({
         state.name = action.payload.data.teacherName;
         state.classId = action.payload.data.classId;
         state.className = action.payload.data.className;
+      } else {
+        state.name = action.payload.data.username;
       }
     });
     builder.addCase(loginUser.rejected, (state, action: any) => {

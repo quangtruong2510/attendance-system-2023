@@ -75,9 +75,9 @@ const PeriodAttendance = () => {
     dispatch(fetchPeriodAttendanceClass(payload));
   }, []);
 
-  const onDetailClick = () => {
+  const onDetailClick = (idStudent: number) => {
     navigate(
-      `/attendance/student?student_id=${id}&start_date=${startDate}&end_date=${endDate}`
+      `/attendance/student?student_id=${idStudent}&start_date=${startDate}&end_date=${endDate}`
     );
   };
 

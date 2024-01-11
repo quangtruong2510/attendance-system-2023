@@ -19,6 +19,7 @@ import { clearValidationErrors } from "../../store/accounts/slice";
 import { AppDispatch, useSelector } from "../../store/configstore";
 import SelectDropdown from "../../components/common/Select/SelectDropdown";
 import { roles } from "../../constant/Utils";
+import { fetchUnAssignTeacherList } from "../../store/initdata/operation";
 
 interface Props {
   isNew: boolean;
@@ -58,7 +59,6 @@ const EditAccount: React.FC<Props> = ({
           handleClose();
           setAccount(initAccount)
           onClickEdit(true);
-
         })
         .catch(() => {
           onClickEdit(false);
@@ -77,6 +77,7 @@ const EditAccount: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    dispatch(fetchUnAssignTeacherList());
     dispatch(clearValidationErrors());
     if (!isNew) {
       setAccount(selectedAccount || initAccount);
@@ -109,7 +110,7 @@ const EditAccount: React.FC<Props> = ({
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
           <CustomInput
             id="pasword"
-            label="Mật khẩu"
+            label="Đặt lại mật khẩu"
             type="password"
             fullWidth={true}
             size="small"
@@ -122,16 +123,18 @@ const EditAccount: React.FC<Props> = ({
             }
           />
         </FormControl>
-        <Stack flexDirection={"row"} gap={2} paddingTop={1} marginTop={2}>
-          <SelectDropdown
+        <Stack flexDirection={"row"} gap={2} paddingTop={1} marginTop={1}>
+          {isNew && (<SelectDropdown
             id={"teacher"}
             label="GVCN"
             options={teachers}
             value={account.teacherId}
             onChange={handleInputChange("teacherId")}
             width={200}
-          />
+          />)}
+
           <SelectDropdown
+            minWidth={352}
             id={"role"}
             label="Phân quyền"
             options={roles}

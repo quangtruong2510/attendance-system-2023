@@ -50,8 +50,6 @@ const AccountList = () => {
         nameTeacher: { value: "", strict: false },
     });
 
-
-
     const handleChangeFilter =
         (property: keyof FilterCriteria) =>
             (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +67,8 @@ const AccountList = () => {
             };
 
     const handleFilterData = () => {
+        console.log("filter", filter);
+
         const allValuesEmpty = Object.values(filter).every((filterItem) => {
             return filterItem.value === "";
         });
