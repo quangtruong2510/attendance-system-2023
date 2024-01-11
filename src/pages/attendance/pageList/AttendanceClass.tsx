@@ -111,6 +111,7 @@ const AttendanceClass = () => {
   };
 
   useEffect(() => {
+
     const idClass = id ? parseInt(id, 10) : defaultClassId;
     dispatch(fetchAttendanceClass(idClass));
   }, []);

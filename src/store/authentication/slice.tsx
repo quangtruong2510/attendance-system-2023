@@ -46,6 +46,14 @@ export const authSlice = createSlice({
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload;
+      state.role = action.payload.data.role;
+      if (action.payload.data.role === Roles.TEACHER) {
+        state.name = action.payload.data.teacherName;
+        state.classId = action.payload.data.classId;
+        state.className = action.payload.data.className;
+      } else {
+        state.name = action.payload.data.username;
+      }
     });
     builder.addCase(checkAuth.rejected, (state) => {
       state.loading = false;

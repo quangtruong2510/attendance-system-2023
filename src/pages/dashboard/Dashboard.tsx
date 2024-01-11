@@ -8,11 +8,6 @@ import {
 } from "@mui/icons-material";
 import { Tab, Tabs, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
 import { format, subDays } from "date-fns";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -27,11 +22,9 @@ import {
   YAxis,
 } from "recharts";
 import styled from "styled-components";
-import { StatusAttendanceType } from "../../Type/Utils";
-import TableHeaders from "../../components/common/Table/TableHeader";
+import TableList from "../../components/common/Table/TableList";
 import BreadcrumbsComponent from "../../components/common/Utils";
 import { breadcrumbDashboardItems } from "../../constant/breadcrums";
-import { StatusAttendanceTypeList } from "../../constant/constant";
 import {
   headerDashboardTable
 } from "../../constant/headerTable";
@@ -71,7 +64,7 @@ export default function Dashboard() {
   const attendanceClasses: AttendanceReport[] = useSelector(
     (state) => state.attendance.attendanceClasses
   );
-
+  const isLoading = useSelector((state) => state.attendance.isLoading);
   const summary = useSelector((state) => state.attendance.summary);
 
   useEffect(() => {
@@ -91,7 +84,7 @@ export default function Dashboard() {
       <Report summary={summary} role={role}></Report>
       <ChartLayout>
         <Chart />
-        <TableReport rows={attendanceClasses} />
+        <TableReport rows={attendanceClasses} isLoading={isLoading} />
       </ChartLayout>
     </Container>
   );
@@ -160,9 +153,10 @@ const Chart = () => {
 
 interface Props {
   rows: any,
+  isLoading: boolean
 }
 
-const TableReport: React.FC<Props> = ({ rows }) => {
+const TableReport: React.FC<Props> = ({ rows, isLoading }) => {
   const [value, setValue] = React.useState("today");
   const dispatch = useDispatch<AppDispatch>();
   const handleChange = async (event: React.SyntheticEvent, newValue: string) => {
@@ -217,39 +211,11 @@ const TableReport: React.FC<Props> = ({ rows }) => {
         </Tabs>
       </TabDay>
 
-      <TableContainer sx={{ maxHeight: 400, paddingBottom: "30px" }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHeaders headers={headerDashboardTable} />
-          <TableBody>
-            {rows.map((row: any) => (
-              <TableRow hover role="checkbox" tabIndex={-1} key={row.class}>
-                {headerDashboardTable.map((column) => {
-                  let value = row[column.id];
-                  if (column.id === "status") {
-                    const type: StatusAttendanceType =
-                      value as StatusAttendanceType;
-                    value = StatusAttendanceTypeList[type];
-                  }
-                  return (
-                    <TableCell
-                      style={{
-                        minWidth: column.minWidth,
-                        textAlign: column.align,
-                        boxSizing: "border-box",
-                        padding: "8px 16px",
-                      }}
-                    >
-                      {column.format && typeof value === "number"
-                        ? column.format(value)
-                        : value}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TableList
+        isLoading={isLoading}
+        headers={headerDashboardTable}
+        currentData={rows}
+      ></TableList>
     </Paper>
   );
 

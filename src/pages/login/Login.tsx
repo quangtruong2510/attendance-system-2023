@@ -18,7 +18,6 @@ export default function SignIn() {
   const isLoggedIn = useSelector(selectAuthenticated);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   console.log(username, password);
 
   const navigate = useNavigate();

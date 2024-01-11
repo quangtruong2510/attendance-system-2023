@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { Request, execute } from "../../utils/request";
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
 const BASE_URL_API = "https://attendance.ily1606.space";
@@ -27,25 +28,12 @@ const loginUser = createAsyncThunk("auth/login", async (user: any) => {
   }
 });
 
-const checkAuth = createAsyncThunk("auth/verifyToken", async (token: any) => {
-  try {
-    const response = await fetch(`${BASE_URL_API}verifyToken`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(token),
-    });
-    let data = await response.json();
-    if (response.status === 200) {
-      localStorage.setItem("token", data.access_token);
-      return data;
-    }
-    return data.errors;
-  } catch (error) {
-    throw new Error("Invalid token");
-  }
+const checkAuth = createAsyncThunk("auth/me", async (token: any) => {
+  const request: Request = {
+    endpoint: `${BASE_URL_API}/api/me?token=${token}`,
+    method: "GET",
+  };
+  return await execute(request);
 });
 
 export { checkAuth, loginUser };

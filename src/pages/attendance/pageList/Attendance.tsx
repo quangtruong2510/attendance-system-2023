@@ -90,7 +90,6 @@ const AttendanceList = () => {
     }
     await dispatch(fetchAttendanceClassPeriod(period))
     setPeriod((prev) => ({ ...prev, from: startDay, to: endDay }));
-
   };
 
   const onDetailClick = (idClass: number) => {
@@ -119,7 +118,6 @@ const AttendanceList = () => {
         if (property === "gradeId") {
           dispatch(filterClassesByGrade(event.target.value));
         }
-
         setFilter((prev) => ({
           ...prev,
           [property]: {

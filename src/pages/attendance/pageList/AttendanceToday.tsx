@@ -123,9 +123,10 @@ const AttendanceToday = () => {
     );
   };
 
-  const handleReload = () => {
-    dispatch(fetchStatisticsAttendance());
+  const handleReload = async () => {
+    await dispatch(fetchStatisticsAttendance());
   };
+
   useEffect(() => {
     dispatch(fetchStatisticsAttendance());
   }, []);

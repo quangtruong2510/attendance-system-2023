@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { AppDispatch } from "../../store/configstore";
+import { AppDispatch, useSelector } from "../../store/configstore";
 import { fetchClassSelection, fetchGradeList, fetchTeacherWithoutAccount, fetchUnAssignTeacherList } from "../../store/initdata/operation";
 import Navigation from "./Navigator/NavigatorList";
 import Header from "./header/header";
+import { checkAuth } from "../../store/authentication/operation";
 
 const ContentLayout = styled("div")(() => ({
   flexGrow: 1,
@@ -16,19 +17,34 @@ const ContentLayout = styled("div")(() => ({
 
 const Layout = () => {
 
-  // const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
+  const isAuthenticated = useSelector(state => state.authentication.isAuthenticated)
   const dispatch = useDispatch<AppDispatch>();
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" />;
-  // }
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
   useEffect(() => {
-    // get token from localStorage
-    // const token = { token: localStorage.getItem("token") };
-    dispatch(fetchUnAssignTeacherList());
-    dispatch(fetchGradeList());
-    dispatch(fetchClassSelection());
-    dispatch(fetchTeacherWithoutAccount());
+    if (isAuthenticated) {
+      dispatch(fetchUnAssignTeacherList());
+      dispatch(fetchGradeList());
+      dispatch(fetchClassSelection());
+      dispatch(fetchTeacherWithoutAccount());
+    } else {
+      dispatch(checkAuth(token))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchUnAssignTeacherList());
+          dispatch(fetchGradeList());
+          dispatch(fetchClassSelection());
+          dispatch(fetchTeacherWithoutAccount());
+        })
+        .catch(() => {
+          console.log("fail!");
+          <Navigate to="/login" />;
+        });
+    }
 
 
     // dispatch(checkAuth());
