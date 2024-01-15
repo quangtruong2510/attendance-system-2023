@@ -1,0 +1,50 @@
+.image-uploader {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+
+    .input {
+        display: none;
+    }
+
+    .image-wrapper {
+        position: relative;
+        width: 90px;
+        height: 100px;
+
+        .delete-button {
+            display: block;
+            color: firebrick;
+            top: -15px;
+            width: 5px;
+            cursor: pointer;
+        }
+
+        img {
+            border-radius: 10px;
+            width: 90px !important;
+            height: 100px !important;
+            object-fit: cover; // Optional, to maintain aspect ratio
+        }
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: none;
+    }
+
+    .form-image {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed #1475cf;
+        height: 100px;
+        width: 90px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+}

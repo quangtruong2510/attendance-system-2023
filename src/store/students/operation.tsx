@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { execute, Request } from "../../utils/request";
+import { execute, executeFormData, Request } from "../../utils/request";
 
 // const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
 
@@ -40,13 +40,13 @@ const getStudentByClassId = createAsyncThunk(
 
 const addStudent = createAsyncThunk(
   "student/addStudent",
-  async (student: any, { rejectWithValue }) => {
+  async (payload: any, { rejectWithValue }) => {
     try {
       const request: Request = {
-        endpoint: `${BASE_URL_API}student`,
+        endpoint: `${BASE_URL_API}student?${payload.queryString}`,
         method: "POST",
       };
-      const response = await execute(request, student);
+      const response = await executeFormData(request, payload.image);
       return response.data;
     } catch (err: any) {
       if (!err.response) {

@@ -35,7 +35,7 @@ const DatePickerValue: React.FC<DatePickerValueProps> = ({
     const date = CommonUtil.formatDate(initialValue || "");
     if (initialValue) {
       setValue(dayjs(date));
-    }  else {
+    } else {
       setValue(null);
     }
   }, [initialValue]);

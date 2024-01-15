@@ -1,3 +1,4 @@
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {
   Button,
   Dialog,
@@ -6,6 +7,7 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
+  IconButton,
   Radio,
   RadioGroup,
   SelectChangeEvent,
@@ -25,6 +27,10 @@ import { addStudent, updateStudent } from "../../store/students/operation";
 import { clearValidationErrors } from "../../store/students/slice";
 import { Roles } from "../../utils/role";
 
+import { ClearAll, CloudUpload } from "@mui/icons-material";
+import styled from "styled-components";
+import "./index.scss";
+
 interface Props {
   isNew: boolean;
   isOpen: boolean;
@@ -41,7 +47,6 @@ const EditStudent: React.FC<Props> = ({
   onClickEdit,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [student, setStudent] = useState<Student>(initStudent);
   const validationErrors = useSelector(
     (state) => state.students.validationErrors
   );
@@ -50,6 +55,59 @@ const EditStudent: React.FC<Props> = ({
     (state) => state.initial.classSelectionList
   );
   const role = useSelector(state => state.authentication.role)
+  const [student, setStudent] = useState<Student>(initStudent);
+  const [images, setImages] = useState<File[]>([]);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedImages = e.target.files;
+
+    if (selectedImages) {
+      const imagesArray = Array.from(selectedImages);
+
+      const imagePromises = imagesArray.map((image) => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (reader.result) {
+              resolve(reader.result.toString());
+            }
+          };
+          reader.readAsDataURL(image);
+        });
+      });
+
+      Promise.all(imagePromises).then(() => {
+        setImages((prevImages) => [...prevImages, ...imagesArray]);
+      });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = [...images];
+
+    newImages.splice(index, 1);
+
+    setImages(newImages);
+  };
+
+  const renderPreviewImages = () => {
+    return images.map((image, index) => (
+      <div key={index} className="image-wrapper">
+        <img src={URL.createObjectURL(image)} alt={`preview-${index}`} />
+        <IconButton
+          className="delete-button"
+          onClick={() => handleRemoveImage(index)}
+        >
+          <DeleteRoundedIcon fontSize="large" style={{ width: "30px", height: "20px" }} />
+        </IconButton>
+      </div>
+    ));
+  };
+
+  const handleResetImages = () => {
+    setImages([]);
+  };
+
   const handleInputChange =
     (property: keyof Student) =>
       (event: SelectChangeEvent<any> | ChangeEvent<HTMLInputElement> | any) => {
@@ -57,18 +115,33 @@ const EditStudent: React.FC<Props> = ({
       };
 
   const onDateSelected = (date: string) => {
+    console.log("onDateSelected", date);
+
     setStudent((prev) => ({ ...prev, dateOfBirth: date }));
+  }
+
+  function encodeQueryString(params: Student): string {
+    return Object.entries(params)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .map(([key, value]) => `${encodeURIComponent(key)}= ${value}`)
+      .join("&");
   }
 
   const handleEditStudent = async () => {
     if (isNew) {
-      dispatch(addStudent(student))
+      const imageData = new FormData();
+      images.forEach((image) => {
+        imageData.append(`files`, image);
+      });
+
+      const queryString = encodeQueryString(student);
+      const payload = { image: imageData, queryString: queryString }
+      dispatch(addStudent(payload))
         .unwrap()
         .then(() => {
           handleClose();
           setStudent(initStudent)
           onClickEdit(true);
-
         })
         .catch(() => {
           onClickEdit(false);
@@ -170,38 +243,11 @@ const EditStudent: React.FC<Props> = ({
               }
             />
           )}
-
-          {/* <TextField
-            fullWidth={true}
-            size="small"
-            name="dateOfBirth"
-            label="Ngày sinh"
-            value={student.dateOfBirth}
-            InputLabelProps={{ shrink: true, required: true }}
-            type="datetime-local"
-            onChange={handleInputChange("dateOfBirth")}
-            error={
-              validationErrors && validationErrors.dateOfBirth ? true : false
-            }
-            helperText={
-              validationErrors && validationErrors.dateOfBirth
-                ? validationErrors.dateOfBirth
-                : ""
-            }
-          /> */}
           <DatePickerValue
             onDateSelected={onDateSelected}
             label={"Ngày sinh"}
             initialValue={student.dateOfBirth}
           ></DatePickerValue>
-          {/* <DatePickerCustom onDateSelected={onDateSelected}></DatePickerCustom> */}
-          {/* <DatePicker
-            label="Departure Date"
-            inputFormat="DD-MM-YYYY" // 13-09-2022
-            onChange={handleInputChange("dateOfBirth")}
-            value={student?.dateOfBirth}
-            renderInput={(params) => <TextField {...params} required />}
-          /> */}
         </Stack>
         <FormControl fullWidth style={{ margin: "20px 0px" }}>
           <CustomInput
@@ -237,6 +283,51 @@ const EditStudent: React.FC<Props> = ({
             }
           />
         </FormControl>
+        {isNew && (<>
+          <Stack mt={2} flexDirection={"row"} gap={10}>
+            <div className="image-uploader">
+              <input
+                accept="image/*"
+                className="image-uploader"
+                style={{ display: "none" }}
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={handleImageChange}
+              />
+              <label htmlFor="contained-button-file">
+                <div className="form-image">
+                  <CloudUpload
+                    style={{ width: "40px", height: "40px" }}
+                    color="primary"
+                  />
+                  Thêm ảnh
+                </div>
+              </label>
+
+              <ContainImage>{renderPreviewImages()}</ContainImage>
+            </div>
+          </Stack>
+          {images.length > 0 && (
+            <Button
+              size="small"
+              style={{
+                marginTop: "10px",
+                height: "35px",
+                fontSize: "14px",
+                textTransform: "none",
+              }}
+              variant="outlined"
+              startIcon={<ClearAll />}
+              color="error"
+              onClick={handleResetImages}
+            >
+              Xóa ảnh
+            </Button>
+          )}
+        </>)}
+
+
       </DialogContent>
       <DialogActions>
         <Button
@@ -254,5 +345,24 @@ const EditStudent: React.FC<Props> = ({
     </Dialog>
   );
 };
+
+const ContainImage = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "row",
+  gap: "10px !important",
+  overflowX: "auto",
+
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#888",
+    borderRadius: "6px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    backgroundColor: "#555",
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: "#f1f1f1",
+  },
+}));
 
 export default EditStudent;

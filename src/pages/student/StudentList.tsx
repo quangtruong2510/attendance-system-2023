@@ -97,6 +97,7 @@ const StudentList = () => {
       dispatch(clearValidationErrors());
       setDialogOpen(false);
       setSelectedStudent(null);
+      handleFilterData()
     }
   };
 

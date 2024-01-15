@@ -37,6 +37,7 @@ const PeriodAttendance = () => {
   const studentAttendanceList: AttendanceClassPeriod[] = useSelector((state) => state.attendancesPeriod.data);
   const currentData: AttendanceClassPeriod[] = useSelector((state) => state.attendancesPeriod.currentData);
   const isLoading = useSelector((state) => state.attendancesPeriod.isLoading);
+  const className = studentAttendanceList.length > 0 ? studentAttendanceList[0].className : "";
 
   const [filter, setFilter] = useState<FilterCriteria>({
     phone: { value: "", strict: false },
@@ -111,7 +112,7 @@ const PeriodAttendance = () => {
             </Typography>
           </Link>
           <Typography variant="h6" style={{ color: "rgb(0, 130, 146)" }}>
-            {`Lớp ${studentAttendanceList[0].className}`}
+            {`Lớp ${className}`}
           </Typography>
           <Typography color="textPrimary">{`(${startDate} ~ ${endDate})`}</Typography>
         </Breadcrumbs>
@@ -126,7 +127,7 @@ const PeriodAttendance = () => {
         }}
       >
         <TableTitle
-          title={`Chuyên cần lớp ${studentAttendanceList[0].className}`}
+          title={`Chuyên cần lớp ${className}`}
           handleExport={handleExport}
           reload={handleReload}
         />
