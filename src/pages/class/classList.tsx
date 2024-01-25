@@ -69,6 +69,7 @@ const StudentList = () => {
   }, []);
 
   const addNewClass = () => {
+    setIsNewClass(true);
     setIsOpenEditDialog(true);
   };
 
